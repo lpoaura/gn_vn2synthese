@@ -159,3 +159,22 @@ ALTER FUNCTION src_lpodatas.fct_get_medias_url_from_visionature_medias_array(_me
 
 COMMENT ON FUNCTION src_lpodatas.fct_get_medias_url_from_visionature_medias_array(_medias JSONB, OUT _result TEXT) IS 'Function to list medias URL from VisioNature datas';
 
+/* Function to get observation generated UUID */
+
+
+CREATE FUNCTION src_lpodatas.fct_get_observation_uuid(_site character varying, _id integer, OUT _uuid uuid) RETURNS uuid
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    EXECUTE format(
+            'SELECT uuid from import_vn.uuid_xref where site like $1 and id = $2 limit 1')
+        INTO _uuid
+        USING _site, _id;
+END ;
+$$;
+
+ALTER FUNCTION src_lpodatas.fct_get_observation_uuid(_site character varying, _id integer, OUT _uuid uuid)  OWNER TO geonature;
+
+COMMENT ON FUNCTION src_lpodatas.fct_get_observation_uuid IS 'Function to get observation generated UUID';
+

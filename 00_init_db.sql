@@ -3,11 +3,13 @@
     - VisioNature
     - dbChiroWeb
 */
+CREATE SCHEMA IF NOT EXISTS src_lpodatas AUTHORIZATION geonature;
+
 DROP TABLE IF EXISTS src_lpodatas.synthese_extended;
 
 CREATE TABLE IF NOT EXISTS src_lpodatas.synthese_extended
 (
-    id_synthese         INTEGER REFERENCES gn_synthese.synthese (id_synthese),
+    id_synthese         INTEGER PRIMARY KEY REFERENCES gn_synthese.synthese (id_synthese),
     id_sp_source        INTEGER,
     taxo_group          VARCHAR(50),
     taxo_real           BOOLEAN,
@@ -63,4 +65,18 @@ COMMENT ON COLUMN src_lpodatas.synthese_extended.is_valid IS 'Donnée validée';
 COMMENT ON COLUMN src_lpodatas.synthese_extended.private_comment IS 'Commentaire privé';
 COMMENT ON COLUMN src_lpodatas.synthese_extended.is_hidden IS 'Donnée cachée';
 
+CREATE INDEX i_synthese_extended_id_sp_source ON src_lpodatas.synthese_extended (id_sp_source);
+CREATE INDEX i_synthese_extended_taxo_group ON src_lpodatas.synthese_extended (taxo_group);
+CREATE INDEX i_synthese_extended_common_name ON src_lpodatas.synthese_extended (common_name);
+CREATE INDEX i_synthese_extended_id_place ON src_lpodatas.synthese_extended (id_place);
+CREATE INDEX i_synthese_extended_is_valid ON src_lpodatas.synthese_extended (is_valid);
+CREATE INDEX i_synthese_extended_is_hidden ON src_lpodatas.synthese_extended (is_hidden);
 
+CREATE TABLE src_lpodatas.cor_vn_taxref (
+    id        BIGINT,
+    vn_id     INTEGER,
+    taxref_id INTEGER
+);
+
+ALTER TABLE src_lpodatas.cor_vn_taxref
+    OWNER TO geonature;

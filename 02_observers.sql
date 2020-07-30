@@ -4,8 +4,6 @@
 
 CREATE INDEX i_t_roles_champ_addi_id_universal ON utilisateurs.t_roles ((champs_addi ->> 'id_universal'));
 
-COMMENT
-INDEX i_t_roles_champ_addi_id_universal ON utilisateurs.t_roles IS 'Index spécifique aux données observateurs de VisioNature';
 
 /* Fonction to create observers if not already registered */
 
