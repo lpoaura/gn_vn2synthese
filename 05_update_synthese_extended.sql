@@ -99,8 +99,8 @@ BEGIN
     SELECT
 
         src_lpodatas.fct_get_or_insert_dataset_from_shortname(new.item #>> '{observers,0,project_code}',
-                                                              gn_commons.get_default_parameter(
-                                                                      'visionature_default_acquisition_framework'))
+                                                              'visionature_default_dataset',
+                                                              'visionature_default_acquisition_framework')
         INTO the_id_dataset;
     SELECT
         ref_nomenclatures.fct_get_synonymes_nomenclature('NAT_OBJ_GEO', new.item #>> '{observers,0,precision}')
@@ -290,8 +290,10 @@ gn_synthese.get_default_nomenclature_value('STADE_VIE')
     SELECT CAST(new.item #>> '{observers,0,hidden}' IS NOT NULL AS BOOL) INTO the_is_hidden;
 
     IF (tg_op = 'UPDATE')
+
         -- DO UPDATE IF trigger action is an UPDATE
     THEN
+        RAISE NOTICE 'Try update data % from site %', new.id, new.site;
         -- Updating data on gn_synthese.synthese when raw data is updated
         UPDATE gn_synthese.synthese
         SET
@@ -378,6 +380,7 @@ gn_synthese.get_default_nomenclature_value('STADE_VIE')
             WHERE
                 id_synthese = the_id_synthese;
         IF NOT found THEN
+            RAISE NOTICE 'Data % from site % not found, proceed INSERT', new.id, new.site;
             INSERT INTO
                 gn_synthese.synthese( unique_id_sinp
                                     , unique_id_sinp_grp
@@ -537,6 +540,7 @@ gn_synthese.get_default_nomenclature_value('STADE_VIE')
         RETURN new;
     ELSEIF (tg_op = 'INSERT')
     THEN
+        RAISE NOTICE 'Try insert data % from site %', new.id, new.site;
         INSERT INTO
             gn_synthese.synthese( unique_id_sinp
                                 , unique_id_sinp_grp
@@ -787,3 +791,7 @@ CREATE TRIGGER tri_observations_upsert_to_geonature
     ON import_vn.observations_json
     FOR EACH ROW
 EXECUTE PROCEDURE src_lpodatas.fct_tri_upsert_observation_to_geonature();
+
+
+TRUNCATE gn_synthese.synthese RESTART IDENTITY CASCADE;
+

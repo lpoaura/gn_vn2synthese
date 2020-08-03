@@ -47,25 +47,32 @@ COMMENT ON FUNCTION src_lpodatas.fct_get_or_insert_basic_acquisition_framework(_
 
 /* Function to basically create new dataset attached to an acquisition_framework find by name */
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_get_or_insert_dataset_from_shortname(_shortname TEXT, _acname TEXT);
+DROP FUNCTION IF EXISTS src_lpodatas.fct_get_or_insert_dataset_from_shortname(_shortname TEXT, _default_dataset TEXT, _default_acquisition_framework TEXT);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_get_or_insert_dataset_from_shortname(_shortname TEXT,
-                                                                                 _acname TEXT DEFAULT gn_commons.get_default_parameter(
-                                                                                         'visionature_default_acquisition_framework')) RETURNS INTEGER
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_get_or_insert_dataset_from_shortname(_shortname TEXT, _default_dataset TEXT,
+                                                                                 _default_acquisition_framework TEXT) RETURNS INTEGER
 AS
 $$
 DECLARE
-    the_id_dataset INT ;
+    the_id_dataset               INT ;
+    the_id_acquisition_framework INT;
+    the_shortname                TEXT;
 BEGIN
-    IF (_shortname IS NOT NULL AND (SELECT
-                                        exists(SELECT
-                                                   1
-                                                   FROM
-                                                       gn_meta.t_datasets
-                                                   WHERE
-                                                       dataset_shortname LIKE _shortname))) THEN
-        SELECT id_dataset INTO the_id_dataset FROM gn_meta.t_datasets WHERE dataset_shortname LIKE _shortname;
-        RAISE NOTICE 'Dataset shortnamed % already exists with id %', _shortname, the_id_dataset;
+    /*  Si shortname est NULL:
+            Si Dataset par défaut existe alors on récupère l'ID de ce dataset
+            Sinon, on créée le dataset et on récupère son ID
+        Si shortname est non NULL:
+            Si Dataset basé sur ce shortname existe, alors on récupère l'ID de ce dataset
+            Sinon, on le créée et on récupère son ID
+    */
+    SELECT coalesce(_shortname, gn_commons.get_default_parameter(_default_dataset)) INTO the_shortname;
+
+    RAISE NOTICE '<fct_get_or_insert_dataset_from_shortname> Data dataset is % ', the_shortname;
+
+    IF (SELECT exists(SELECT 1 FROM gn_meta.t_datasets WHERE dataset_shortname LIKE the_shortname)) THEN
+        /* Si le JDD par défaut existe déjà, on récupère son ID */
+        SELECT id_dataset INTO the_id_dataset FROM gn_meta.t_datasets WHERE dataset_shortname LIKE the_shortname;
+        RAISE NOTICE '<fct_get_or_insert_dataset_from_shortname> Dataset with shortname % exists with get ID : %', the_shortname, the_id_dataset;
     ELSE
         INSERT INTO
             gn_meta.t_datasets( id_acquisition_framework
@@ -76,25 +83,26 @@ BEGIN
                               , terrestrial_domain
                               , meta_create_date)
             VALUES
-            ( src_lpodatas.fct_get_id_acquisition_framework_by_name(_acname)
-            , '[' || coalesce(_shortname, gn_commons.get_default_parameter('visionature_default_dataset')) || '] Jeu de données compléter'
-            , coalesce(_shortname, gn_commons.get_default_parameter('visionature_default_dataset'))
+            (src_lpodatas.fct_get_id_acquisition_framework_by_name(
+                     gn_commons.get_default_parameter(
+                             _default_acquisition_framework))
+            , '[' || the_shortname || '] Jeu de données compléter'
+            , the_shortname
             , 'A compléter'
             , FALSE
             , TRUE
             , now())
             RETURNING id_dataset INTO the_id_dataset;
-        RAISE NOTICE 'Dataset shortnamed % inserted with id %', _shortname, the_id_dataset;
-        RETURN the_id_dataset;
+        RAISE NOTICE '<fct_get_or_insert_dataset_from_shortname> Data dataset doesn''t exists, new dataset with shortname % created with ID : %', the_shortname, the_id_dataset;
     END IF;
+
     RETURN the_id_dataset;
 END
-$$
-    LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
 
-ALTER FUNCTION src_lpodatas.fct_get_or_insert_dataset_from_shortname(_shortname TEXT, _acname TEXT) OWNER TO geonature;
+ALTER FUNCTION src_lpodatas.fct_get_or_insert_dataset_from_shortname(_shortname TEXT, _default_dataset TEXT,_default_acquisition_framework TEXT) OWNER TO geonature;
 
-COMMENT ON FUNCTION src_lpodatas.fct_get_or_insert_dataset_from_shortname(_shortname TEXT, _acname TEXT) IS 'function to basically create acquisition framework';
+COMMENT ON FUNCTION src_lpodatas.fct_get_or_insert_dataset_from_shortname(_shortname TEXT,_default_dataset TEXT, _default_acquisition_framework TEXT) IS 'function to basically create acquisition framework';
 
 /* TESTS */
 --
@@ -172,4 +180,16 @@ COMMENT ON FUNCTION src_lpodatas.fct_get_id_dataset_by_shortname(_shortname TEXT
 
 
 
+SELECT DISTINCT
+    src_lpodatas.fct_get_or_insert_dataset_from_shortname(item #>> '{observers,0,project_code}',
+                                                          'visionature_default_dataset',
+                                                          'visionature_default_acquisition_framework')
+  , count(*)
+    FROM
+        import_vn.observations_json
+    GROUP BY
+        item #>> '{observers,0,project_code}';
 
+
+src_lpodatas.fct_get_or_insert_dataset_from_shortname(_shortname TEXT, _default_dataset TEXT,
+                                                                                 _default_acquisition_framework TEXT

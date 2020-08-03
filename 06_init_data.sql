@@ -58,10 +58,10 @@ SELECT
             '1900-01-01');
 
 
-SELECT
-    src_lpodatas.fct_get_or_insert_dataset_from_shortname(
-            gn_commons.get_default_parameter('visionature_default_acquisition_framework'),
-            gn_commons.get_default_parameter('visionature_default_dataset'));
+-- SELECT
+--     src_lpodatas.fct_get_or_insert_dataset_from_shortname(
+--             gn_commons.get_default_parameter('visionature_default_acquisition_framework'),
+--             gn_commons.get_default_parameter('visionature_default_dataset'));
 
 /* Nomenclatures des codes atlas */
 
