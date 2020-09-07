@@ -4,9 +4,9 @@
 
 CREATE INDEX i_source_name ON gn_synthese.t_sources (name_source)
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_create_source_from_visionature(_source TEXT);
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_upsert_or_get_source_from_visionature(_source TEXT);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_upsert_or_get_source_from_visionature(_source TEXT) RETURNS INTEGER
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_upsert_or_get_source_from_visionature(_source TEXT) RETURNS INTEGER
 AS
 $$
 DECLARE
@@ -35,11 +35,11 @@ END
 $$
     LANGUAGE plpgsql;
 
-ALTER FUNCTION src_lpodatas.fct_upsert_or_get_source_from_visionature(_source TEXT) OWNER TO geonature;
+ALTER FUNCTION src_lpodatas.fct_c_upsert_or_get_source_from_visionature(_source TEXT) OWNER TO geonature;
 
-COMMENT ON FUNCTION src_lpodatas.fct_upsert_or_get_source_from_visionature(_source TEXT) IS 'function to basically create new sources from VisioNature import';
+COMMENT ON FUNCTION src_lpodatas.fct_c_upsert_or_get_source_from_visionature(_source TEXT) IS 'function to basically create new sources from VisioNature import';
 
 /* TESTS */
 
-SELECT src_lpodatas.fct_upsert_or_get_source_from_visionature('test');
+SELECT src_lpodatas.fct_c_upsert_or_get_source_from_visionature('test');
 

@@ -1,0 +1,12 @@
+# Connexion settings
+dbHost=localhost
+dbPort=5432
+dbName=mydb
+dbUser=mydbuser
+dbPwd=mydbuserpwd
+
+# Customization
+sourceSchema=import_vn
+schemaName=src_myowndata
+
+

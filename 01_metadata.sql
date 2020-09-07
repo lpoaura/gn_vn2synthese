@@ -1,9 +1,9 @@
 /* Create a default dataset for new studies */
 
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_get_or_insert_basic_acquisition_framework(_name TEXT, _desc TEXT, _startdate DATE);
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_or_insert_basic_acquisition_framework(_name TEXT, _desc TEXT, _startdate DATE);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_get_or_insert_basic_acquisition_framework(_name TEXT, _desc TEXT, _startdate DATE) RETURNS INTEGER
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_or_insert_basic_acquisition_framework(_name TEXT, _desc TEXT, _startdate DATE) RETURNS INTEGER
 AS
 $$
 DECLARE
@@ -41,15 +41,15 @@ END
 $$
     LANGUAGE plpgsql;
 
-ALTER FUNCTION src_lpodatas.fct_get_or_insert_basic_acquisition_framework(_name TEXT, _desc TEXT, _startdate DATE) OWNER TO geonature;
+ALTER FUNCTION src_lpodatas.fct_c_get_or_insert_basic_acquisition_framework(_name TEXT, _desc TEXT, _startdate DATE) OWNER TO geonature;
 
-COMMENT ON FUNCTION src_lpodatas.fct_get_or_insert_basic_acquisition_framework(_name TEXT, _desc TEXT, _startdate DATE) IS 'function to basically create acquisition framework';
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_or_insert_basic_acquisition_framework(_name TEXT, _desc TEXT, _startdate DATE) IS 'function to basically create acquisition framework';
 
 /* Function to basically create new dataset attached to an acquisition_framework find by name */
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_get_or_insert_dataset_from_shortname(_shortname TEXT, _default_dataset TEXT, _default_acquisition_framework TEXT);
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_or_insert_dataset_from_shortname(_shortname TEXT, _default_dataset TEXT, _default_acquisition_framework TEXT);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_get_or_insert_dataset_from_shortname(_shortname TEXT, _default_dataset TEXT,
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_or_insert_dataset_from_shortname(_shortname TEXT, _default_dataset TEXT,
                                                                                  _default_acquisition_framework TEXT) RETURNS INTEGER
 AS
 $$
@@ -67,12 +67,12 @@ BEGIN
     */
     SELECT coalesce(_shortname, gn_commons.get_default_parameter(_default_dataset)) INTO the_shortname;
 
-    RAISE NOTICE '<fct_get_or_insert_dataset_from_shortname> Data dataset is % ', the_shortname;
+    RAISE NOTICE '<fct_c_get_or_insert_dataset_from_shortname> Data dataset is % ', the_shortname;
 
     IF (SELECT exists(SELECT 1 FROM gn_meta.t_datasets WHERE dataset_shortname LIKE the_shortname)) THEN
         /* Si le JDD par défaut existe déjà, on récupère son ID */
         SELECT id_dataset INTO the_id_dataset FROM gn_meta.t_datasets WHERE dataset_shortname LIKE the_shortname;
-        RAISE NOTICE '<fct_get_or_insert_dataset_from_shortname> Dataset with shortname % exists with get ID : %', the_shortname, the_id_dataset;
+        RAISE NOTICE '<fct_c_get_or_insert_dataset_from_shortname> Dataset with shortname % exists with get ID : %', the_shortname, the_id_dataset;
     ELSE
         INSERT INTO
             gn_meta.t_datasets( id_acquisition_framework
@@ -83,7 +83,7 @@ BEGIN
                               , terrestrial_domain
                               , meta_create_date)
             VALUES
-            (src_lpodatas.fct_get_id_acquisition_framework_by_name(
+            (src_lpodatas.fct_c_get_id_acquisition_framework_by_name(
                      gn_commons.get_default_parameter(
                              _default_acquisition_framework))
             , '[' || the_shortname || '] Jeu de données compléter'
@@ -93,16 +93,16 @@ BEGIN
             , TRUE
             , now())
             RETURNING id_dataset INTO the_id_dataset;
-        RAISE NOTICE '<fct_get_or_insert_dataset_from_shortname> Data dataset doesn''t exists, new dataset with shortname % created with ID : %', the_shortname, the_id_dataset;
+        RAISE NOTICE '<fct_c_get_or_insert_dataset_from_shortname> Data dataset doesn''t exists, new dataset with shortname % created with ID : %', the_shortname, the_id_dataset;
     END IF;
 
     RETURN the_id_dataset;
 END
 $$ LANGUAGE plpgsql;
 
-ALTER FUNCTION src_lpodatas.fct_get_or_insert_dataset_from_shortname(_shortname TEXT, _default_dataset TEXT,_default_acquisition_framework TEXT) OWNER TO geonature;
+ALTER FUNCTION src_lpodatas.fct_c_get_or_insert_dataset_from_shortname(_shortname TEXT, _default_dataset TEXT,_default_acquisition_framework TEXT) OWNER TO geonature;
 
-COMMENT ON FUNCTION src_lpodatas.fct_get_or_insert_dataset_from_shortname(_shortname TEXT,_default_dataset TEXT, _default_acquisition_framework TEXT) IS 'function to basically create acquisition framework';
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_or_insert_dataset_from_shortname(_shortname TEXT,_default_dataset TEXT, _default_acquisition_framework TEXT) IS 'function to basically create acquisition framework';
 
 /* TESTS */
 --
@@ -122,9 +122,9 @@ COMMENT ON FUNCTION src_lpodatas.fct_get_or_insert_dataset_from_shortname(_short
 
 /* New function to get acquisition framework id by name */
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_get_id_acquisition_framework_by_name(_name TEXT);
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_id_acquisition_framework_by_name(_name TEXT);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_get_id_acquisition_framework_by_name(_name TEXT) RETURNS INTEGER
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_id_acquisition_framework_by_name(_name TEXT) RETURNS INTEGER
     LANGUAGE plpgsql
 AS
 $$
@@ -143,15 +143,15 @@ BEGIN
 END;
 $$;
 
-ALTER FUNCTION src_lpodatas.fct_get_id_acquisition_framework_by_name(_name TEXT) OWNER TO geonature;
+ALTER FUNCTION src_lpodatas.fct_c_get_id_acquisition_framework_by_name(_name TEXT) OWNER TO geonature;
 
-COMMENT ON FUNCTION src_lpodatas.fct_get_id_acquisition_framework_by_name(_name TEXT) IS 'function to get acquisition framework id by name';
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_id_acquisition_framework_by_name(_name TEXT) IS 'function to get acquisition framework id by name';
 
 /* New function to get dataset id by shortname */
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_get_id_dataset_by_shortname(_shortname TEXT);
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_id_dataset_by_shortname(_shortname TEXT);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_get_id_dataset_by_shortname(_shortname TEXT) RETURNS INTEGER
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_id_dataset_by_shortname(_shortname TEXT) RETURNS INTEGER
     LANGUAGE plpgsql
 AS
 $$
@@ -169,27 +169,27 @@ BEGIN
 END;
 $$;
 
-ALTER FUNCTION src_lpodatas.fct_get_id_dataset_by_shortname(_shortname TEXT) OWNER TO geonature;
+ALTER FUNCTION src_lpodatas.fct_c_get_id_dataset_by_shortname(_shortname TEXT) OWNER TO geonature;
 
-COMMENT ON FUNCTION src_lpodatas.fct_get_id_dataset_by_shortname(_shortname TEXT) IS 'function to get dataset id by shortname';
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_id_dataset_by_shortname(_shortname TEXT) IS 'function to get dataset id by shortname';
 
 --SELECT gn_meta.get_id_dataset_by_shortname('dbChiroGCRA');
 
 
 /* Create default acquisition framework */
 
-
-
-SELECT DISTINCT
-    src_lpodatas.fct_get_or_insert_dataset_from_shortname(item #>> '{observers,0,project_code}',
-                                                          'visionature_default_dataset',
-                                                          'visionature_default_acquisition_framework')
-  , count(*)
-    FROM
-        import_vn.observations_json
-    GROUP BY
-        item #>> '{observers,0,project_code}';
-
-
-src_lpodatas.fct_get_or_insert_dataset_from_shortname(_shortname TEXT, _default_dataset TEXT,
-                                                                                 _default_acquisition_framework TEXT
+--
+--
+-- SELECT DISTINCT
+--     src_lpodatas.fct_c_get_or_insert_dataset_from_shortname(item #>> '{observers,0,project_code}',
+--                                                           'visionature_default_dataset',
+--                                                           'visionature_default_acquisition_framework')
+--   , count(*)
+--     FROM
+--         import_vn.observations_json
+--     GROUP BY
+--         item #>> '{observers,0,project_code}';
+--
+--
+-- src_lpodatas.fct_c_get_or_insert_dataset_from_shortname(_shortname TEXT, _default_dataset TEXT,
+--                                                                                  _default_acquisition_framework TEXT

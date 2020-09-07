@@ -8,7 +8,7 @@ Transfert des données VisioNature reçues depuis l'API avec ClientApiVN vers la
 2. Execute triggers on JSON data tables to populate GeoNature synthesis with some default values when there is no correspondances (e.g. new species without any match with TaxRef repository)
 
 Triggers will populate to different tables:
-* `gn_synthese.synthesis`, main synthesis table
-* `gn_synthese.vn_datas`, child table with specific job data, linked by foreign key (`gn_synthese.synthese.id_synthese`)
+* `gn_synthese.synthese`, main synthesis table
+* `src_lpodatas.t_c_synthese_extended`, child table with specific job data, linked by foreign key (`gn_synthese.synthese.id_synthese`)
 
 
