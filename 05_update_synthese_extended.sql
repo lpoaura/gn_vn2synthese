@@ -257,7 +257,7 @@ gn_synthese.get_default_nomenclature_value('STADE_VIE')
             ELSE src_lpodatas.fct_c_get_species_values_from_vn('french_name'::TEXT, the_id_sp_source)
             END
         INTO the_common_name;
-    SELECT NULL INTO the_pseudo_observer_uid;
+    SELECT encode(hmac(CAST((new.item #>> '{observers,0,@uid}') AS TEXT), 'cyifoE!A5r', 'sha1'), 'hex') INTO the_pseudo_observer_uid;
     SELECT CAST(new.item #>> '{observers,0,atlas_code}' AS INTEGER) INTO the_bird_breed_code;
     SELECT
         CASE
@@ -789,7 +789,7 @@ $$;
 
 ALTER FUNCTION src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature() OWNER TO geonature;
 
-COMMENT ON FUNCTION src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature() IS 'Trigger function to upsert datas from VisioNature to synthese and custom child table'
+COMMENT ON FUNCTION src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature() IS 'Trigger function to upsert datas from VisioNature to synthese and custom child table';
 
 DROP TRIGGER IF EXISTS fct_tri_c_upsert_vn_observation_to_geonature ON import_vn.observations_json;
 
@@ -835,7 +835,7 @@ $$;
 
 ALTER FUNCTION src_lpodatas.fct_tri_c_delete_vn_observation_from_geonature() OWNER TO geonature;
 
-COMMENT ON FUNCTION src_lpodatas.fct_tri_c_delete_vn_observation_from_geonature() IS 'Trigger function to delete datas from geonature synthese and extended table when DELETE on VisioNature source datas'
+COMMENT ON FUNCTION src_lpodatas.fct_tri_c_delete_vn_observation_from_geonature() IS 'Trigger function to delete datas from geonature synthese and extended table when DELETE on VisioNature source datas';
 
 DROP TRIGGER IF EXISTS tri_c_delete_vn_observation_from_geonature ON import_vn.observations_json;
 

@@ -1,6 +1,7 @@
 /* Function to get taxo group from visionature id_species */
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_taxo_group_values_from_vn(_key TEXT, _site TEXT, _id INTEGER, OUT _result TEXT);
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_taxo_group_values_from_vn(_key TEXT, _site TEXT, _id INTEGER, OUT _result TEXT)
+;
 
 CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_taxo_group_values_from_vn(_key TEXT, _site TEXT, _id INTEGER, OUT _result TEXT) RETURNS TEXT
     LANGUAGE plpgsql
@@ -11,14 +12,20 @@ BEGIN
         INTO _result
         USING _key, _site, _id;
 END ;
-$$;
+$$
+;
 
-ALTER FUNCTION src_lpodatas.fct_c_get_taxo_group_values_from_vn(_key TEXT, _sie TEXT, _id INTEGER, OUT _result TEXT) OWNER TO geonature;
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_taxo_group_values_from_vn(_key TEXT, _site TEXT, _id INTEGER, OUT _result TEXT) IS 'Function to get taxo group from visionature id_species';
+ALTER FUNCTION src_lpodatas.fct_c_get_taxo_group_values_from_vn(_key TEXT, _sie TEXT, _id INTEGER, OUT _result TEXT) OWNER TO geonature
+;
+
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_taxo_group_values_from_vn(_key TEXT, _site TEXT, _id INTEGER, OUT _result TEXT) IS 'Function to get taxo group from visionature id_species'
+;
 
 
 /* Function to get taxref datas from VN id_sp */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_taxref_values_from_vn(_field_name ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT);
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_taxref_values_from_vn(_field_name ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT)
+;
+
 CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_taxref_values_from_vn(_field_name ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT) RETURNS ANYELEMENT
     LANGUAGE plpgsql
 AS
@@ -30,15 +37,19 @@ BEGIN
         INTO _result
         USING _id_species;
 END ;
-$$;
+$$
+;
 
-ALTER FUNCTION src_lpodatas.fct_c_get_taxref_values_from_vn(_field_name ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT) OWNER TO geonature;
+ALTER FUNCTION src_lpodatas.fct_c_get_taxref_values_from_vn(_field_name ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT) OWNER TO geonature
+;
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_taxref_values_from_vn(_field_name ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT) IS 'Function to get taxref datas from VN id_sp';
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_taxref_values_from_vn(_field_name ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT) IS 'Function to get taxref datas from VN id_sp'
+;
 
 /* Function to get visionature species datas from VN id_sp */
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_species_values_from_vn(_key ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT);
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_species_values_from_vn(_key ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT)
+;
 
 CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_species_values_from_vn(_key ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT) RETURNS ANYELEMENT
     LANGUAGE plpgsql
@@ -49,15 +60,19 @@ BEGIN
         INTO _result
         USING _key, _id_species;
 END ;
-$$;
+$$
+;
 
-ALTER FUNCTION src_lpodatas.fct_c_get_species_values_from_vn(_key ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT) OWNER TO geonature;
+ALTER FUNCTION src_lpodatas.fct_c_get_species_values_from_vn(_key ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT) OWNER TO geonature
+;
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_species_values_from_vn(_key ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT) IS 'Function to get visionature species datas from VN id_sp';
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_species_values_from_vn(_key ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT) IS 'Function to get visionature species datas from VN id_sp'
+;
 
 /* Function to get observer full name from VisioNature observer universal id*/
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_observer_full_name_from_vn(_id_universal INTEGER, OUT _result TEXT);
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_observer_full_name_from_vn(_id_universal INTEGER, OUT _result TEXT)
+;
 
 CREATE FUNCTION src_lpodatas.fct_c_get_observer_full_name_from_vn(_id_universal INTEGER, OUT _result TEXT) RETURNS TEXT
     LANGUAGE plpgsql
@@ -70,15 +85,19 @@ BEGIN
         INTO _result
         USING _id_universal;
 END ;
-$$;
+$$
+;
 
-ALTER FUNCTION src_lpodatas.fct_c_get_observer_full_name_from_vn(_id_universal INTEGER, OUT _result TEXT) OWNER TO geonature;
+ALTER FUNCTION src_lpodatas.fct_c_get_observer_full_name_from_vn(_id_universal INTEGER, OUT _result TEXT) OWNER TO geonature
+;
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_observer_full_name_from_vn(_id_universal INTEGER, OUT _result TEXT) IS 'Function to get observer full name from VisioNature observer universal id';
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_observer_full_name_from_vn(_id_universal INTEGER, OUT _result TEXT) IS 'Function to get observer full name from VisioNature observer universal id'
+;
 
 /* Function to get entity name from VisioNature observer universal id */
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_entity_from_observer_site_uid(_uid INTEGER, _site TEXT, OUT _result TEXT);
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_entity_from_observer_site_uid(_uid INTEGER, _site TEXT, OUT _result TEXT)
+;
 
 CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_entity_from_observer_site_uid(_uid INTEGER, _site TEXT, OUT _result TEXT) RETURNS TEXT
     LANGUAGE plpgsql
@@ -95,15 +114,19 @@ BEGIN
               usr.id_universal = _uid
           AND usr.site = _site;
 END;
-$$;
+$$
+;
 
-ALTER FUNCTION src_lpodatas.fct_c_get_entity_from_observer_site_uid(_uid INTEGER, _site TEXT, OUT _result TEXT) OWNER TO geonature;
+ALTER FUNCTION src_lpodatas.fct_c_get_entity_from_observer_site_uid(_uid INTEGER, _site TEXT, OUT _result TEXT) OWNER TO geonature
+;
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_entity_from_observer_site_uid(_uid INTEGER, _site TEXT, OUT _result TEXT) IS 'Function to get entity name from VisioNature observer universal id';
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_entity_from_observer_site_uid(_uid INTEGER, _site TEXT, OUT _result TEXT) IS 'Function to get entity name from VisioNature observer universal id'
+;
 
 /* Function to generate an array of behaviours from VisioNature datas */
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_behaviours_texts_array_from_id_array(_behaviours JSONB, OUT _result TEXT[]);
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_behaviours_texts_array_from_id_array(_behaviours JSONB, OUT _result TEXT[])
+;
 
 CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_behaviours_texts_array_from_id_array(_behaviours JSONB, OUT _result TEXT[]) RETURNS TEXT[]
     LANGUAGE plpgsql
@@ -132,16 +155,20 @@ BEGIN
         SELECT NULL INTO _result;
     END IF;
 END;
-$$;
+$$
+;
 
-ALTER FUNCTION src_lpodatas.fct_c_get_behaviours_texts_array_from_id_array(_behaviours JSONB, OUT _result TEXT[]) OWNER TO geonature;
+ALTER FUNCTION src_lpodatas.fct_c_get_behaviours_texts_array_from_id_array(_behaviours JSONB, OUT _result TEXT[]) OWNER TO geonature
+;
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_behaviours_texts_array_from_id_array(_behaviours JSONB, OUT _result TEXT[]) IS 'Function to generate an array of behaviours from VisioNature datas';
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_behaviours_texts_array_from_id_array(_behaviours JSONB, OUT _result TEXT[]) IS 'Function to generate an array of behaviours from VisioNature datas'
+;
 
 
 /* list visionature medias URL from medias details */
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_medias_url_from_visionature_medias_array(_medias JSONB, OUT _result TEXT);
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_medias_url_from_visionature_medias_array(_medias JSONB, OUT _result TEXT)
+;
 
 CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_medias_url_from_visionature_medias_array(_medias JSONB, OUT _result TEXT) RETURNS TEXT
     LANGUAGE plpgsql
@@ -161,15 +188,19 @@ BEGIN
         SELECT NULL INTO _result;
     END IF;
 END;
-$$;
+$$
+;
 
-ALTER FUNCTION src_lpodatas.fct_c_get_medias_url_from_visionature_medias_array(_medias JSONB, OUT _result TEXT) OWNER TO geonature;
+ALTER FUNCTION src_lpodatas.fct_c_get_medias_url_from_visionature_medias_array(_medias JSONB, OUT _result TEXT) OWNER TO geonature
+;
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_medias_url_from_visionature_medias_array(_medias JSONB, OUT _result TEXT) IS 'Function to list medias URL from VisioNature datas';
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_medias_url_from_visionature_medias_array(_medias JSONB, OUT _result TEXT) IS 'Function to list medias URL from VisioNature datas'
+;
 
 /* Function to get observation generated UUID */
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_observation_uuid(_site CHARACTER VARYING, _id INTEGER, OUT _uuid UUID);
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_observation_uuid(_site CHARACTER VARYING, _id INTEGER, OUT _uuid UUID)
+;
 
 CREATE FUNCTION src_lpodatas.fct_c_get_observation_uuid(_site CHARACTER VARYING, _id INTEGER, OUT _uuid UUID) RETURNS UUID
     LANGUAGE plpgsql
@@ -181,9 +212,12 @@ BEGIN
         INTO _uuid
         USING _site, _id;
 END ;
-$$;
+$$
+;
 
-ALTER FUNCTION src_lpodatas.fct_c_get_observation_uuid(_site CHARACTER VARYING, _id INTEGER, OUT _uuid UUID) OWNER TO geonature;
+ALTER FUNCTION src_lpodatas.fct_c_get_observation_uuid(_site CHARACTER VARYING, _id INTEGER, OUT _uuid UUID) OWNER TO geonature
+;
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_observation_uuid IS 'Function to get observation generated UUID';
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_observation_uuid IS 'Function to get observation generated UUID'
+;
 
