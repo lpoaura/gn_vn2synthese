@@ -1,6 +1,6 @@
 # gn_vn2synthese
 
-[![GeoNature](https://img.shields.io/badge/GeoNature-v2.5.5%20tested-brightgreen)](https://github.com/PnX-SI/GeoNature) [![Python](https://img.shields.io/badge/Python-3.7+-blueviolet)](https://www.python.org/) [![Poetry](https://img.shields.io/badge/packaging%20tool-poetry-important)](https://python-poetry.org/) [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-10+-blue)](https://www.postgresql.org/)
+[![GeoNature](https://img.shields.io/badge/GeoNature-v2.5.5%20tested-brightgreen)](https://github.com/PnX-SI/GeoNature) [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-10+-blue)](https://www.postgresql.org/)
 
 Transfer of Visionature JSON data to the GeoNature database
 ## Process
