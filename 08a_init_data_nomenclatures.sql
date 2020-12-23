@@ -1,6 +1,9 @@
 ALTER TABLE gn_commons.t_parameters
-    ADD CONSTRAINT unique_t_parameters_id_organism_parameter_name UNIQUE (id_organism, parameter_name);
-CREATE UNIQUE INDEX i_unique_t_parameters_parameter_name_with_id_organism_null ON gn_commons.t_parameters (parameter_name) WHERE id_organism IS NULL;
+    ADD CONSTRAINT unique_t_parameters_id_organism_parameter_name UNIQUE (id_organism, parameter_name)
+;
+
+CREATE UNIQUE INDEX i_unique_t_parameters_parameter_name_with_id_organism_null ON gn_commons.t_parameters (parameter_name) WHERE id_organism IS NULL
+;
 
 INSERT INTO
     gn_commons.t_parameters (id_organism, parameter_name, parameter_desc, parameter_value, parameter_extra_value)
@@ -10,7 +13,8 @@ INSERT INTO
     , 'Jeu de données par défaut pour les données Visionature lorsque pas de code étude'
     , 'visionature_opportunistic'
     , NULL)
-ON CONFLICT DO NOTHING;
+ON CONFLICT DO NOTHING
+;
 
 INSERT INTO
     gn_commons.t_parameters (id_organism, parameter_name, parameter_desc, parameter_value, parameter_extra_value)
@@ -20,7 +24,8 @@ INSERT INTO
     , 'Cadre d''acquisition par défaut pour les nouveaux jeux de données automatiquement créés'
     , '<unclassified>'
     , NULL)
-ON CONFLICT DO NOTHING;
+ON CONFLICT DO NOTHING
+;
 
 INSERT INTO
     gn_commons.t_parameters (id_organism, parameter_name, parameter_desc, parameter_value, parameter_extra_value)
@@ -37,14 +42,16 @@ INSERT INTO
              AND lb_nom LIKE 'Animalia')
     , NULL)
 ON CONFLICT
-    DO NOTHING;
+    DO NOTHING
+;
 
 INSERT INTO
     gn_commons.t_parameters (id_organism, parameter_name, parameter_desc, parameter_value, parameter_extra_value)
     VALUES
     (0, 'visionature_default_source', 'Source par défaut pour les donnnées VisioNature', 'VisioNature generic', NULL)
 ON CONFLICT
-    DO NOTHING;
+    DO NOTHING
+;
 
 INSERT INTO
     gn_synthese.t_sources (name_source, desc_source, entity_source_pk_field, meta_create_date, meta_update_date)
@@ -54,13 +61,15 @@ SELECT
   , 'Source visionature générique'
   , 'is_sp_source'
   , now()
-  , now();
+  , now()
+;
 
 SELECT
-    src_lpodatas.fct_get_or_insert_basic_acquisition_framework(
+    src_lpodatas.fct_c_get_or_insert_basic_acquisition_framework(
             gn_commons.get_default_parameter('visionature_default_acquisition_framework'),
             '[Ne pas toucher] Cadre d''acquisition par défaut pour tout nouveau code étude',
-            '1900-01-01');
+            '1900-01-01')
+;
 
 
 -- SELECT
@@ -105,7 +114,8 @@ INSERT INTO
     , 'VisioNature'
     , NULL
     , now()
-    , NULL);
+    , NULL)
+;
 
 
 INSERT INTO
@@ -151,9 +161,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -197,9 +209,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -243,9 +257,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -289,9 +305,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -335,9 +353,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -381,9 +401,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -427,9 +449,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -473,9 +497,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -519,9 +545,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -565,9 +593,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -611,9 +641,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -657,9 +689,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -703,9 +737,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -749,9 +785,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -795,9 +833,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -841,9 +881,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -887,9 +929,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -933,9 +977,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -979,9 +1025,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -1025,9 +1073,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -1071,9 +1121,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -1117,9 +1169,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -1163,9 +1217,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -1209,9 +1265,11 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
+
 INSERT INTO
     ref_nomenclatures.t_nomenclatures ( id_type
                                       , cd_nomenclature
@@ -1255,11 +1313,14 @@ INSERT INTO
     , NULL
     , NULL
     , NULL
-    , '2019-08-05 12:40:49.718706'
+    , now()
     , NULL
-    , TRUE);
+    , TRUE)
+;
 
 /* Synonymie des nomenclatures */
+TRUNCATE ref_nomenclatures.t_c_synonyms restart identity ;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1270,24 +1331,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 101
-    , NULL
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_VALID')
+    , 'STATUT_VALID'
     , '1'
     , 'Certain - très probable'
     , 'Certain - très probable'
     , 'ACCEPTED'
-    , 318
-    , '2020-07-27 14:11:15.790304'
-    , '2020-07-27 14:11:15.790304'
-    , 185
+    , ref_nomenclatures.get_id_nomenclature('STATUT_VALID', '1')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,committees_validation,chr}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1298,24 +1359,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 101
-    , NULL
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_VALID')
+    , 'STATUT_VALID'
     , '1'
     , 'Certain - très probable'
     , 'Certain - très probable'
     , 'ACCEPTED'
-    , 318
-    , '2020-07-27 14:12:23.801656'
-    , '2020-07-27 14:12:23.801656'
-    , 186
+    , ref_nomenclatures.get_id_nomenclature('STATUT_VALID', '1')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,committees_validation,chn}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1326,22 +1387,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '0'
     , 'Inconnu'
     , 'Inconnu'
     , 'U'
-    , 1
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 52
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1352,22 +1413,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '1'
     , 'Indéterminé'
     , 'Indéterminé'
     , 'ADYOUNG'
-    , 2
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 37
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '1')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1378,22 +1439,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '2'
     , 'Adulte'
     , 'Adulte'
     , 'MATURE'
-    , 3
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 47
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '2')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1404,22 +1465,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '2'
     , 'Adulte'
     , 'Adulte'
     , 'AD'
-    , 3
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 36
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '2')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1430,22 +1491,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '3'
     , 'Juvénile'
     , 'Juvénile'
     , 'YOUNGHAIRY'
-    , 4
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 56
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '3')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1456,22 +1517,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '3'
     , 'Juvénile'
     , 'Juvénile'
     , 'YOUNGFLYING'
-    , 4
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 55
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '3')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1482,22 +1543,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '3'
     , 'Juvénile'
     , 'Juvénile'
     , 'YOUNGDEP'
-    , 4
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 54
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '3')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1508,22 +1569,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '3'
     , 'Juvénile'
     , 'Juvénile'
     , 'YOUNGBOLD'
-    , 4
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 53
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '3')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1534,22 +1595,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '3'
     , 'Juvénile'
     , 'Juvénile'
     , 'PULL'
-    , 4
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 48
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '3')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1560,22 +1621,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '3'
     , 'Juvénile'
     , 'Juvénile'
     , 'JUVENILE'
-    , 4
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 45
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '3')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1586,22 +1647,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '4'
     , 'Immature'
     , 'Immature'
     , 'IMM'
-    , 5
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 44
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '4')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1612,22 +1673,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '4'
     , 'Immature'
     , 'Immature'
     , '5Y'
-    , 5
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 35
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '4')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1638,22 +1699,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '4'
     , 'Immature'
     , 'Immature'
     , '4Y'
-    , 5
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 34
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '4')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1664,22 +1725,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '4'
     , 'Immature'
     , 'Immature'
     , '3Y'
-    , 5
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 33
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '4')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1690,22 +1751,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '4'
     , 'Immature'
     , 'Immature'
     , '2Y'
-    , 5
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 32
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '4')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1716,22 +1777,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '4'
     , 'Immature'
     , 'Immature'
     , '1YP'
-    , 5
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 31
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '4')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1742,22 +1803,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '4'
     , 'Immature'
     , 'Immature'
     , '1Y'
-    , 5
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 30
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '4')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1768,22 +1829,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '5'
     , 'Sub-adulte'
     , 'Sub-adulte'
     , 'SUBAD'
-    , 6
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 50
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '5')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1794,22 +1855,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '6'
     , 'Larve'
     , 'Larve'
     , 'LARVA'
-    , 7
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 46
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '6')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1820,22 +1881,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '7'
     , 'Chenille'
     , 'Chenille'
     , 'CAT'
-    , 8
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 38
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '7')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1846,22 +1907,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '8'
     , 'Têtard'
     , 'Têtard'
     , 'TETARD'
-    , 9
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 51
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '8')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1872,22 +1933,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '9'
     , 'Œuf'
     , 'Œuf'
     , 'SPAWN'
-    , 10
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 49
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '9')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1898,22 +1959,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '9'
     , 'Œuf'
     , 'Œuf'
     , 'EGG'
-    , 10
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 40
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '9')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1924,22 +1985,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '11'
     , 'Exuvie'
     , 'Exuvie'
     , 'EXUVIE'
-    , 12
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 42
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '11')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1950,22 +2011,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '12'
     , 'Chrysalide'
     , 'Chrysalide'
     , 'CHRY'
-    , 13
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 39
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '12')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -1976,22 +2037,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '15'
     , 'Imago'
     , 'Imago'
     , 'IMAGO'
-    , 16
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 43
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '15')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2002,22 +2063,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '25'
     , 'Emergent'
     , 'Emergent'
     , 'EMERGENT'
-    , 26
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 41
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '25')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2028,22 +2089,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 10
+    ( ref_nomenclatures.get_id_nomenclature_type('STADE_VIE')
     , 'STADE_VIE'
     , '25'
     , 'Emergent'
     , 'Emergent'
     , 'EMERGENCE'
-    , 26
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 147
+    , ref_nomenclatures.get_id_nomenclature('STADE_VIE', '25')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2054,24 +2115,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 13
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_BIO')
     , 'STATUT_BIO'
     , '3'
     , 'Reproduction'
     , 'Reproduction'
     , '13'
-    , 31
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 9
+    , ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '3')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2082,24 +2143,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 13
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_BIO')
     , 'STATUT_BIO'
     , '3'
     , 'Reproduction'
     , 'Reproduction'
     , '12'
-    , 31
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 8
+    , ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '3')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2110,24 +2171,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 13
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_BIO')
     , 'STATUT_BIO'
     , '3'
     , 'Reproduction'
     , 'Reproduction'
     , '11'
-    , 31
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 7
+    , ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '3')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2138,24 +2199,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 13
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_BIO')
     , 'STATUT_BIO'
     , '3'
     , 'Reproduction'
     , 'Reproduction'
     , '10'
-    , 31
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 6
+    , ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '3')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2166,24 +2227,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 13
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_BIO')
     , 'STATUT_BIO'
     , '3'
     , 'Reproduction'
     , 'Reproduction'
     , '9'
-    , 31
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 5
+    , ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '3')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2194,24 +2255,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 13
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_BIO')
     , 'STATUT_BIO'
     , '3'
     , 'Reproduction'
     , 'Reproduction'
     , '8'
-    , 31
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 4
+    , ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '3')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2222,24 +2283,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 13
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_BIO')
     , 'STATUT_BIO'
     , '3'
     , 'Reproduction'
     , 'Reproduction'
     , '7'
-    , 31
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 3
+    , ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '3')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2250,24 +2311,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 13
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_BIO')
     , 'STATUT_BIO'
     , '3'
     , 'Reproduction'
     , 'Reproduction'
     , '6'
-    , 31
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 2
+    , ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '3')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2278,24 +2339,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 13
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_BIO')
     , 'STATUT_BIO'
     , '3'
     , 'Reproduction'
     , 'Reproduction'
     , '5'
-    , 31
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 1
+    , ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '3')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2306,24 +2367,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 13
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_BIO')
     , 'STATUT_BIO'
     , '3'
     , 'Reproduction'
     , 'Reproduction'
     , '50'
-    , 31
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 18
+    , ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '3')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2334,24 +2395,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 13
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_BIO')
     , 'STATUT_BIO'
     , '3'
     , 'Reproduction'
     , 'Reproduction'
     , '40'
-    , 31
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 17
+    , ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '3')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2362,24 +2423,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 13
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_BIO')
     , 'STATUT_BIO'
     , '3'
     , 'Reproduction'
     , 'Reproduction'
     , '19'
-    , 31
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 16
+    , ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '3')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2390,24 +2451,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 13
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_BIO')
     , 'STATUT_BIO'
     , '3'
     , 'Reproduction'
     , 'Reproduction'
     , '18'
-    , 31
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 15
+    , ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '3')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2418,24 +2479,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 13
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_BIO')
     , 'STATUT_BIO'
     , '3'
     , 'Reproduction'
     , 'Reproduction'
     , '4'
-    , 31
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 14
+    , ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '3')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2446,24 +2507,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 13
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_BIO')
     , 'STATUT_BIO'
     , '3'
     , 'Reproduction'
     , 'Reproduction'
     , '17'
-    , 31
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 13
+    , ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '3')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2474,24 +2535,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 13
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_BIO')
     , 'STATUT_BIO'
     , '3'
     , 'Reproduction'
     , 'Reproduction'
     , '16'
-    , 31
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 12
+    , ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '3')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2502,24 +2563,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 13
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_BIO')
     , 'STATUT_BIO'
     , '3'
     , 'Reproduction'
     , 'Reproduction'
     , '15'
-    , 31
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 11
+    , ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '3')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2530,24 +2591,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 13
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_BIO')
     , 'STATUT_BIO'
     , '3'
     , 'Reproduction'
     , 'Reproduction'
     , '14'
-    , 31
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 10
+    , ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '3')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2558,24 +2619,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 13
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_BIO')
     , 'STATUT_BIO'
     , '10'
     , 'Passage en vol'
     , 'Passage en vol'
     , 'FLY'
-    , 38
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 103
+    , ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '10')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2586,22 +2647,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '0'
     , 'Vu'
     , 'Vu'
     , 'PHOTO'
-    , 41
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 167
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2612,22 +2673,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '0'
     , 'Vu'
     , 'Vu'
     , 'THERMAL'
-    , 41
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 165
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2638,22 +2699,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '0'
     , 'Vu'
     , 'Vu'
     , 'NIGHT_VISION'
-    , 41
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 163
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2664,22 +2725,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '0'
     , 'Vu'
     , 'Vu'
     , 'TELESCOPE'
-    , 41
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 160
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2690,22 +2751,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '0'
     , 'Vu'
     , 'Vu'
     , 'BINOCULARS'
-    , 41
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 157
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2716,22 +2777,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '0'
     , 'Vu'
     , 'Vu'
     , 'RESCUE'
-    , 41
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 107
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2742,22 +2803,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '0'
     , 'Vu'
     , 'Vu'
     , 'FLY'
-    , 41
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 104
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2768,22 +2829,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '0'
     , 'Vu'
     , 'Vu'
     , 'LABO'
-    , 41
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 102
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2794,22 +2855,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '0'
     , 'Vu'
     , 'Vu'
     , 'LAIDACTIV'
-    , 41
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 87
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2820,22 +2881,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '0'
     , 'Vu'
     , 'Vu'
     , 'OUTSHELTER'
-    , 41
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 78
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2846,22 +2907,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '0'
     , 'Vu'
     , 'Vu'
     , 'HAND'
-    , 41
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 77
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2872,22 +2933,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '0'
     , 'Vu'
     , 'Vu'
     , 'MAGNIFYING'
-    , 41
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 72
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2898,22 +2959,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '0'
     , 'Vu'
     , 'Vu'
     , 'VIDEO'
-    , 41
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 169
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2924,22 +2985,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '0'
     , 'Vu'
     , 'Vu'
     , 'VIEW'
-    , 41
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 64
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2950,22 +3011,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '0'
     , 'Vu'
     , 'Vu'
     , 'LAID'
-    , 41
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 98
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -2976,22 +3037,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '0'
     , 'Vu'
     , 'Vu'
     , 'LAIDINACTIV'
-    , 41
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 84
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3002,22 +3063,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '0'
     , 'Vu'
     , 'Vu'
     , 'EYE'
-    , 41
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 153
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3028,22 +3089,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '0'
     , 'Vu'
     , 'Vu'
     , 'TRAP'
-    , 41
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 149
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3054,22 +3115,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '0'
     , 'Vu'
     , 'Vu'
     , 'BONESREMAINS'
-    , 41
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 116
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3080,22 +3141,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '0'
     , 'Vu'
     , 'Vu'
     , 'COLLECTED'
-    , 41
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 115
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3106,22 +3167,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '0'
     , 'Vu'
     , 'Vu'
     , 'MUMMIE'
-    , 41
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 114
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3132,22 +3193,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '1'
     , 'Entendu'
     , 'Entendu'
     , 'AUDIO'
-    , 42
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 94
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '1')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3158,22 +3219,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '2'
     , 'Coquilles d''œuf'
     , 'Coquilles d''œuf'
     , '12'
-    , 43
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 21
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '2')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3184,22 +3245,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '3'
     , 'Ultrasons'
     , 'Ultrasons'
     , 'DETECT'
-    , 44
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 88
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '3')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3210,22 +3271,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '6'
     , 'Fèces/Guano/Epreintes'
     , 'Fèces/Guano/Epreintes'
     , 'FRESHGUANO'
-    , 47
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 111
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '6')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3236,22 +3297,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '6'
     , 'Fèces/Guano/Epreintes'
     , 'Fèces/Guano/Epreintes'
     , 'DRYGUANO'
-    , 47
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 73
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '6')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3262,22 +3323,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '8'
     , 'Nid/Gîte'
     , 'Nid/Gîte'
     , '19'
-    , 49
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 24
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '8')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3288,22 +3349,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '8'
     , 'Nid/Gîte'
     , 'Nid/Gîte'
     , '18'
-    , 49
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 23
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '8')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3314,22 +3375,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '8'
     , 'Nid/Gîte'
     , 'Nid/Gîte'
     , '14'
-    , 49
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 22
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '8')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3340,22 +3401,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '10'
     , 'Restes dans pelote de réjection'
     , 'Restes dans pelote de réjection'
     , 'PEL'
-    , 51
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 66
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '10')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3366,22 +3427,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '20'
     , 'Autre'
     , 'Autre'
     , 'OLFACTIF'
-    , 61
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 110
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '20')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3392,22 +3453,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '20'
     , 'Autre'
     , 'Autre'
     , 'OTHER'
-    , 61
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 97
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '20')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3418,22 +3479,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '21'
     , 'Inconnu'
     , 'Inconnu'
     , 'U'
-    , 62
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 70
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '21')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3444,22 +3505,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 14
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_OBS')
     , 'METH_OBS'
     , '25'
     , 'Vu et entendu'
     , 'Vu et entendu'
     , 'EYE_IDENTIFIED'
-    , 66
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 154
+    , ref_nomenclatures.get_id_nomenclature('METH_OBS', '25')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3470,22 +3531,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 15
+    ( ref_nomenclatures.get_id_nomenclature_type('PREUVE_EXIST')
     , 'PREUVE_EXIST'
     , '1'
     , 'Oui'
     , 'Oui'
     , 'VIDEO'
-    , 82
-    , '2019-12-16 10:43:47.532533'
-    , '2020-07-27 13:13:57.411139'
-    , 173
+    , ref_nomenclatures.get_id_nomenclature('PREUVE_EXIST', '1')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3496,22 +3557,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 15
+    ( ref_nomenclatures.get_id_nomenclature_type('PREUVE_EXIST')
     , 'PREUVE_EXIST'
     , '1'
     , 'Oui'
     , 'Oui'
     , 'PHOTO'
-    , 82
-    , '2019-12-16 10:43:47.532533'
-    , '2020-07-27 13:13:57.411139'
-    , 172
+    , ref_nomenclatures.get_id_nomenclature('PREUVE_EXIST', '1')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3522,22 +3583,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 15
+    ( ref_nomenclatures.get_id_nomenclature_type('PREUVE_EXIST')
     , 'PREUVE_EXIST'
     , '1'
     , 'Oui'
     , 'Oui'
     , 'TRAP'
-    , 82
-    , '2019-12-16 10:43:47.532533'
-    , '2020-07-27 13:13:57.411139'
-    , 171
+    , ref_nomenclatures.get_id_nomenclature('PREUVE_EXIST', '1')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3548,22 +3609,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 18
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_OBS')
     , 'STATUT_OBS'
     , 'No'
     , 'No'
     , 'Non observé'
     , '100'
-    , 87
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 20
+    , ref_nomenclatures.get_id_nomenclature('STATUT_OBS', 'No')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3574,22 +3635,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 18
+    ( ref_nomenclatures.get_id_nomenclature_type('STATUT_OBS')
     , 'STATUT_OBS'
     , 'No'
     , 'No'
     , 'Non observé'
     , '99'
-    , 87
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 19
+    , ref_nomenclatures.get_id_nomenclature('STATUT_OBS', 'No')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3600,24 +3661,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 21
+    ( ref_nomenclatures.get_id_nomenclature_type('TYP_DENBR')
     , 'TYP_DENBR'
     , 'Co'
     , 'Co'
     , 'Compté'
     , 'EXACT_VALUE'
-    , 92
-    , '2020-07-29 10:44:07.094070'
-    , '2020-07-29 10:44:07.094070'
-    , 187
+    , ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'Co')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,estimation_code}"
     }'
-    , NULL);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3628,24 +3689,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 21
+    ( ref_nomenclatures.get_id_nomenclature_type('TYP_DENBR')
     , 'TYP_DENBR'
     , 'Es'
     , 'Es'
     , 'Estimé'
     , 'MINIMUM'
-    , 93
-    , '2020-07-29 10:44:07.094070'
-    , '2020-07-29 10:44:07.094070'
-    , 189
+    , ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'Es')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,estimation_code}"
     }'
-    , NULL);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3656,24 +3717,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 21
+    ( ref_nomenclatures.get_id_nomenclature_type('TYP_DENBR')
     , 'TYP_DENBR'
     , 'Es'
     , 'Es'
     , 'Estimé'
     , 'ESTIMATION'
-    , 93
-    , '2020-07-29 10:44:07.094070'
-    , '2020-07-29 10:44:07.094070'
-    , 188
+    , ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'Es')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,estimation_code}"
     }'
-    , NULL);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3684,24 +3745,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 21
+    ( ref_nomenclatures.get_id_nomenclature_type('TYP_DENBR')
     , 'TYP_DENBR'
     , 'NSP'
     , 'NSP'
     , 'Ne sait pas'
     , 'NO_VALUE'
-    , 94
-    , '2020-07-29 10:44:07.094070'
-    , '2020-07-29 10:44:07.094070'
-    , 190
+    , ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'NSP')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,estimation_code}"
     }'
-    , NULL);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3712,24 +3773,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 23
+    ( ref_nomenclatures.get_id_nomenclature_type('TYP_INF_GEO')
     , 'TYP_INF_GEO'
     , '1'
     , '1'
     , 'Géoréférencement'
     , 'polygone_precise'
-    , 126
-    , '2020-07-29 13:34:53.033751'
-    , '2020-07-29 13:34:53.033751'
-    , 192
+    , ref_nomenclatures.get_id_nomenclature('TYP_INF_GEO', '1')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,precision}"
     }'
-    , NULL);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3740,24 +3801,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 23
+    ( ref_nomenclatures.get_id_nomenclature_type('TYP_INF_GEO')
     , 'TYP_INF_GEO'
     , '1'
     , '1'
     , 'Géoréférencement'
     , 'precise'
-    , 126
-    , '2020-07-29 13:34:53.033751'
-    , '2020-07-29 13:34:53.033751'
-    , 191
+    , ref_nomenclatures.get_id_nomenclature('TYP_INF_GEO', '1')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,precision}"
     }'
-    , NULL);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3768,24 +3829,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 23
+    ( ref_nomenclatures.get_id_nomenclature_type('TYP_INF_GEO')
     , 'TYP_INF_GEO'
     , '2'
     , '2'
     , 'Rattachement'
     , 'transect'
-    , 127
-    , '2020-07-29 13:34:53.033751'
-    , '2020-07-29 13:34:53.033751'
-    , 197
+    , ref_nomenclatures.get_id_nomenclature('TYP_INF_GEO', '2')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,precision}"
     }'
-    , NULL);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3796,24 +3857,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 23
+    ( ref_nomenclatures.get_id_nomenclature_type('TYP_INF_GEO')
     , 'TYP_INF_GEO'
     , '2'
     , '2'
     , 'Rattachement'
     , 'subplace'
-    , 127
-    , '2020-07-29 13:34:53.033751'
-    , '2020-07-29 13:34:53.033751'
-    , 196
+    , ref_nomenclatures.get_id_nomenclature('TYP_INF_GEO', '2')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,precision}"
     }'
-    , NULL);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3824,24 +3885,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 23
+    ( ref_nomenclatures.get_id_nomenclature_type('TYP_INF_GEO')
     , 'TYP_INF_GEO'
     , '2'
     , '2'
     , 'Rattachement'
     , 'polygone'
-    , 127
-    , '2020-07-29 13:34:53.033751'
-    , '2020-07-29 13:34:53.033751'
-    , 195
+    , ref_nomenclatures.get_id_nomenclature('TYP_INF_GEO', '2')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,precision}"
     }'
-    , NULL);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3852,24 +3913,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 23
+    ( ref_nomenclatures.get_id_nomenclature_type('TYP_INF_GEO')
     , 'TYP_INF_GEO'
     , '2'
     , '2'
     , 'Rattachement'
     , 'garden'
-    , 127
-    , '2020-07-29 13:34:53.033751'
-    , '2020-07-29 13:34:53.033751'
-    , 194
+    , ref_nomenclatures.get_id_nomenclature('TYP_INF_GEO', '2')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,precision}"
     }'
-    , NULL);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3880,24 +3941,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 23
+    ( ref_nomenclatures.get_id_nomenclature_type('TYP_INF_GEO')
     , 'TYP_INF_GEO'
     , '2'
     , '2'
     , 'Rattachement'
     , 'municipality'
-    , 127
-    , '2020-07-29 13:34:53.033751'
-    , '2020-07-29 13:34:53.033751'
-    , 193
+    , ref_nomenclatures.get_id_nomenclature('TYP_INF_GEO', '2')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,precision}"
     }'
-    , NULL);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3908,24 +3969,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 7
+    ( ref_nomenclatures.get_id_nomenclature_type('ETA_BIO')
     , 'ETA_BIO'
     , '2'
     , 'Observé vivant'
     , 'Observé vivant'
     , 'LAIDINACTIV'
-    , 157
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 86
+    , ref_nomenclatures.get_id_nomenclature('ETA_BIO', '2')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3936,24 +3997,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 7
+    ( ref_nomenclatures.get_id_nomenclature_type('ETA_BIO')
     , 'ETA_BIO'
     , '2'
     , 'Observé vivant'
     , 'Observé vivant'
     , 'OUTSHELTER'
-    , 157
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 80
+    , ref_nomenclatures.get_id_nomenclature('ETA_BIO', '2')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3964,24 +4025,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 7
+    ( ref_nomenclatures.get_id_nomenclature_type('ETA_BIO')
     , 'ETA_BIO'
     , '2'
     , 'Observé vivant'
     , 'Observé vivant'
     , 'RESCUE'
-    , 157
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 108
+    , ref_nomenclatures.get_id_nomenclature('ETA_BIO', '2')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -3992,24 +4053,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 7
+    ( ref_nomenclatures.get_id_nomenclature_type('ETA_BIO')
     , 'ETA_BIO'
     , '2'
     , 'Observé vivant'
     , 'Observé vivant'
     , 'FLY'
-    , 157
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 106
+    , ref_nomenclatures.get_id_nomenclature('ETA_BIO', '2')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4020,24 +4081,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 7
+    ( ref_nomenclatures.get_id_nomenclature_type('ETA_BIO')
     , 'ETA_BIO'
     , '2'
     , 'Observé vivant'
     , 'Observé vivant'
     , 'LAID'
-    , 157
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 100
+    , ref_nomenclatures.get_id_nomenclature('ETA_BIO', '2')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4048,24 +4109,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 7
+    ( ref_nomenclatures.get_id_nomenclature_type('ETA_BIO')
     , 'ETA_BIO'
     , '2'
     , 'Observé vivant'
     , 'Observé vivant'
     , 'AUDIO'
-    , 157
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 96
+    , ref_nomenclatures.get_id_nomenclature('ETA_BIO', '2')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4076,24 +4137,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 7
+    ( ref_nomenclatures.get_id_nomenclature_type('ETA_BIO')
     , 'ETA_BIO'
     , '2'
     , 'Observé vivant'
     , 'Observé vivant'
     , 'DETECT'
-    , 157
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 93
+    , ref_nomenclatures.get_id_nomenclature('ETA_BIO', '2')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4104,24 +4165,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 7
+    ( ref_nomenclatures.get_id_nomenclature_type('ETA_BIO')
     , 'ETA_BIO'
     , '2'
     , 'Observé vivant'
     , 'Observé vivant'
     , 'LAIDACTIV'
-    , 157
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 90
+    , ref_nomenclatures.get_id_nomenclature('ETA_BIO', '2')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4132,24 +4193,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 7
+    ( ref_nomenclatures.get_id_nomenclature_type('ETA_BIO')
     , 'ETA_BIO'
     , '3'
     , 'Trouvé mort'
     , 'Trouvé mort'
     , 'BONESREMAINS'
-    , 158
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 83
+    , ref_nomenclatures.get_id_nomenclature('ETA_BIO', '3')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4160,24 +4221,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 7
+    ( ref_nomenclatures.get_id_nomenclature_type('ETA_BIO')
     , 'ETA_BIO'
     , '3'
     , 'Trouvé mort'
     , 'Trouvé mort'
     , 'PEL'
-    , 158
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 69
+    , ref_nomenclatures.get_id_nomenclature('ETA_BIO', '3')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4188,24 +4249,24 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 7
+    ( ref_nomenclatures.get_id_nomenclature_type('ETA_BIO')
     , 'ETA_BIO'
     , '3'
     , 'Trouvé mort'
     , 'Trouvé mort'
     , 'MUMMIE'
-    , 158
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 62
+    , ref_nomenclatures.get_id_nomenclature('ETA_BIO', '3')
+    , now()
+    , now()
     , '{
       "visionature_json_path": "{observers,0,details,0,condition}"
     }'
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4216,22 +4277,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 9
+    ( ref_nomenclatures.get_id_nomenclature_type('SEXE')
     , 'SEXE'
     , '0'
     , 'Inconnu'
     , 'Inconnu'
     , 'U'
-    , 165
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 28
+    , ref_nomenclatures.get_id_nomenclature('SEXE', '0')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4242,22 +4303,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 9
+    ( ref_nomenclatures.get_id_nomenclature_type('SEXE')
     , 'SEXE'
     , '1'
     , 'Indéterminé'
     , 'Indéterminé'
     , 'FT'
-    , 166
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 29
+    , ref_nomenclatures.get_id_nomenclature('SEXE', '1')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4268,22 +4329,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 9
+    ( ref_nomenclatures.get_id_nomenclature_type('SEXE')
     , 'SEXE'
     , '2'
     , 'Femelle'
     , 'Femelle'
     , 'F'
-    , 167
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 26
+    , ref_nomenclatures.get_id_nomenclature('SEXE', '2')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4294,11 +4355,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    (9, 'SEXE', '3', 'Mâle', 'Mâle', 'M', 168, '2019-12-12 12:57:53.904659', '2020-07-27 13:13:57.411139', 25, NULL, 2);
+    ( ref_nomenclatures.get_id_nomenclature_type('SEXE')
+    , 'SEXE'
+    , '3'
+    , 'Mâle'
+    , 'Mâle'
+    , 'M'
+    , ref_nomenclatures.get_id_nomenclature('SEXE', '3')
+    , now()
+    , now()
+    , NULL
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4309,22 +4381,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 9
+    ( ref_nomenclatures.get_id_nomenclature_type('SEXE')
     , 'SEXE'
     , '5'
     , 'Mixte'
     , 'Mixte'
     , 'MF'
-    , 170
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 27
+    , ref_nomenclatures.get_id_nomenclature('SEXE', '5')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4335,22 +4407,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 3
+    ( ref_nomenclatures.get_id_nomenclature_type('NAT_OBJ_GEO')
     , 'NAT_OBJ_GEO'
     , 'In'
     , 'Inventoriel'
     , 'Inventoriel'
     , 'transect_precise'
-    , 172
-    , '2019-12-16 11:16:44.597905'
-    , '2020-07-27 13:13:57.411139'
-    , 183
+    , ref_nomenclatures.get_id_nomenclature('NAT_OBJ_GEO', 'In')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4361,22 +4433,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 3
+    ( ref_nomenclatures.get_id_nomenclature_type('NAT_OBJ_GEO')
     , 'NAT_OBJ_GEO'
     , 'In'
     , 'Inventoriel'
     , 'Inventoriel'
     , 'transect'
-    , 172
-    , '2019-12-16 11:16:44.597905'
-    , '2020-07-27 13:13:57.411139'
-    , 182
+    , ref_nomenclatures.get_id_nomenclature('NAT_OBJ_GEO', 'In')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4387,22 +4459,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 3
+    ( ref_nomenclatures.get_id_nomenclature_type('NAT_OBJ_GEO')
     , 'NAT_OBJ_GEO'
     , 'In'
     , 'Inventoriel'
     , 'Inventoriel'
     , 'subplace_precise'
-    , 172
-    , '2019-12-16 11:16:44.597905'
-    , '2020-07-27 13:13:57.411139'
-    , 181
+    , ref_nomenclatures.get_id_nomenclature('NAT_OBJ_GEO', 'In')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4413,22 +4485,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 3
+    ( ref_nomenclatures.get_id_nomenclature_type('NAT_OBJ_GEO')
     , 'NAT_OBJ_GEO'
     , 'In'
     , 'Inventoriel'
     , 'Inventoriel'
     , 'subplace'
-    , 172
-    , '2019-12-16 11:16:44.597905'
-    , '2020-07-27 13:13:57.411139'
-    , 180
+    , ref_nomenclatures.get_id_nomenclature('NAT_OBJ_GEO', 'In')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4439,22 +4511,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 3
+    ( ref_nomenclatures.get_id_nomenclature_type('NAT_OBJ_GEO')
     , 'NAT_OBJ_GEO'
     , 'In'
     , 'Inventoriel'
     , 'Inventoriel'
     , 'square'
-    , 172
-    , '2019-12-16 11:16:44.597905'
-    , '2020-07-27 13:13:57.411139'
-    , 179
+    , ref_nomenclatures.get_id_nomenclature('NAT_OBJ_GEO', 'In')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4465,22 +4537,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 3
+    ( ref_nomenclatures.get_id_nomenclature_type('NAT_OBJ_GEO')
     , 'NAT_OBJ_GEO'
     , 'In'
     , 'Inventoriel'
     , 'Inventoriel'
     , 'polygone_precise'
-    , 172
-    , '2019-12-16 11:16:44.597905'
-    , '2020-07-27 13:13:57.411139'
-    , 178
+    , ref_nomenclatures.get_id_nomenclature('NAT_OBJ_GEO', 'In')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4491,22 +4563,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 3
+    ( ref_nomenclatures.get_id_nomenclature_type('NAT_OBJ_GEO')
     , 'NAT_OBJ_GEO'
     , 'In'
     , 'Inventoriel'
     , 'Inventoriel'
     , 'polygone'
-    , 172
-    , '2019-12-16 11:16:44.597905'
-    , '2020-07-27 13:13:57.411139'
-    , 177
+    , ref_nomenclatures.get_id_nomenclature('NAT_OBJ_GEO', 'In')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4517,22 +4589,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 3
+    ( ref_nomenclatures.get_id_nomenclature_type('NAT_OBJ_GEO')
     , 'NAT_OBJ_GEO'
     , 'In'
     , 'Inventoriel'
     , 'Inventoriel'
     , 'place'
-    , 172
-    , '2019-12-16 11:16:44.597905'
-    , '2020-07-27 13:13:57.411139'
-    , 176
+    , ref_nomenclatures.get_id_nomenclature('NAT_OBJ_GEO', 'In')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4543,22 +4615,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 3
+    ( ref_nomenclatures.get_id_nomenclature_type('NAT_OBJ_GEO')
     , 'NAT_OBJ_GEO'
     , 'In'
     , 'Inventoriel'
     , 'Inventoriel'
     , 'municipality'
-    , 172
-    , '2019-12-16 11:16:44.597905'
-    , '2020-07-27 13:13:57.411139'
-    , 175
+    , ref_nomenclatures.get_id_nomenclature('NAT_OBJ_GEO', 'In')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4569,22 +4641,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 3
+    ( ref_nomenclatures.get_id_nomenclature_type('NAT_OBJ_GEO')
     , 'NAT_OBJ_GEO'
     , 'In'
     , 'Inventoriel'
     , 'Inventoriel'
     , 'garden'
-    , 172
-    , '2019-12-16 11:16:44.597905'
-    , '2020-07-27 13:13:57.411139'
-    , 174
+    , ref_nomenclatures.get_id_nomenclature('NAT_OBJ_GEO', 'In')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4595,22 +4667,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 3
+    ( ref_nomenclatures.get_id_nomenclature_type('NAT_OBJ_GEO')
     , 'NAT_OBJ_GEO'
     , 'St'
     , 'Stationnel'
     , 'Stationnel'
     , 'precise'
-    , 174
-    , '2019-12-16 11:16:44.597905'
-    , '2020-07-27 13:13:57.411139'
-    , 184
+    , ref_nomenclatures.get_id_nomenclature('NAT_OBJ_GEO', 'St')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4621,22 +4693,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 100
+    ( ref_nomenclatures.get_id_nomenclature_type('TECHNIQUE_OBS')
     , 'TECHNIQUE_OBS'
     , '21'
     , 'Détection des ultrasons (écoute indirecte, analyse sonore, détection ultrasonore)'
     , 'Détection des ultrasons (écoute indirecte, analyse sonore, détection ultrasonore)'
     , 'DETECT'
-    , 204
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 91
+    , ref_nomenclatures.get_id_nomenclature('TECHNIQUE_OBS', '21')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4647,22 +4719,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 100
+    ( ref_nomenclatures.get_id_nomenclature_type('TECHNIQUE_OBS')
     , 'TECHNIQUE_OBS'
     , '21'
     , 'Détection des ultrasons (écoute indirecte, analyse sonore, détection ultrasonore)'
     , 'Détection des ultrasons (écoute indirecte, analyse sonore, détection ultrasonore)'
     , 'EYE_IDENTIFIED'
-    , 204
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 155
+    , ref_nomenclatures.get_id_nomenclature('TECHNIQUE_OBS', '21')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4673,22 +4745,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 100
+    ( ref_nomenclatures.get_id_nomenclature_type('TECHNIQUE_OBS')
     , 'TECHNIQUE_OBS'
     , '45'
     , 'Observation aux jumelles (observation à la longue-vue)'
     , 'Observation aux jumelles (observation à la longue-vue)'
     , 'TELESCOPE'
-    , 228
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 161
+    , ref_nomenclatures.get_id_nomenclature('TECHNIQUE_OBS', '45')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4699,22 +4771,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 100
+    ( ref_nomenclatures.get_id_nomenclature_type('TECHNIQUE_OBS')
     , 'TECHNIQUE_OBS'
     , '45'
     , 'Observation aux jumelles (observation à la longue-vue)'
     , 'Observation aux jumelles (observation à la longue-vue)'
     , 'BINOCULARS'
-    , 228
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 158
+    , ref_nomenclatures.get_id_nomenclature('TECHNIQUE_OBS', '45')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4725,22 +4797,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 100
+    ( ref_nomenclatures.get_id_nomenclature_type('TECHNIQUE_OBS')
     , 'TECHNIQUE_OBS'
     , '48'
     , 'Observation de larves (recherche de larves)'
     , 'Observation de larves (recherche de larves)'
     , 'LARVA'
-    , 231
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 57
+    , ref_nomenclatures.get_id_nomenclature('TECHNIQUE_OBS', '48')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4751,22 +4823,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 100
+    ( ref_nomenclatures.get_id_nomenclature_type('TECHNIQUE_OBS')
     , 'TECHNIQUE_OBS'
     , '49'
     , 'Observation de macro-restes (cadavres, élytres…)'
     , 'Observation de macro-restes (cadavres, élytres…)'
     , 'PEL'
-    , 232
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 68
+    , ref_nomenclatures.get_id_nomenclature('TECHNIQUE_OBS', '49')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4777,22 +4849,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 100
+    ( ref_nomenclatures.get_id_nomenclature_type('TECHNIQUE_OBS')
     , 'TECHNIQUE_OBS'
     , '49'
     , 'Observation de macro-restes (cadavres, élytres…)'
     , 'Observation de macro-restes (cadavres, élytres…)'
     , 'MUMMIE'
-    , 232
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 61
+    , ref_nomenclatures.get_id_nomenclature('TECHNIQUE_OBS', '49')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4803,22 +4875,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 100
+    ( ref_nomenclatures.get_id_nomenclature_type('TECHNIQUE_OBS')
     , 'TECHNIQUE_OBS'
     , '49'
     , 'Observation de macro-restes (cadavres, élytres…)'
     , 'Observation de macro-restes (cadavres, élytres…)'
     , 'BONESREMAINS'
-    , 232
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 82
+    , ref_nomenclatures.get_id_nomenclature('TECHNIQUE_OBS', '49')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4829,22 +4901,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 100
+    ( ref_nomenclatures.get_id_nomenclature_type('TECHNIQUE_OBS')
     , 'TECHNIQUE_OBS'
     , '51'
     , 'Observation de pontes (observation des œufs, recherche des pontes)'
     , 'Observation de pontes (observation des œufs, recherche des pontes)'
     , 'SPAWN'
-    , 234
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 58
+    , ref_nomenclatures.get_id_nomenclature('TECHNIQUE_OBS', '51')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4855,22 +4927,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 100
+    ( ref_nomenclatures.get_id_nomenclature_type('TECHNIQUE_OBS')
     , 'TECHNIQUE_OBS'
     , '56'
     , 'Observation d''exuvies'
     , 'Observation d''exuvies'
     , 'EXUVIE'
-    , 239
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 59
+    , ref_nomenclatures.get_id_nomenclature('TECHNIQUE_OBS', '56')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4881,22 +4953,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 100
+    ( ref_nomenclatures.get_id_nomenclature_type('TECHNIQUE_OBS')
     , 'TECHNIQUE_OBS'
     , '57'
     , 'Observation d''indices de présence'
     , 'Observation d''indices de présence'
     , 'FRESHGUANO'
-    , 240
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 113
+    , ref_nomenclatures.get_id_nomenclature('TECHNIQUE_OBS', '57')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4907,22 +4979,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 100
+    ( ref_nomenclatures.get_id_nomenclature_type('TECHNIQUE_OBS')
     , 'TECHNIQUE_OBS'
     , '57'
     , 'Observation d''indices de présence'
     , 'Observation d''indices de présence'
     , 'DRYGUANO'
-    , 240
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 75
+    , ref_nomenclatures.get_id_nomenclature('TECHNIQUE_OBS', '57')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4933,22 +5005,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 100
+    ( ref_nomenclatures.get_id_nomenclature_type('TECHNIQUE_OBS')
     , 'TECHNIQUE_OBS'
     , '67'
     , 'Observation par piège photographique'
     , 'Observation par piège photographique'
     , 'TRAP'
-    , 250
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 151
+    , ref_nomenclatures.get_id_nomenclature('TECHNIQUE_OBS', '67')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4959,22 +5031,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '4'
     , 'Analyse ADN de l''individu ou de ses restes'
     , 'Analyse ADN de l''individu ou de ses restes'
     , 'GENETIC'
-    , 345
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 148
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '4')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -4985,22 +5057,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '9'
     , 'Examen auditif direct'
     , 'Examen auditif direct'
     , 'AUDIO'
-    , 350
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 95
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '9')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5011,22 +5083,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '10'
     , 'Examen auditif avec transformation électronique'
     , 'Examen auditif avec transformation électronique'
     , 'EYE_IDENTIFIED'
-    , 351
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 156
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '10')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5037,22 +5109,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '10'
     , 'Examen auditif avec transformation électronique'
     , 'Examen auditif avec transformation électronique'
     , 'DETECT'
-    , 351
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 92
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '10')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5063,22 +5135,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '11'
     , 'Examen des organes reproducteurs ou critères spécifiques en laboratoire'
     , 'Examen des organes reproducteurs ou critères spécifiques en laboratoire'
     , 'LABO'
-    , 352
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 101
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '11')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5089,22 +5161,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '2'
     , 'Autre méthode de détermination'
     , 'Autre méthode de détermination'
     , 'OTHER'
-    , 353
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 152
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '2')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5115,22 +5187,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 115
+    ( ref_nomenclatures.get_id_nomenclature_type('METHO_RECUEIL')
     , 'METHO_RECUEIL'
     , '1'
     , 'Observation directe : Vue, écoute, olfactive, tactile'
     , 'Observation directe : Vue, écoute, olfactive, tactile'
     , 'OLFACTIF'
-    , 404
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 109
+    , ref_nomenclatures.get_id_nomenclature('METHO_RECUEIL', '1')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5141,22 +5213,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 115
+    ( ref_nomenclatures.get_id_nomenclature_type('METHO_RECUEIL')
     , 'METHO_RECUEIL'
     , '9'
     , 'Prélèvement (capture avec collecte d''échantillon) : capture-conservation'
     , 'Prélèvement (capture avec collecte d''échantillon) : capture-conservation'
     , 'COLLECTED'
-    , 412
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 63
+    , ref_nomenclatures.get_id_nomenclature('METHO_RECUEIL', '9')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5167,22 +5239,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '18'
     , 'Examen visuel à distance'
     , 'Examen visuel à distance'
     , 'THERMAL'
-    , 462
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 166
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '18')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5193,22 +5265,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '18'
     , 'Examen visuel à distance'
     , 'Examen visuel à distance'
     , 'NIGHT_VISION'
-    , 462
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 164
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '18')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5219,22 +5291,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '18'
     , 'Examen visuel à distance'
     , 'Examen visuel à distance'
     , 'TELESCOPE'
-    , 462
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 162
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '18')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5245,22 +5317,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '18'
     , 'Examen visuel à distance'
     , 'Examen visuel à distance'
     , 'BINOCULARS'
-    , 462
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 159
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '18')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5271,22 +5343,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '18'
     , 'Examen visuel à distance'
     , 'Examen visuel à distance'
     , 'FLY'
-    , 462
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 105
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '18')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5297,22 +5369,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '18'
     , 'Examen visuel à distance'
     , 'Examen visuel à distance'
     , 'LAID'
-    , 462
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 99
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '18')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5323,22 +5395,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '18'
     , 'Examen visuel à distance'
     , 'Examen visuel à distance'
     , 'LAIDACTIV'
-    , 462
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 89
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '18')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5349,22 +5421,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '18'
     , 'Examen visuel à distance'
     , 'Examen visuel à distance'
     , 'OUTSHELTER'
-    , 462
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 79
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '18')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5375,22 +5447,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '18'
     , 'Examen visuel à distance'
     , 'Examen visuel à distance'
     , 'VIEW'
-    , 462
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 65
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '18')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5401,22 +5473,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '18'
     , 'Examen visuel à distance'
     , 'Examen visuel à distance'
     , 'LAIDINACTIV'
-    , 462
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 85
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '18')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5427,22 +5499,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '20'
     , 'Examen visuel sous loupe ou microscope'
     , 'Examen visuel sous loupe ou microscope'
     , 'MAGNIFYING'
-    , 464
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 71
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '20')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5453,22 +5525,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '14'
     , 'Examen visuel des restes de l’individu'
     , 'Examen visuel des restes de l’individu'
     , 'PEL'
-    , 458
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 67
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '14')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5479,22 +5551,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '14'
     , 'Examen visuel des restes de l’individu'
     , 'Examen visuel des restes de l’individu'
     , 'MUMMIE'
-    , 458
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 60
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '14')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5505,22 +5577,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '14'
     , 'Examen visuel des restes de l’individu'
     , 'Examen visuel des restes de l’individu'
     , 'BONESREMAINS'
-    , 458
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 81
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '14')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5531,22 +5603,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '17'
     , 'Examen direct des traces ou indices de présence'
     , 'Examen direct des traces ou indices de présence'
     , 'FRESHGUANO'
-    , 461
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 112
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '17')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5557,22 +5629,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '17'
     , 'Examen direct des traces ou indices de présence'
     , 'Examen direct des traces ou indices de présence'
     , 'DRYGUANO'
-    , 461
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 74
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '17')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5583,22 +5655,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '21'
     , 'Examen visuel de l’individu en main'
     , 'Examen visuel de l’individu en main'
     , 'HAND'
-    , 465
-    , '2019-12-12 12:57:53.904659'
-    , '2020-07-27 13:13:57.411139'
-    , 76
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '21')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5609,22 +5681,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '22'
     , 'Examen visuel sur photo ou vidéo'
     , 'Examen visuel sur photo ou vidéo'
     , 'VIDEO'
-    , 466
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 170
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '22')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5635,22 +5707,22 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '22'
     , 'Examen visuel sur photo ou vidéo'
     , 'Examen visuel sur photo ou vidéo'
     , 'PHOTO'
-    , 466
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 168
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '22')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
+
 INSERT INTO
     ref_nomenclatures.t_c_synonyms ( id_type
                                    , type_mnemonique
@@ -5661,47 +5733,49 @@ INSERT INTO
                                    , id_nomenclature
                                    , meta_create_date
                                    , meta_update_date
-                                   , id_synonyme
                                    , addon_values
                                    , id_source)
     VALUES
-    ( 106
+    ( ref_nomenclatures.get_id_nomenclature_type('METH_DETERMIN')
     , 'METH_DETERMIN'
     , '22'
     , 'Examen visuel sur photo ou vidéo'
     , 'Examen visuel sur photo ou vidéo'
     , 'TRAP'
-    , 466
-    , '2019-12-16 10:40:40.908147'
-    , '2020-07-27 13:13:57.411139'
-    , 150
+    , ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '22')
+    , now()
+    , now()
     , NULL
-    , 2);
+    , NULL)
+;
 
-UPDATE ref_nomenclatures.t_c_synonyms
-SET
-    id_type = bib_nomenclatures_types.id_type
-    FROM
-        ref_nomenclatures.bib_nomenclatures_types
-    WHERE
-          t_c_synonyms.type_mnemonique = bib_nomenclatures_types.mnemonique
-      AND t_c_synonyms.type_mnemonique IS NOT NULL;
-
-UPDATE ref_nomenclatures.t_c_synonyms
-SET
-    id_nomenclature =t_nomenclatures.id_nomenclature
-    FROM
-        ref_nomenclatures.t_nomenclatures
-            JOIN
-            ref_nomenclatures.bib_nomenclatures_types ON t_nomenclatures.id_type = bib_nomenclatures_types.id_type
-    WHERE
-          t_c_synonyms.type_mnemonique = bib_nomenclatures_types.mnemonique
-      AND t_c_synonyms.mnemonique = t_nomenclatures.mnemonique;
-
+--
+-- UPDATE ref_nomenclatures.t_c_synonyms
+-- SET
+--     id_type = bib_nomenclatures_types.id_type
+--     FROM
+--         ref_nomenclatures.bib_nomenclatures_types
+--     WHERE
+--           t_c_synonyms.type_mnemonique = bib_nomenclatures_types.mnemonique
+--       AND t_c_synonyms.type_mnemonique IS NOT NULL
+-- ;
+--
+-- UPDATE ref_nomenclatures.t_c_synonyms
+-- SET
+--     id_nomenclature =t_nomenclatures.id_nomenclature
+--     FROM
+--         ref_nomenclatures.t_nomenclatures
+--             JOIN
+--             ref_nomenclatures.bib_nomenclatures_types ON t_nomenclatures.id_type = bib_nomenclatures_types.id_type
+--     WHERE
+--           t_c_synonyms.type_mnemonique = bib_nomenclatures_types.mnemonique
+--       AND t_c_synonyms.mnemonique = t_nomenclatures.mnemonique
+-- ;
+--
 
 WITH
-    selection AS (SELECT site, id FROM import_vn.observations_json LIMIT 5)
-UPDATE import_vn.observations_json
+    selection AS (SELECT site, id FROM src_vn_json.observations_json LIMIT 5)
+UPDATE src_vn_json.observations_json
 SET
     site=observations_json.site
     FROM

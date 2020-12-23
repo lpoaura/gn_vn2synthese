@@ -2,9 +2,9 @@
 
 /* Générer les sources si absentes */
 
-DROP TRIGGER IF EXISTS tri_c_upsert_vn_observation_to_geonature ON import_vn.observations_json;
+DROP TRIGGER IF EXISTS tri_c_upsert_vn_observation_to_geonature ON src_vn_json.observations_json;
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature();
+DROP FUNCTION IF EXISTS src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature() CASCADE;
 CREATE OR REPLACE FUNCTION src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature() RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
@@ -19,7 +19,7 @@ DECLARE
     the_id_dataset                           INTEGER;
     the_id_nomenclature_geo_object_nature    INTEGER;
     the_id_nomenclature_grp_typ              INTEGER;
-    the_id_nomenclature_obs_meth             INTEGER;
+    -- the_id_nomenclature_obs_meth             INTEGER;
     the_id_nomenclature_obs_technique        INTEGER;
     the_id_nomenclature_bio_status           INTEGER;
     the_id_nomenclature_bio_condition        INTEGER;
@@ -110,11 +110,11 @@ BEGIN
         gn_synthese.get_default_nomenclature_value(
                 'TYP_GRP'::CHARACTER VARYING)
         INTO the_id_nomenclature_grp_typ;
-    SELECT gn_synthese.get_default_nomenclature_value('METH_OBS') INTO the_id_nomenclature_obs_meth;
+    -- SELECT gn_synthese.get_default_nomenclature_value('METH_OBS') INTO the_id_nomenclature_obs_meth;
     --         ref_nomenclatures.fct_c_get_synonyms_nomenclature('METH_OBS',
 --                                                          new.item #>> '{observers,0,details,0,condition}')
 
-    SELECT gn_synthese.get_default_nomenclature_value('TECHNIQUE_OBS') INTO the_id_nomenclature_obs_technique;
+    SELECT gn_synthese.get_default_nomenclature_value('METH_OBS') INTO the_id_nomenclature_obs_technique;
     --         coalesce(
 --                 ref_nomenclatures.fct_c_get_synonyms_nomenclature('TECHNIQUE_OBS',
 --                                                                  new.item #>> '{observers,0,details,0,condition}'),
@@ -262,7 +262,7 @@ gn_synthese.get_default_nomenclature_value('STADE_VIE')
     SELECT
         CASE
             WHEN (new.item #> '{observers,0}') ? 'atlas_code'
-                THEN ref_nomenclatures.get_nomenclature_label_from_id('VN_ATLAS_CODE',
+                THEN ref_nomenclatures.get_nomenclature_label_by_cdnom_mnemonique('VN_ATLAS_CODE',
                                                                       new.item #>> '{observers,0,atlas_code}')
             ELSE NULL END
         INTO the_bird_breed_status;
@@ -310,7 +310,7 @@ gn_synthese.get_default_nomenclature_value('STADE_VIE')
           , id_dataset                           = the_id_dataset
           , id_nomenclature_geo_object_nature    = the_id_nomenclature_geo_object_nature
           , id_nomenclature_grp_typ              = the_id_nomenclature_grp_typ
-          , id_nomenclature_obs_meth             = the_id_nomenclature_obs_meth
+        --   , id_nomenclature_obs_meth             = the_id_nomenclature_obs_meth
           , id_nomenclature_obs_technique        = the_id_nomenclature_obs_technique
           , id_nomenclature_bio_status           = the_id_nomenclature_bio_status
           , id_nomenclature_bio_condition        = the_id_nomenclature_bio_condition
@@ -363,7 +363,7 @@ gn_synthese.get_default_nomenclature_value('STADE_VIE')
                                     , id_dataset
                                     , id_nomenclature_geo_object_nature
                                     , id_nomenclature_grp_typ
-                                    , id_nomenclature_obs_meth
+                                    -- , id_nomenclature_obs_meth
                                     , id_nomenclature_obs_technique
                                     , id_nomenclature_bio_status
                                     , id_nomenclature_bio_condition
@@ -411,7 +411,7 @@ gn_synthese.get_default_nomenclature_value('STADE_VIE')
                 , the_id_dataset
                 , the_id_nomenclature_geo_object_nature
                 , the_id_nomenclature_grp_typ
-                , the_id_nomenclature_obs_meth
+                -- , the_id_nomenclature_obs_meth
                 , the_id_nomenclature_obs_technique
                 , the_id_nomenclature_bio_status
                 , the_id_nomenclature_bio_condition
@@ -555,7 +555,7 @@ gn_synthese.get_default_nomenclature_value('STADE_VIE')
                                 , id_dataset
                                 , id_nomenclature_geo_object_nature
                                 , id_nomenclature_grp_typ
-                                , id_nomenclature_obs_meth
+                                -- , id_nomenclature_obs_meth
                                 , id_nomenclature_obs_technique
                                 , id_nomenclature_bio_status
                                 , id_nomenclature_bio_condition
@@ -603,7 +603,7 @@ gn_synthese.get_default_nomenclature_value('STADE_VIE')
             , the_id_dataset
             , the_id_nomenclature_geo_object_nature
             , the_id_nomenclature_grp_typ
-            , the_id_nomenclature_obs_meth
+            -- , the_id_nomenclature_obs_meth
             , the_id_nomenclature_obs_technique
             , the_id_nomenclature_bio_status
             , the_id_nomenclature_bio_condition
@@ -652,7 +652,7 @@ gn_synthese.get_default_nomenclature_value('STADE_VIE')
               , id_dataset                           = the_id_dataset
               , id_nomenclature_geo_object_nature    = the_id_nomenclature_geo_object_nature
               , id_nomenclature_grp_typ              = the_id_nomenclature_grp_typ
-              , id_nomenclature_obs_meth             = the_id_nomenclature_obs_meth
+            --   , id_nomenclature_obs_meth             = the_id_nomenclature_obs_meth
               , id_nomenclature_obs_technique        = the_id_nomenclature_obs_technique
               , id_nomenclature_bio_status           = the_id_nomenclature_bio_status
               , id_nomenclature_bio_condition        = the_id_nomenclature_bio_condition
@@ -791,11 +791,11 @@ ALTER FUNCTION src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature() OWNER
 
 COMMENT ON FUNCTION src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature() IS 'Trigger function to upsert datas from VisioNature to synthese and custom child table';
 
-DROP TRIGGER IF EXISTS fct_tri_c_upsert_vn_observation_to_geonature ON import_vn.observations_json;
+DROP TRIGGER IF EXISTS fct_tri_c_upsert_vn_observation_to_geonature ON src_vn_json.observations_json;
 
 CREATE TRIGGER fct_tri_c_upsert_vn_observation_to_geonature
     AFTER INSERT OR UPDATE
-    ON import_vn.observations_json
+    ON src_vn_json.observations_json
     FOR EACH ROW
 EXECUTE PROCEDURE src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature();
 
@@ -803,7 +803,7 @@ EXECUTE PROCEDURE src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature();
 -- TRUNCATE gn_synthese.synthese RESTART IDENTITY CASCADE;
 
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_tri_c_delete_vn_observation_from_geonature();
+DROP FUNCTION IF EXISTS src_lpodatas.fct_tri_c_delete_vn_observation_from_geonature() CASCADE;
 CREATE OR REPLACE FUNCTION src_lpodatas.fct_tri_c_delete_vn_observation_from_geonature() RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
@@ -837,10 +837,10 @@ ALTER FUNCTION src_lpodatas.fct_tri_c_delete_vn_observation_from_geonature() OWN
 
 COMMENT ON FUNCTION src_lpodatas.fct_tri_c_delete_vn_observation_from_geonature() IS 'Trigger function to delete datas from geonature synthese and extended table when DELETE on VisioNature source datas';
 
-DROP TRIGGER IF EXISTS tri_c_delete_vn_observation_from_geonature ON import_vn.observations_json;
+DROP TRIGGER IF EXISTS tri_c_delete_vn_observation_from_geonature ON src_vn_json.observations_json;
 
 CREATE TRIGGER tri_c_delete_vn_observation_from_geonature
     AFTER DELETE
-    ON import_vn.observations_json
+    ON src_vn_json.observations_json
     FOR EACH ROW
 EXECUTE PROCEDURE src_lpodatas.fct_tri_c_delete_vn_observation_from_geonature();

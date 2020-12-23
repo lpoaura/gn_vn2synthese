@@ -91,7 +91,7 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_get_id_role_from_visionature_uid(_uid TEX
 --         (SELECT
 --              jsonb_set(item, '{name}', '"test2"') AS item
 --              FROM
---                  import_vn.observers_json
+--                  src_vn_json.observers_json
 --              LIMIT 1)
 --
 -- SELECT
@@ -105,7 +105,7 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_get_id_role_from_visionature_uid(_uid TEX
 --         (SELECT
 --              jsonb_set(item, '{name}', '"test2"') AS item
 --              FROM
---                  import_vn.observers_json
+--                  src_vn_json.observers_json
 --              LIMIT 1)
 --
 -- SELECT
@@ -115,7 +115,7 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_get_id_role_from_visionature_uid(_uid TEX
 
 /* Trigger pour peupler automatiquement la table t_roles à partir des entrées observateurs de VisioNature*/
 
-DROP TRIGGER tri_upsert_synthese_extended ON import_vn.observers_json;
+DROP TRIGGER IF EXISTS tri_upsert_synthese_extended ON src_vn_json.observers_json;
 
 DROP FUNCTION IF EXISTS src_lpodatas.fct_tri_c_vn_observers_to_geonature();
 
@@ -131,12 +131,12 @@ $$;
 
 ALTER FUNCTION src_lpodatas.fct_tri_c_vn_observers_to_geonature() OWNER TO geonature;
 
-COMMENT ON FUNCTION src_lpodatas.fct_tri_c_vn_observers_to_geonature() IS 'Function de trigger permettant de peupler automatiquement la table des observateurs utilisateurs.t_roles à partir des données VisioNature'
+COMMENT ON FUNCTION src_lpodatas.fct_tri_c_vn_observers_to_geonature() IS 'Function de trigger permettant de peupler automatiquement la table des observateurs utilisateurs.t_roles à partir des données VisioNature';
 
 CREATE TRIGGER tri_upsert_vn_observers_to_geonature
     AFTER INSERT OR UPDATE
-    ON import_vn.observers_json
+    ON src_vn_json.observers_json
     FOR EACH ROW
 EXECUTE PROCEDURE src_lpodatas.fct_tri_c_vn_observers_to_geonature();
 
-COMMENT ON TRIGGER tri_upsert_vn_observers_to_geonature ON import_vn.observers_json IS 'Trigger permettant de peupler automatiquement la table des observateurs utilisateurs.t_roles à partir des données VisioNature'
+COMMENT ON TRIGGER tri_upsert_vn_observers_to_geonature ON src_vn_json.observers_json IS 'Trigger permettant de peupler automatiquement la table des observateurs utilisateurs.t_roles à partir des données VisioNature'

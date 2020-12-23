@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_taxo_group_values_from_vn(_key
 AS
 $$
 BEGIN
-    EXECUTE 'select item ->> $1 from import_vn.taxo_groups_json where taxo_groups_json.id = $3 and taxo_groups_json.site like $2 limit 1;'
+    EXECUTE 'select item ->> $1 from src_vn_json.taxo_groups_json where taxo_groups_json.id = $3 and taxo_groups_json.site like $2 limit 1;'
         INTO _result
         USING _key, _site, _id;
 END ;
@@ -56,7 +56,7 @@ CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_species_values_from_vn(_key AN
 AS
 $$
 BEGIN
-    EXECUTE 'select item ->> $1 from import_vn.species_json where species_json.id = $2 limit 1;'
+    EXECUTE 'select item ->> $1 from src_vn_json.species_json where species_json.id = $2 limit 1;'
         INTO _result
         USING _key, _id_species;
 END ;
@@ -81,7 +81,7 @@ $$
 BEGIN
     EXECUTE
         format(
-                'select concat(UPPER(item ->> ''name''), '' '', item ->> ''surname'') as text from import_vn.observers_json where observers_json.id_universal = $1 limit 1')
+                'select concat(UPPER(item ->> ''name''), '' '', item ->> ''surname'') as text from src_vn_json.observers_json where observers_json.id_universal = $1 limit 1')
         INTO _result
         USING _id_universal;
 END ;
@@ -107,8 +107,8 @@ BEGIN
     SELECT INTO _result
         CASE WHEN ent.item ->> 'short_name' = '-' THEN NULL ELSE ent.item ->> 'short_name' END
         FROM
-            import_vn.observers_json usr
-                JOIN import_vn.entities_json ent
+            src_vn_json.observers_json usr
+                JOIN src_vn_json.entities_json ent
                      ON (usr.site, cast(usr.item ->> 'id_entity' AS INT)) = (ent.site, ent.id)
         WHERE
               usr.id_universal = _uid
@@ -148,7 +148,7 @@ BEGIN
         SELECT INTO _result
             array_agg(item ->> 'text')
             FROM
-                import_vn.field_details_json
+                src_vn_json.field_details_json
             WHERE
                 id IN (SELECT unnest(_array_id));
     ELSE
@@ -208,7 +208,7 @@ AS
 $$
 BEGIN
     EXECUTE format(
-            'SELECT uuid from import_vn.uuid_xref where site like $1 and id = $2 limit 1')
+            'SELECT uuid from src_vn_json.uuid_xref where site like $1 and id = $2 limit 1')
         INTO _uuid
         USING _site, _id;
 END ;
