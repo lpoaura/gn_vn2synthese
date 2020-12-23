@@ -71,4 +71,7 @@ CREATE INDEX i_t_c_synthese_extended_common_name ON src_lpodatas.t_c_synthese_ex
 CREATE INDEX i_t_c_synthese_extended_id_place ON src_lpodatas.t_c_synthese_extended (id_place);
 CREATE INDEX i_t_c_synthese_extended_is_valid ON src_lpodatas.t_c_synthese_extended (is_valid);
 CREATE INDEX i_t_c_synthese_extended_is_hidden ON src_lpodatas.t_c_synthese_extended (is_hidden);
+CREATE INDEX i_t_c_synthese_extended_bird_breed_code_txt ON src_lpodatas.t_c_synthese_extended (cast(bird_breed_code AS TEXT));
+CREATE INDEX i_t_c_synthese_extended_bird_breed_code ON src_lpodatas.t_c_synthese_extended (bird_breed_code);
+CREATE INDEX i_t_c_synthese_extended_project_code ON src_lpodatas.t_c_synthese_extended (project_code);
 

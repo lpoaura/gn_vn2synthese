@@ -186,7 +186,7 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_get_id_dataset_by_shortname(_shortname TE
 --                                                           'visionature_default_acquisition_framework')
 --   , count(*)
 --     FROM
---         import_vn.observations_json
+--         src_vn_json.observations_json
 --     GROUP BY
 --         item #>> '{observers,0,project_code}';
 --
