@@ -3,7 +3,7 @@
     - VisioNature
     - dbChiroWeb
 */
-CREATE SCHEMA IF NOT EXISTS src_lpodatas AUTHORIZATION geonature;
+CREATE SCHEMA IF NOT EXISTS src_lpodatas AUTHORIZATION gnadm;
 
 DROP TABLE IF EXISTS src_lpodatas.t_c_synthese_extended;
 
