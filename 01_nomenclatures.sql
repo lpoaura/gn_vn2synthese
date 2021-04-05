@@ -15,7 +15,7 @@ CREATE TABLE ref_nomenclatures.t_c_synonyms (
     id_source integer CONSTRAINT fk_t_synonymes_id_source REFERENCES gn_synthese.t_sources
 );
 
-ALTER TABLE ref_nomenclatures.t_c_synonyms OWNER TO gnadm;
+ALTER TABLE ref_nomenclatures.t_c_synonyms OWNER TO geonatadmin;
 
 COMMENT ON TABLE ref_nomenclatures.t_c_synonyms IS 'Table de correspondances des nomenclatures avec une source tierce';
 
@@ -51,7 +51,7 @@ FROM
     JOIN ref_nomenclatures.t_nomenclatures ON t_c_synonyms.id_nomenclature = t_nomenclatures.id_nomenclature
     JOIN gn_synthese.t_sources ON t_c_synonyms.id_source = t_sources.id_source;
 
-ALTER TABLE ref_nomenclatures.v_c_synonyms OWNER TO gnadm;
+ALTER TABLE ref_nomenclatures.v_c_synonyms OWNER TO geonatadmin;
 
 
 /* Function permettant de retrouver l'id_nomenclature à partir des données VisioNature */
@@ -80,6 +80,6 @@ BEGIN
 END;
 $$;
 
-ALTER FUNCTION ref_nomenclatures.fct_c_get_synonyms_nomenclature (_type CHARACTER VARYING, _value CHARACTER VARYING) OWNER TO gnadm;
+ALTER FUNCTION ref_nomenclatures.fct_c_get_synonyms_nomenclature (_type CHARACTER VARYING, _value CHARACTER VARYING) OWNER TO geonatadmin;
 
 COMMENT ON FUNCTION ref_nomenclatures.fct_c_get_synonyms_nomenclature (_type CHARACTER VARYING, _value CHARACTER VARYING) IS 'Fonction de recherche des id_nomenclatures'

@@ -5,9 +5,9 @@ CREATE INDEX IF NOT EXISTS i_t_roles_champ_addi_id_universal ON utilisateurs.t_r
 
 
 /* Fonction to create observers if not already registered */
-DROP FUNCTION IF EXISTS .fct_c_create_gnadm_observer_from_visionature (_item JSONB, _rq TEXT);
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_create_geonatadmin_observer_from_visionature (_item JSONB, _rq TEXT);
 
-CREATE OR REPLACE FUNCTION .fct_c_create_gnadm_observer_from_visionature (_item jsonb, _rq text DEFAULT 'Utilisateur VisioNature')
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_create_geonatadmin_observer_from_visionature (_item jsonb, _rq text DEFAULT 'Utilisateur VisioNature')
     RETURNS int
     AS $$
 DECLARE
@@ -34,7 +34,7 @@ BEGIN
     WHERE
         champs_addi ->> 'id_universal' LIKE _item ->> 'id_universal') THEN
             UPDATE
-                utilisateurs.t_roles
+                utilisateurs.t_roles v
             SET
                 nom_role = _item ->> 'name',
                 prenom_role = _item ->> 'surname',
@@ -64,13 +64,13 @@ END
 $$
 LANGUAGE plpgsql;
 
-COMMENT ON FUNCTION .fct_c_create_gnadm_observer_from_visionature (_item JSONB, _rq TEXT) IS 'créée ou mets à jour un observervateur à partir des entrées json VisioNature';
+COMMENT ON FUNCTION src_lpodatas.fct_c_create_geonatadmin_observer_from_visionature (_item JSONB, _rq TEXT) IS 'créée ou mets à jour un observervateur à partir des entrées json VisioNature';
 
 
 /* Function that returns id_role from VisioNature user universal id */
-DROP FUNCTION IF EXISTS .fct_c_get_id_role_from_visionature_uid (_uid TEXT);
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_id_role_from_visionature_uid (_uid TEXT);
 
-CREATE FUNCTION .fct_c_get_id_role_from_visionature_uid (_uid text)
+CREATE FUNCTION src_lpodatas.fct_c_get_id_role_from_visionature_uid (_uid text)
     RETURNS int
     AS $$
 DECLARE
@@ -87,7 +87,7 @@ END
 $$
 LANGUAGE plpgsql;
 
-COMMENT ON FUNCTION .fct_c_get_id_role_from_visionature_uid (_uid TEXT) IS 'Retourne un id_role à partir d''un id_universal de visionature';
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_id_role_from_visionature_uid (_uid TEXT) IS 'Retourne un id_role à partir d''un id_universal de visionature';
 
 
 /* TESTS */
@@ -100,7 +100,7 @@ COMMENT ON FUNCTION .fct_c_get_id_role_from_visionature_uid (_uid TEXT) IS 'Reto
 --              LIMIT 1)
 --
 -- SELECT
---     .fct_create_observer_from_visionature(item)
+--     src_lpodatas.fct_create_observer_from_visionature(item)
 --     FROM
 --         titem;
 -- WITH
@@ -112,32 +112,32 @@ COMMENT ON FUNCTION .fct_c_get_id_role_from_visionature_uid (_uid TEXT) IS 'Reto
 --              LIMIT 1)
 --
 -- SELECT
---     .fct_get_id_role_from_visionature_uid(item ->> 'id_universal')
+--     src_lpodatas.fct_get_id_role_from_visionature_uid(item ->> 'id_universal')
 --     FROM
 --         titem;
 /* Trigger pour peupler automatiquement la table t_roles à partir des entrées observateurs de VisioNature*/
 DROP TRIGGER IF EXISTS tri_upsert_synthese_extended ON src_vn_json.observers_json;
 
-DROP FUNCTION IF EXISTS .fct_tri_c_vn_observers_to_g ();
+DROP FUNCTION IF EXISTS src_lpodatas.fct_tri_c_vn_observers_to_g ();
 
-CREATE OR REPLACE FUNCTION .fct_tri_c_vn_observers_to_geonature ()
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_tri_c_vn_observers_to_geonature ()
     RETURNS TRIGGER
     LANGUAGE plpgsql
     AS $$
 BEGIN
     PERFORM
-        .fct_c_create_gnadm_observer_from_visionature (NEW.item);
+        src_lpodatas.fct_c_create_geonatadmin_observer_from_visionature (NEW.item);
     RETURN new;
 END;
 $$;
 
-ALTER FUNCTION .fct_tri_c_vn_observers_to_geonature () OWNER TO gnadm;
+ALTER FUNCTION src_lpodatas.fct_tri_c_vn_observers_to_geonature () OWNER TO geonatadmin;
 
-COMMENT ON FUNCTION .fct_tri_c_vn_observers_to_geonature () IS 'Function de trigger permettant de peupler automatiquement la table des observateurs utilisateurs.t_roles à partir des données VisioNature';
+COMMENT ON FUNCTION src_lpodatas.fct_tri_c_vn_observers_to_geonature () IS 'Function de trigger permettant de peupler automatiquement la table des observateurs utilisateurs.t_roles à partir des données VisioNature';
 
 CREATE TRIGGER tri_upsert_vn_observers_to_geonature
     AFTER INSERT OR UPDATE ON src_vn_json.observers_json
     FOR EACH ROW
-    EXECUTE PROCEDURE .fct_tri_c_vn_observers_to_geonature ();
+    EXECUTE PROCEDURE src_lpodatas.fct_tri_c_vn_observers_to_geonature ();
 
 COMMENT ON TRIGGER tri_upsert_vn_observers_to_geonature ON src_vn_json.observers_json IS 'Trigger permettant de peupler automatiquement la table des observateurs utilisateurs.t_roles à partir des données VisioNature'

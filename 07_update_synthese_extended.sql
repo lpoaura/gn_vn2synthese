@@ -1,13 +1,17 @@
 /* Peuplement auto de la synthèse étendue LPO */
 /* Générer les sources si absentes */
-DROP TRIGGER IF EXISTS tri_c_upsert_vn_observation_to_geonature ON src_vn_json.observations_json;
 
-DROP FUNCTION IF EXISTS .fct_tri_c_upsert_vn_observation_to_geonature () CASCADE;
+DROP TRIGGER IF EXISTS tri_c_upsert_vn_observation_to_geonature ON src_vn_json.observations_json
+;
 
-CREATE OR REPLACE FUNCTION .fct_tri_c_upsert_vn_observation_to_geonature ()
+DROP FUNCTION IF EXISTS.fct_tri_c_upsert_vn_observation_to_geonature () CASCADE
+;
+
+CREATE OR REPLACE FUNCTION.fct_tri_c_upsert_vn_observation_to_geonature ()
     RETURNS TRIGGER
     LANGUAGE plpgsql
-    AS $$
+AS
+$$
 DECLARE
     the_id_synthese integer;
 
@@ -96,7 +100,7 @@ BEGIN
 
     /* Partie gn_synthese.synthese */
     SELECT
-        .fct_c_get_observation_uuid (NEW.site, NEW.id) INTO the_unique_id_sinp;
+        CAST(NEW.item #>> '{observers,0,uuid}' AS UUID) INTO the_unique_id_sinp;
 
     /* TODO récupérer un UUID pour les formulaires */
     SELECT
@@ -426,26 +430,35 @@ BEGIN
     END IF;
     RETURN new;
 END;
-$$;
 
-ALTER FUNCTION .fct_tri_c_upsert_vn_observation_to_geonature () OWNER TO gnadm;
+$$
+;
 
-COMMENT ON FUNCTION .fct_tri_c_upsert_vn_observation_to_geonature () IS 'Trigger function to upsert datas from VisioNature to synthese and custom child table';
+ALTER FUNCTION.fct_tri_c_upsert_vn_observation_to_geonature () OWNER TO gnadm
+;
 
-DROP TRIGGER IF EXISTS fct_tri_c_upsert_vn_observation_to_geonature ON src_vn_json.observations_json;
+COMMENT ON FUNCTION.fct_tri_c_upsert_vn_observation_to_geonature () IS 'Trigger function to upsert datas from VisioNature to synthese and custom child table'
+;
+
+DROP TRIGGER IF EXISTS fct_tri_c_upsert_vn_observation_to_geonature ON src_vn_json.observations_json
+;
 
 CREATE TRIGGER fct_tri_c_upsert_vn_observation_to_geonature
-    AFTER INSERT OR UPDATE ON src_vn_json.observations_json
+    AFTER INSERT OR UPDATE
+    ON src_vn_json.observations_json
     FOR EACH ROW
-    EXECUTE PROCEDURE .fct_tri_c_upsert_vn_observation_to_geonature ();
+EXECUTE PROCEDURE.fct_tri_c_upsert_vn_observation_to_geonature ()
+;
 
 -- TRUNCATE gn_synthese.synthese RESTART IDENTITY CASCADE;
-DROP FUNCTION IF EXISTS .fct_tri_c_delete_vn_observation_from_geonature () CASCADE;
+DROP FUNCTION IF EXISTS.fct_tri_c_delete_vn_observation_from_geonature () CASCADE
+;
 
-CREATE OR REPLACE FUNCTION .fct_tri_c_delete_vn_observation_from_geonature ()
+CREATE OR REPLACE FUNCTION.fct_tri_c_delete_vn_observation_from_geonature ()
     RETURNS TRIGGER
     LANGUAGE plpgsql
-    AS $$
+AS
+$$
 DECLARE
     the_id_synthese int;
     the_unique_id_sinp uuid;
@@ -468,16 +481,23 @@ BEGIN
     END IF;
     RETURN old;
 END;
-$$;
 
-ALTER FUNCTION .fct_tri_c_delete_vn_observation_from_geonature () OWNER TO gnadm;
+$$
+;
 
-COMMENT ON FUNCTION .fct_tri_c_delete_vn_observation_from_geonature () IS 'Trigger function to delete datas from gnadm synthese and extended table when DELETE on VisioNature source datas';
+ALTER FUNCTION.fct_tri_c_delete_vn_observation_from_geonature () OWNER TO gnadm
+;
 
-DROP TRIGGER IF EXISTS tri_c_delete_vn_observation_from_geonature ON src_vn_json.observations_json;
+COMMENT ON FUNCTION.fct_tri_c_delete_vn_observation_from_geonature () IS 'Trigger function to delete datas from gnadm synthese and extended table when DELETE on VisioNature source datas'
+;
+
+DROP TRIGGER IF EXISTS tri_c_delete_vn_observation_from_geonature ON src_vn_json.observations_json
+;
 
 CREATE TRIGGER tri_c_delete_vn_observation_from_geonature
-    AFTER DELETE ON src_vn_json.observations_json
+    AFTER DELETE
+    ON src_vn_json.observations_json
     FOR EACH ROW
-    EXECUTE PROCEDURE .fct_tri_c_delete_vn_observation_from_geonature ();
+EXECUTE PROCEDURE.fct_tri_c_delete_vn_observation_from_geonature ()
+;
 
