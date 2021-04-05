@@ -1,4 +1,4 @@
-/* Disable some triggers on src_vn_json.observations_json > src_lpodatas.observations */
+/* Disable some triggers on src_vn_json.observations_json > .observations */
 
 ALTER TABLE src_vn_json.observations_json DISABLE TRIGGER obsfull_delete_from_vn_trigger;
 ALTER TABLE src_vn_json.observations_json DISABLE TRIGGER obsfull_upsert_from_vn_trigger;
