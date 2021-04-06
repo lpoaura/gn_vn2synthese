@@ -6,7 +6,7 @@ dbUser=mydbuser
 dbPwd=mydbuserpwd
 
 # Customization
-sourceSchema=import_vn
-schemaName=src_myowndata
+schemaSource=import_vn
+schemaDestination=src_myowndata
 
 

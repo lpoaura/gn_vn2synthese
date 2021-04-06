@@ -1,7 +1,9 @@
 /*
  Manage VisioNature sources
  */
-CREATE INDEX i_source_name ON gn_synthese.t_sources (name_source) DROP FUNCTION IF EXISTS src_lpodatas.fct_c_upsert_or_get_source_from_visionature (_source TEXT);
+CREATE INDEX i_source_name ON gn_synthese.t_sources (name_source);
+
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_upsert_or_get_source_from_visionature (_source TEXT);
 
 CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_upsert_or_get_source_from_visionature (_source text)
     RETURNS integer
@@ -44,6 +46,6 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_upsert_or_get_source_from_visionature (_s
 
 
 /* TESTS */
-SELECT
+/*SELECT
     src_lpodatas.fct_c_upsert_or_get_source_from_visionature ('test');
-
+*/

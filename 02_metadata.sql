@@ -48,7 +48,6 @@ CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_or_insert_dataset_from_shortna
     AS $$
 DECLARE
     the_id_dataset int;
-    the_id_acquisition_framework int;
     the_shortname text;
 BEGIN
     /*  Si shortname est NULL:
@@ -80,7 +79,7 @@ BEGIN
         RAISE NOTICE '<fct_c_get_or_insert_dataset_from_shortname> Dataset with shortname % exists with get ID : %', the_shortname, the_id_dataset;
     ELSE
         INSERT INTO gn_meta.t_datasets (id_acquisition_framework, dataset_name, dataset_shortname, dataset_desc, marine_domain, terrestrial_domain, meta_create_date)
-            VALUES (.fct_c_get_id_acquisition_framework_by_name (gn_commons.get_default_parameter (_default_acquisition_framework)), '[' || the_shortname || '] Jeu de données compléter', the_shortname, 'A compléter', FALSE, TRUE, now())
+            VALUES (src_lpodatas.fct_c_get_id_acquisition_framework_by_name (gn_commons.get_default_parameter (_default_acquisition_framework)), '[' || the_shortname || '] Jeu de données compléter', the_shortname, 'A compléter', FALSE, TRUE, now())
         RETURNING
             id_dataset INTO the_id_dataset;
         RAISE NOTICE '<fct_c_get_or_insert_dataset_from_shortname> Data dataset doesn''t exists, new dataset with shortname % created with ID : %', the_shortname, the_id_dataset;
@@ -117,17 +116,17 @@ CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_id_acquisition_framework_by_na
     LANGUAGE plpgsql
     AS $$
 DECLARE
-    theidacquisitionframework integer;
+    the_id_acquisition_framework integer;
 BEGIN
     --Retrouver l'id du module par son code
     SELECT
-        INTO theidacquisitionframework id_acquisition_framework
+        INTO the_id_acquisition_framework id_acquisition_framework
     FROM
         gn_meta.t_acquisition_frameworks
     WHERE
         acquisition_framework_name ILIKE _name
     LIMIT 1;
-    RETURN theidacquisitionframework;
+    RETURN the_id_acquisition_framework;
 END;
 $$;
 
@@ -144,16 +143,16 @@ CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_id_dataset_by_shortname (_shor
     LANGUAGE plpgsql
     AS $$
 DECLARE
-    theiddataset integer;
+    the_id_dataset integer;
 BEGIN
     --Retrouver l'id du module par son code
     SELECT
-        INTO theiddataset id_dataset
+        INTO the_id_dataset id_dataset
     FROM
         gn_meta.t_datasets
     WHERE
         dataset_shortname ILIKE _shortname;
-    RETURN theiddataset;
+    RETURN the_id_dataset;
 END;
 $$;
 

@@ -167,6 +167,7 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_get_medias_url_from_visionature_medias_ar
 
 
 /* Function to get observation generated UUID */
+/* NOTE: removed because uuid are now available in faune-france API */
 DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_observation_uuid (_site CHARACTER VARYING, _id INTEGER, OUT _uuid UUID);
 
 --
@@ -179,7 +180,6 @@ DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_observation_uuid (_site CHARACTER
 --     USING _site, _id;
 -- END;
 -- $$;
-ALTER FUNCTION src_lpodatas.fct_c_get_observation_uuid (_site CHARACTER VARYING, _id INTEGER, OUT _uuid UUID) OWNER TO geonatadmin;
-
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_observation_uuid IS 'Function to get observation generated UUID';
+-- ALTER FUNCTION src_lpodatas.fct_c_get_observation_uuid (_site CHARACTER VARYING, _id INTEGER, OUT _uuid UUID) OWNER TO geonatadmin;/**/
+-- COMMENT ON FUNCTION src_lpodatas.fct_c_get_observation_uuid IS 'Function to get observation generated UUID';
 

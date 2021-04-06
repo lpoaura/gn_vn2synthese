@@ -118,9 +118,9 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_get_id_role_from_visionature_uid (_uid TE
 /* Trigger pour peupler automatiquement la table t_roles à partir des entrées observateurs de VisioNature*/
 DROP TRIGGER IF EXISTS tri_upsert_synthese_extended ON src_vn_json.observers_json;
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_tri_c_vn_observers_to_g ();
+DROP FUNCTION IF EXISTS src_lpodatas.fct_tri_c_vn_observers_to_geonature();
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_tri_c_vn_observers_to_geonature ()
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_tri_c_vn_observers_to_geonature()
     RETURNS TRIGGER
     LANGUAGE plpgsql
     AS $$

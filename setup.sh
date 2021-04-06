@@ -54,25 +54,27 @@ echo -e "\e[1;34m(i)\e[0m Create tmp directory" | tee -a $logFile
 mkdir tmp | tee -a $logFile
 echo "" | tee -a $logFile
 
-echo "# compile sql files to tmp/ subdir" | tee -a $logFile
+echo -e "\e[1;32m[X]\e[0m compile sql files to tmp/ subdir" | tee -a $logFile
 #find . -maxdepth 1 -type f -name "*.sql" -print0 | xargs -0 cat >> tmp/run.sql
 cp *.sql tmp/ | tee -a $logFile
-cd tmp | tee -a $logFile
-echo "" | tee -a $logFile
 # find . -type f -exec sed "s/src_lpodatas/$schemaName/g" {} \;
 
-find . -type f -name "*.sql" -print0 | xargs -0 sed -i "s/src_vn_json/$schemaSource/g"
-echo -e "\e[1;32m[X]\e[0m source schema name updated" | tee -a $logFile
+cd ./tmp | tee -a $logFile
+ls | tee -a $logFile
+echo -e "\e[1;32m[X]\e[0m workdir is $(pwd)" | tee -a $logFile
+echo -e "\e[1;32m[X]\e[0m source schema name updated to ${schemaSource:-src_vn_json}" | tee -a $logFile
+find tmp/ -type f -name "*.sql" -print0 | xargs -0 sed -i "s/src_vn_json/${schemaSource:-src_vn_json}/g"
+echo -e "\e[1;32m[X]\e[0m source schema name updated to ${schemaSource:-src_vn_json}" | tee -a $logFile
 
-find . -type f -name "*.sql" -print0 | xargs -0 sed -i "s/src_lpodatas/$schemaDestination/g"
-echo -e "\e[1;32m[X]\e[0m destination schema name updated" | tee -a $logFile
+find tmp/ -type f -name "*.sql" -print0 | xargs -0 sed -i "s/src_lpodatas/${schemaDestination:-src_lpodatas}/g"
+echo -e "\e[1;32m[X]\e[0m destination schema name updated to ${schemaDestination:-src_lpodatas}" | tee -a $logFile
 
-find . -type f -name "*.sql" -print0 | xargs -0 sed -i "s/geonatadmin/$dbOwner/g"
-echo -e "\e[1;32m[X]\e[0m db username updated" | tee -a $logFile
+find tmp/ -type f -name "*.sql" -print0 | xargs -0 sed -i "s/geonatadmin/$dbUser/g"
+echo -e "\e[1;32m[X]\e[0m db username updated to $dbUser" | tee -a $logFile
 
-echo "" | tee -a $logFile
+# echo "" | tee -a $logFile
 
-echo -e "\e[1;34m(i)\e[0m \e[1;32mOpen your preferred SQL tool and execute successively each SQL files from tmp directory \e[0m"
+# echo -e "\e[1;34m(i)\e[0m \e[1;32mOpen your preferred SQL tool and execute successively each SQL files from tmp directory \e[0m"
 #
 #echo "# Check if source schema exists" | tee -a $logFile
 #schemaSourceExists=`psql  $connectionString  -X -A -t -c "SELECT exists(select schema_name FROM information_schema.schemata WHERE schema_name = '$schemaSource');"` | tee -a $logFile
