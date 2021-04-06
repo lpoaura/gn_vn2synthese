@@ -52,8 +52,8 @@ DECLARE
     the_altitude_min integer;
     the_altitude_max integer;
     _the_geom_4326 GEOMETRY(Geometry, 4326);
-    _the_geom_point GEOMETRY(point, 4326);
-    _the_geom_local GEOMETRY(Geometry, 2154);
+    _the_geom_point GEOMETRY(Point, 4326);
+    _the_geom_local GEOMETRY(Geometry, dbSrid);
     the_date_min timestamp;
     the_date_max timestamp;
     the_validation_comment text;
@@ -215,7 +215,7 @@ BEGIN
     SELECT
         _the_geom_4326 INTO _the_geom_point;
     SELECT
-        public.st_transform (_the_geom_4326, 2154) INTO _the_geom_local;
+        public.st_transform (_the_geom_4326, dbSrid) INTO _the_geom_local;
     SELECT
         to_timestamp(CAST(NEW.item #>> '{date,@timestamp}' AS double precision)) INTO the_date_min;
     SELECT

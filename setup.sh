@@ -59,16 +59,12 @@ echo -e "\e[1;32m[X]\e[0m compile sql files to tmp/ subdir" | tee -a $logFile
 cp *.sql tmp/ | tee -a $logFile
 # find . -type f -exec sed "s/src_lpodatas/$schemaName/g" {} \;
 
-cd ./tmp | tee -a $logFile
-ls | tee -a $logFile
-echo -e "\e[1;32m[X]\e[0m workdir is $(pwd)" | tee -a $logFile
-echo -e "\e[1;32m[X]\e[0m source schema name updated to ${schemaSource:-src_vn_json}" | tee -a $logFile
 find tmp/ -type f -name "*.sql" -print0 | xargs -0 sed -i "s/src_vn_json/${schemaSource:-src_vn_json}/g"
 echo -e "\e[1;32m[X]\e[0m source schema name updated to ${schemaSource:-src_vn_json}" | tee -a $logFile
-
 find tmp/ -type f -name "*.sql" -print0 | xargs -0 sed -i "s/src_lpodatas/${schemaDestination:-src_lpodatas}/g"
 echo -e "\e[1;32m[X]\e[0m destination schema name updated to ${schemaDestination:-src_lpodatas}" | tee -a $logFile
-
+find tmp/ -type f -name "*.sql" -print0 | xargs -0 sed -i "s/dbSrid/${dbSrid:-2154}/g"
+echo -e "\e[1;32m[X]\e[0m main SRID updated to ${dbSrid:-2154}" | tee -a $logFile
 find tmp/ -type f -name "*.sql" -print0 | xargs -0 sed -i "s/geonatadmin/$dbUser/g"
 echo -e "\e[1;32m[X]\e[0m db username updated to $dbUser" | tee -a $logFile
 

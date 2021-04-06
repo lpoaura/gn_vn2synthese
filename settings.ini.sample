@@ -4,9 +4,10 @@ dbPort=5432
 dbName=mydb
 dbUser=mydbuser
 dbPwd=mydbuserpwd
+dbSrid=2154
 
 # Customization
-schemaSource=import_vn
+schemaSource=src_vn_json
 schemaDestination=src_myowndata
 
 
