@@ -170,16 +170,17 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_get_medias_url_from_visionature_medias_ar
 /* NOTE: removed because uuid are now available in faune-france API */
 DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_observation_uuid (_site CHARACTER VARYING, _id INTEGER, OUT _uuid UUID);
 
---
--- CREATE FUNCTION src_lpodatas.fct_c_get_observation_uuid (_site character varying, _id integer, OUT _uuid uuid)
---     RETURNS uuid
---     LANGUAGE plpgsql
---     AS $$
--- BEGIN
---     EXECUTE format('SELECT uuid from src_vn_json.uuid_xref where site like $1 and id = $2 limit 1') INTO _uuid
---     USING _site, _id;
--- END;
--- $$;
--- ALTER FUNCTION src_lpodatas.fct_c_get_observation_uuid (_site CHARACTER VARYING, _id INTEGER, OUT _uuid UUID) OWNER TO geonatadmin;/**/
--- COMMENT ON FUNCTION src_lpodatas.fct_c_get_observation_uuid IS 'Function to get observation generated UUID';
+
+CREATE FUNCTION src_lpodatas.fct_c_get_observation_uuid (_site character varying, _id integer, OUT _uuid uuid)
+    RETURNS uuid
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    EXECUTE format('SELECT uuid from src_vn_json.uuid_xref where site like $1 and id = $2 limit 1') INTO _uuid
+    USING _site, _id;
+END;
+$$;
+ALTER FUNCTION src_lpodatas.fct_c_get_observation_uuid (_site CHARACTER VARYING, _id INTEGER, OUT _uuid UUID) OWNER TO fcloitre;/**/
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_observation_uuid IS 'Function to get observation generated UUID';
+
 
