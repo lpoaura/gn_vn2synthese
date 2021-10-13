@@ -1,13 +1,20 @@
 /*
- Manage observers from VisioNature observers datas
- */
+OBSERVERS
+---------
+Various functions to import and get observers into UsersHub tables from VisioNature
+*/
 
 
-CREATE INDEX IF NOT EXISTS i_t_roles_champ_addi_id_universal ON utilisateurs.t_roles ((champs_addi ->> 'id_universal'))
+BEGIN
 ;
 
+DROP INDEX IF EXISTS utilisateurs.i_t_roles_champ_addi_id_universal
+;
 
-CREATE UNIQUE INDEX i_uniq_t_roles_email ON utilisateurs.t_roles (email)
+CREATE INDEX IF NOT EXISTS i_t_roles_champ_addi_id_universal ON utilisateurs.t_roles ((champs_addi #>> '{from_vn, id_universal}'))
+;
+
+CREATE UNIQUE INDEX IF NOT EXISTS i_uniq_t_roles_email ON utilisateurs.t_roles (email)
 ;
 
 
@@ -62,10 +69,16 @@ BEGIN
             WHERE
                 champs_addi #>> '{from_vn,id_universal}' LIKE _item ->> 'id_universal';
         -- Si nom/prenom/email est différent de ce qui est stocké alors ok sinon on update le mail et les noms
+
         IF (_item ->> 'name',
             _item ->> 'surname',
             _item ->> 'email') <>
            (therolerecord.nom_role, therolerecord.prenom_role, therolerecord.email) THEN
+            RAISE DEBUG 'Observer % with email % already exists', _item ->> 'id_universal', _item ->> 'email';
+            RAISE DEBUG '_item %', (_item ->> 'name',
+                                    _item ->> 'surname',
+                                    _item ->> 'email');
+            RAISE DEBUG 'therecord %', (therolerecord.nom_role, therolerecord.prenom_role, therolerecord.email);
             UPDATE
                 utilisateurs.t_roles v
             SET
@@ -75,21 +88,21 @@ BEGIN
               , remarques   = _rq
                 WHERE
                     id_role = therolerecord.id_role;
-            RAISE NOTICE 'Observer % with email % updated', _item ->> 'id_universal', _item ->> 'email';
+            RAISE DEBUG 'Observer % with email % updated', _item ->> 'id_universal', _item ->> 'email';
         END IF;
         -- Si la donnée source contient une entité, on tente vérifie si elle existe déjà dans usershub
         IF (_item ? 'id_entity')
         THEN
             -- Si from_vn contient déjà un rattachement à une entité pour le site
             SELECT src_lpodatas.fct_c_get_organisme_from_vn_id(_site, _item ->> 'id_entity') INTO theorganismid;
-            RAISE NOTICE '<ID ORGANISM> is % | % | % ', _site, _item ->> 'id_entity', theorganismid;
+            RAISE DEBUG '<ID ORGANISM> is % | % | % ', _site, _item ->> 'id_entity', theorganismid;
             IF (therolerecord.id_organisme IS NULL OR
                 (therolerecord.id_organisme IS NOT NULL AND therolerecord.id_organisme != theorganismid))
             THEN
                 UPDATE utilisateurs.t_roles SET id_organisme = theorganismid WHERE id_role = therolerecord.id_role;
             END IF;
             IF NOT (therolerecord.champs_addi #> '{from_vn}' ? _site) THEN
-                RAISE NOTICE 'Create site % key within "from_vn" for role %', _site,therolerecord.id_role;
+                RAISE DEBUG 'Create site % key within "from_vn" for role %', _site,therolerecord.id_role;
                 UPDATE utilisateurs.t_roles
                 SET
                     champs_addi = jsonb_set(champs_addi, ('{from_vn,' || _site || '}')::TEXT[], '{}'::JSONB, TRUE)
@@ -101,7 +114,7 @@ BEGIN
                 (therolerecord.champs_addi #>> ('{from_vn,' || _site || ',id_entity}')::TEXT[] !=
                  _item ->> 'id_entity'))
             THEN
-                RAISE NOTICE 'create or update id_entity % for site % for user % with email %', _item ->> 'id_entity', _site, _item ->> 'id_universal', _item ->> 'email';
+                RAISE DEBUG 'create or update id_entity % for site % for user % with email %', _item ->> 'id_entity', _site, _item ->> 'id_universal', _item ->> 'email';
                 UPDATE utilisateurs.t_roles
                 SET
                     champs_addi = jsonb_set(champs_addi, ('{from_vn,' || _site || ', id_entity}')::TEXT[],
@@ -110,32 +123,36 @@ BEGIN
                     WHERE
                         id_role = therolerecord.id_role;
             ELSE
-                RAISE NOTICE 'id_entity % for site % and user % with email % already exists', _item ->> 'id_entity', _site, _item ->> 'id_universal', _item ->> 'email';
+                RAISE DEBUG 'id_entity % for site % and user % with email % already exists', _item ->> 'id_entity', _site, _item ->> 'id_universal', _item ->> 'email';
             END IF;
 
 
         END IF;
-        RAISE NOTICE 'Observer % with email % already exists', _item ->> 'id_universal', _item ->> 'email';
+        RAISE DEBUG 'Observer % with email % already exists', _item ->> 'id_universal', _item ->> 'email';
     ELSE
         INSERT INTO
             utilisateurs.t_roles (nom_role, prenom_role, email, champs_addi, remarques, active, date_insert)
             VALUES
-                (                                 _item ->> 'name'
-                ,                                 _item ->> 'surname'
-                ,                                 _item ->> 'email'
-                ,                                 jsonb_build_object(
-                                                          'from_vn',
-                                                          jsonb_build_object(
-                                                                  _site,
-                                                                  jsonb_build_object(
-                                                                          'id_entity',
-                                                                          _item ->>
-                                                                          'id_entity'), 'id_universal',
-                                                                  _item ->>
-                                                                  'id_universal'))
-                ,                                 _rq
-                ,                                 FALSE
-                ,                                 now())
+                (                              _item ->> 'name'
+                ,                              _item ->> 'surname'
+                ,                              _item ->> 'email'
+                ,                              jsonb_build_object(
+                                                       'from_vn',
+                                                       jsonb_build_object(
+                                                               _site,
+                                                               jsonb_build_object(
+                                                                       'id_entity',
+                                                                       _item ->>
+                                                                       'id_entity'),
+                                                               'id_universal',
+                                                               _item ->>
+                                                               'id_universal',
+                                                               'anonymous',
+                                                               _item ->>
+                                                               'anonymous'))
+                ,                              _rq
+                ,                              FALSE
+                ,                              now())
         ON CONFLICT (email)
             DO UPDATE SET
                           nom_role    = _item ->> 'name'
@@ -149,10 +166,13 @@ BEGIN
                                     _item ->>
                                     'id_entity'), 'id_universal',
                             _item ->>
-                            'id_universal'))
+                            'id_universal',
+                            'anonymous',
+                            _item ->>
+                            'anonymous'))
                         , remarques   = _rq
-            RETURNING id_role INTO therolerecord.id_role;
-        RAISE NOTICE 'Observer % inserted with id %', _item ->> 'id_universal', therolerecord.id_role;
+            RETURNING id_role INTO therolerecord;
+        RAISE DEBUG 'Observer % inserted with id %', _item ->> 'id_universal', therolerecord.id_role;
         RETURN therolerecord.id_role;
     END IF;
     RETURN therolerecord.id_role;
@@ -161,46 +181,73 @@ $$
     LANGUAGE plpgsql
 ;
 
-UPDATE utilisateurs.t_roles
-SET
-    champs_addi = '{}'::JSON
-;
-
-
-SELECT *
-    FROM
-        utilisateurs.t_roles
-;
 
 COMMENT ON FUNCTION src_lpodatas.fct_c_create_usershub_roles_from_visionature (_site VARCHAR, _item JSONB, _rq TEXT) IS 'créée ou mets à jour un observervateur à partir des entrées json VisioNature'
 ;
 
 
 /* Function that returns id_role from VisioNature user universal id */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_id_role_from_visionature_uid (_uid TEXT)
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_id_role_from_visionature_uid (_uid TEXT, _check_anonymous BOOL)
 ;
 
-CREATE FUNCTION src_lpodatas.fct_c_get_id_role_from_visionature_uid(_uid TEXT)
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_id_role_from_visionature_uid(_uid TEXT, _check_anonymous BOOL DEFAULT FALSE)
     RETURNS INT
 AS
 $$
 DECLARE
-    theroleid INT;
+    the_roleid INT;
 BEGIN
-    SELECT
-        id_role
-        INTO theroleid
+    SELECT INTO the_roleid
+        CASE
+            WHEN (_check_anonymous AND t_roles.champs_addi #>> '{from_vn,anonymous}' = '1')
+                THEN NULL
+            ELSE
+                t_roles.id_role END
         FROM
             utilisateurs.t_roles
         WHERE
-            champs_addi ->> 'id_universal' = _uid;
-    RETURN theroleid;
+            champs_addi #>> '{from_vn,id_universal}' = _uid;
+    RETURN the_roleid;
 END
 $$
     LANGUAGE plpgsql
 ;
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_id_role_from_visionature_uid (_uid TEXT) IS 'Retourne un id_role à partir d''un id_universal de visionature'
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_id_role_from_visionature_uid (_uid TEXT, _check_anonymous BOOL ) IS 'Retourne un id_role à partir d''un id_universal de visionature'
+;
+
+
+/* Function that returns id_role from VisioNature user universal id */
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_role_name_from_visionature_uid(_uid TEXT, _check_anonymous BOOL)
+;
+
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_role_name_from_visionature_uid(_uid TEXT, _check_anonymous BOOL DEFAULT FALSE)
+    RETURNS TEXT
+AS
+$$
+DECLARE
+    the_rolename TEXT;
+BEGIN
+    SELECT INTO the_rolename
+        CASE
+            WHEN (_check_anonymous AND t_roles.champs_addi #>> '{from_vn,anonymous}' = '1')
+                THEN 'Anonyme'
+            ELSE
+                trim(concat(nom_role, ' ', prenom_role)) END
+        FROM
+            utilisateurs.t_roles
+        WHERE
+            champs_addi #>> '{from_vn,id_universal}' = _uid;
+    RETURN the_rolename;
+END
+$$
+    LANGUAGE plpgsql
+;
+
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_role_name_from_visionature_uid (_uid TEXT, _check_anonymous BOOL) IS 'Retourne un id_role à partir d''un id_universal de visionature'
+;
+
+DROP FUNCTION IF EXISTS src_lpodatas.fct_tri_c_vn_observers_to_usershub()
 ;
 
 
@@ -231,10 +278,8 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_get_id_role_from_visionature_uid (_uid TE
 --         titem;
 /* Trigger pour peupler automatiquement la table t_roles à partir des entrées observateurs de VisioNature*/
 
-DROP TRIGGER IF EXISTS tri_upsert_synthese_extended ON src_vn_json.observers_json
-;
-
-DROP FUNCTION IF EXISTS src_lpodatas.fct_tri_c_vn_observers_to_usershub()
+DROP TRIGGER IF EXISTS tri_upsert_synthese_extended
+    ON src_vn_json.observers_json
 ;
 
 CREATE OR REPLACE FUNCTION src_lpodatas.fct_tri_c_vn_observers_to_usershub()
@@ -250,13 +295,10 @@ END;
 $$
 ;
 
-ALTER FUNCTION src_lpodatas.fct_tri_c_vn_observers_to_usershub () OWNER TO geonatadmin
-;
-
 COMMENT ON FUNCTION src_lpodatas.fct_tri_c_vn_observers_to_usershub () IS 'Function de trigger permettant de peupler automatiquement la table des observateurs utilisateurs.t_roles à partir des données VisioNature'
 ;
 
-DROP TRIGGER tri_upsert_vn_observers_to_geonature ON src_vn_json.observers_json
+DROP TRIGGER IF EXISTS tri_upsert_vn_observers_to_geonature ON src_vn_json.observers_json
 ;
 
 CREATE TRIGGER tri_upsert_vn_observers_to_geonature
@@ -268,46 +310,5 @@ EXECUTE FUNCTION src_lpodatas.fct_tri_c_vn_observers_to_usershub()
 
 COMMENT ON TRIGGER tri_upsert_vn_observers_to_geonature ON src_vn_json.observers_json IS 'Trigger permettant de peupler automatiquement la table des observateurs utilisateurs.t_roles à partir des données VisioNature'
 
-UPDATE src_vn_json.observers_json
-SET
-    id = id
+COMMIT
 ;
-
-SELECT
-    nom_organisme
-  , count(t_roles)
-    FROM
-        utilisateurs.t_roles
-            LEFT JOIN utilisateurs.bib_organismes ON t_roles.id_organisme = bib_organismes.id_organisme
-    GROUP BY
-        nom_organisme
-;
-
-SELECT
-    item ->> 'name'
-  , item ->> 'surname'
-  , item ->> 'email'
-  , jsonb_build_object('from_vn',
-                       array_to_json(array_agg(jsonb_build_object(
-                               site,
-                               jsonb_build_object(
-                                       'id_entity', item ->> 'id_entity')))),
-                       'id_universal',
-                       item ->> 'id_universal')
-  , FALSE
-  , now()
-    FROM
-        src_vn_json.observers_json
-    GROUP BY
-        item ->> 'name'
-      , item ->> 'surname'
-      , item ->> 'email'
-      , item ->> 'id_universal'
-;
-
-SELECT *
-    FROM
-        utilisateurs.t_roles
-;
-
-

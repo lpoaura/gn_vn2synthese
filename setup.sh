@@ -1,8 +1,8 @@
 #!/bin/bash
-echo -e "\e[1;33m##########################################\e[0m" | tee -a $logFile
-echo -e "\e[1;33m# VisioNature 2 GeoNature synthese setup #\e[0m" | tee -a $logFile
-echo -e "\e[1;33m##########################################\e[0m" | tee -a $logFile
-echo -e "\e[1;34m(i)\e[0m version $(cat VERSION)"
+echo -e "\e[1;33m+----------------------------------------+\e[0m" | tee -a $logFile
+echo -e "\e[1;33m| VisioNature 2 GeoNature synthese setup |\e[0m" | tee -a $logFile
+echo -e "\e[1;33m+----------------------------------------+\e[0m" | tee -a $logFile
+echo -e "\n\e[1;34m(i)\e[0m VERSION $(cat VERSION)\n" | tee -a $logFile
 echo "" | tee -a $logFile
 
 if [ -f ./settings.ini ]; then
@@ -65,23 +65,10 @@ find tmp/ -type f -name "*.sql" -print0 | xargs -0 sed -i "s/src_lpodatas/${sche
 echo -e "\e[1;32m[X]\e[0m destination schema name updated to ${schemaDestination:-src_lpodatas}" | tee -a $logFile
 find tmp/ -type f -name "*.sql" -print0 | xargs -0 sed -i "s/dbSrid/${dbSrid:-2154}/g"
 echo -e "\e[1;32m[X]\e[0m main SRID updated to ${dbSrid:-2154}" | tee -a $logFile
-find tmp/ -type f -name "*.sql" -print0 | xargs -0 sed -i "s/geonatadmin/$dbUser/g"
-echo -e "\e[1;32m[X]\e[0m db username updated to $dbUser" | tee -a $logFile
+echo -e "\n" | tee -a $logFile
+echo -e "\e[1;32m+------------------------------------------------+\e[0m" | tee -a $logFile
+echo -e "\e[1;32m| You can now execute files from ./tmp directory |\e[0m" | tee -a $logFile
+echo -e "\e[1;32m| \e[1;33mMay the force be with you!\e[0m                     \e[1;32m|\e[0m" | tee -a $logFile
+echo -e "\e[1;32m+------------------------------------------------+\e[0m" | tee -a $logFile
 
-# echo "" | tee -a $logFile
 
-# echo -e "\e[1;34m(i)\e[0m \e[1;32mOpen your preferred SQL tool and execute successively each SQL files from tmp directory \e[0m"
-#
-#echo "# Check if source schema exists" | tee -a $logFile
-#schemaSourceExists=`psql  $connectionString  -X -A -t -c "SELECT exists(select schema_name FROM information_schema.schemata WHERE schema_name = '$schemaSource');"` | tee -a $logFile
-#echo "schemaSourceExists $schemaSourceExists"| tee -a $logFile
-#
-#if [ "$sourceSchemaExists" = "0" ]; then
-#    echo "# Schema  $sourceSchema exists, continue" | tee -a $logFile
-#else
-#    echo "# Schema  $sourceSchema doesn't exists, exit" | tee -a $logFile
-#fi
-#
-#echo "# Check if destination schema exists" | tee -a $logFile
-#schemaDestinationExists=`psql  $connectionString  -X -A -t -c "SELECT exists(select schema_name FROM information_schema.schemata WHERE schema_name = '$schemaDestination'); "` | tee -a $logFile
-#echo $schemaDestinationExists | tee -a $logFile
