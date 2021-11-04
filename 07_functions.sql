@@ -6,6 +6,7 @@ A collection of various helper fonctions
 
 
 /* Function to get taxo group from visionature id_species */
+
 BEGIN
 ;
 
@@ -251,6 +252,43 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql
 ;
+
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_committees_validation_status(_committees_validation JSONB)
+;
+
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_committees_validation_status(_committees_validation JSONB)
+    RETURNS TEXT[] AS
+$$
+DECLARE
+    the_values TEXT[];
+    the_rec    RECORD;
+BEGIN
+    FOR the_rec IN (SELECT jsonb_object_keys(_committees_validation) AS key)
+        LOOP
+            SELECT
+                array_append(the_values, _committees_validation ->> the_rec.key)
+                INTO the_values;
+        END LOOP;
+    RETURN the_values;
+END;
+$$ LANGUAGE plpgsql
+;
+
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_committees_validation_is_accepted(_committees_validation JSONB)
+;
+
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_committees_validation_is_accepted(_committees_validation JSONB)
+    RETURNS BOOLEAN AS
+$$
+DECLARE
+    is_accepted BOOLEAN;
+BEGIN
+    SELECT 'ACCEPTED' = ANY (src_lpodatas.fct_c_get_committees_validation_status(_committees_validation)) INTO is_accepted;
+    RETURN is_accepted;
+END;
+$$ LANGUAGE plpgsql
+;
+
 
 COMMIT
 ;

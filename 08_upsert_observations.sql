@@ -65,7 +65,7 @@ DECLARE
     the_altitude_max                         INTEGER;
     _the_geom_4326                           GEOMETRY(Geometry, 4326);
     _the_geom_point                          GEOMETRY(Point, 4326);
-    _the_geom_local                          GEOMETRY(Geometry, 4326);
+    _the_geom_local                          GEOMETRY(Geometry, :local_srid);
     the_date_min                             TIMESTAMP;
     the_date_max                             TIMESTAMP;
     the_validation_comment                   TEXT;
@@ -206,10 +206,12 @@ BEGIN
     SELECT
         -- When chr or chn accepted then certain, when admin_hidden then is douteux else probable.
         CASE
-            WHEN new.item #>> '{observers,0,committees_validation,chr}' LIKE 'ACCEPTED'
-                OR new.item #>> '{observers,0,committees_validation,chn}' LIKE 'ACCEPTED' THEN
+            WHEN src_lpodatas.fct_c_get_committees_validation_is_accepted(new.item #> '{observers,0,committees_validation}')
+                THEN
                 ref_nomenclatures.get_id_nomenclature('STATUT_VALID', '1')
-            WHEN cast(new.item #>> '{observers,0,admin_hidden}' AS BOOLEAN) THEN
+            WHEN cast(new.item #>> '{observers,0,admin_hidden}' AS BOOLEAN) OR
+                 NOT src_lpodatas.fct_c_get_committees_validation_is_accepted(new.item #> '{observers,0,committees_validation}')
+                THEN
                 ref_nomenclatures.get_id_nomenclature('STATUT_VALID', '3')
             ELSE
                 ref_nomenclatures.get_id_nomenclature('STATUT_VALID', '2')
@@ -314,7 +316,7 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
         _the_geom_4326
         INTO _the_geom_point;
     SELECT
-        public.st_transform(_the_geom_4326, (gn_commons.get_default_parameter('local_srid'))::int)
+        public.st_transform(_the_geom_4326, (gn_commons.get_default_parameter('local_srid'))::INT)
         INTO _the_geom_local;
     SELECT
         to_timestamp(cast(new.item #>> '{date,@timestamp}' AS DOUBLE PRECISION))
