@@ -13,7 +13,7 @@ CREATE TABLE taxonomie.cor_c_vn_taxref
 )
 ;
 
-CREATE UNIQUE INDEX ON taxonomie.cor_c_vn_taxref (vn_id, taxref_id)
+CREATE UNIQUE INDEX i_uniq_cor_c_vn_taxref ON taxonomie.cor_c_vn_taxref (vn_id, taxref_id)
 ;
 
 COMMENT ON TABLE taxonomie.cor_c_vn_taxref IS 'Correlation between taxref cd_nom (taxref) and VisioNature species id (src_vn.species).'
