@@ -130,7 +130,7 @@ BEGIN
         src_lpodatas.fct_c_upsert_or_get_source_from_visionature(new.site)
         INTO the_id_source;
     SELECT
-        new.id
+        new.id::TEXT
         INTO the_entity_source_pk_value;
     IF new.item #> '{observers,0}' ? 'project_code'
     THEN
@@ -138,18 +138,6 @@ BEGIN
             src_lpodatas.fct_c_get_or_insert_dataset_from_shortname(new.item #>> '{observers,0,project_code}',
                                                                     'visionature_default_dataset',
                                                                     'visionature_default_acquisition_framework')
-            INTO the_id_dataset;
-    ELSIF (new.site IN ('vn01', 'vn07', 'vn26', 'vn38', 'vn42', 'vn74', 'vn73', 'vn69') AND
-           new.item #>> '{species,taxonomy}' = '8')
-    THEN
-        SELECT
-            src_lpodatas.fct_c_get_or_insert_dataset_from_shortname_with_af_id('LPO_SYMPETRUM',
-                                                                               NULL,
-                                                                               src_lpodatas.fct_c_get_or_insert_basic_acquisition_framework(
-                                                                                       'LPO_SYMPETRUM',
-                                                                                       'CA LPO-SYMPETRUM',
-                                                                                       now()::DATE)
-                )
             INTO the_id_dataset;
     ELSE
         SELECT
@@ -353,7 +341,9 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
     SELECT
         new.item #>> '{observers,0,comment}'
         INTO the_comments;
-    SELECT src_lpodatas.fct_c_get_source_url(the_id_source, the_entity_source_pk_value) INTO the_reference_biblio;
+    SELECT
+        src_lpodatas.fct_c_get_source_url(the_id_source, the_entity_source_pk_value)
+        INTO the_reference_biblio;
     --     SELECT
 --         to_timestamp(cast(new.item #>> '{observers,0,insert_date}' AS DOUBLE PRECISION))
 --         INTO the_meta_create_date;

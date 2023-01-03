@@ -203,7 +203,7 @@ BEGIN
                 JOIN utilisateurs.bib_organismes ON t_roles.id_organisme = bib_organismes.id_organisme
         WHERE
               t_roles.champs_addi #>> '{from_vn,id_universal}' = _uid
-          AND t_datasets.additional_data ->> '{standard_name}' = bib_organismes.additional_data #>> '{from_vn, short_name}'
+          AND t_datasets.additional_data #>> '{standard_name}' = bib_organismes.additional_data #>> '{from_vn, short_name}'
         LIMIT 1;
     RETURN thedatasetid;
 END;

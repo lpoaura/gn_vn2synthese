@@ -5,7 +5,6 @@ Add main new data
 
 
 */
-
 BEGIN
 ;
 
@@ -83,21 +82,21 @@ ON CONFLICT
 --     now();
 
 
-SELECT
-    count(*)
-    FROM
-        gn_synthese.synthese
-    WHERE
-            id_dataset =
 -- SELECT
-            src_lpodatas.fct_c_get_or_insert_dataset_from_shortname_with_af_id(
-                    gn_commons.get_default_parameter('visionature_default_acquisition_framework'),
-                    gn_commons.get_default_parameter('visionature_default_dataset'),
-                    src_lpodatas.fct_c_get_or_insert_basic_acquisition_framework(
-                            gn_commons.get_default_parameter('visionature_default_acquisition_framework'),
-                            '[Ne pas toucher] Cadre d''acquisition par défaut pour tout nouveau code étude',
-                            '1900-01-01'))
-;
+--     count(*)
+--     FROM
+--         gn_synthese.synthese
+--     WHERE
+--             id_dataset =
+-- -- SELECT
+--             src_lpodatas.fct_c_get_or_insert_dataset_from_shortname_with_af_id(
+--                     gn_commons.get_default_parameter('visionature_default_acquisition_framework'),
+--                     gn_commons.get_default_parameter('visionature_default_dataset'),
+--                     src_lpodatas.fct_c_get_or_insert_basic_acquisition_framework(
+--                             gn_commons.get_default_parameter('visionature_default_acquisition_framework'),
+--                             '[Ne pas toucher] Cadre d''acquisition par défaut pour tout nouveau code étude',
+--                             '1900-01-01'))
+-- ;
 
 COMMIT
 ;
