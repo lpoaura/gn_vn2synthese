@@ -112,85 +112,71 @@ BEGIN
     SELECT clock_timestamp() INTO start_ts;
     RAISE DEBUG '-- % -- START SCRIPT', start_ts;
     RAISE DEBUG '-- % -- Populate variables > Beginning', start_ts;
-    SELECT
-        cast(new.item #>> '{species,@id}' AS INTEGER)
-        INTO the_id_sp_source;
+    SELECT cast(new.item #>> '{species,@id}' AS INTEGER)
+    INTO the_id_sp_source;
 
     /* Partie gn_synthese.synthese */
-    SELECT
-        coalesce(cast(new.item #>> '{observers,0,uuid}' AS UUID),
-                 src_lpodatas.fct_c_get_observation_uuid(new.site, new.id))
-        INTO the_unique_id_sinp;
+    SELECT coalesce(cast(new.item #>> '{observers,0,uuid}' AS UUID),
+                    src_lpodatas.fct_c_get_observation_uuid(new.site, new.id))
+    INTO the_unique_id_sinp;
     RAISE DEBUG 'UUID is %', the_unique_id_sinp;
     /* TODO récupérer un UUID pour les formulaires */
-    SELECT
-        NULL
-        INTO the_unique_id_sinp_grp;
-    SELECT
-        src_lpodatas.fct_c_upsert_or_get_source_from_visionature(new.site)
-        INTO the_id_source;
-    SELECT
-        new.id::TEXT
-        INTO the_entity_source_pk_value;
+    SELECT NULL
+    INTO the_unique_id_sinp_grp;
+    SELECT src_lpodatas.fct_c_upsert_or_get_source_from_visionature(new.site)
+    INTO the_id_source;
+    SELECT new.id::TEXT
+    INTO the_entity_source_pk_value;
     IF new.item #> '{observers,0}' ? 'project_code'
     THEN
-        SELECT
-            src_lpodatas.fct_c_get_or_insert_dataset_from_shortname(new.item #>> '{observers,0,project_code}',
-                                                                    'visionature_default_dataset',
-                                                                    'visionature_default_acquisition_framework')
-            INTO the_id_dataset;
+        SELECT src_lpodatas.fct_c_get_or_insert_dataset_from_shortname(new.item #>> '{observers,0,project_code}',
+                                                                       'visionature_default_dataset',
+                                                                       'visionature_default_acquisition_framework')
+        INTO the_id_dataset;
     ELSE
-        SELECT
-            coalesce(src_lpodatas.fct_c_get_dataset_from_observer_uid(new.item #>> '{observers,0,@uid}'),
-                     src_lpodatas.fct_c_get_or_insert_dataset_from_shortname(NULL,
-                                                                             'visionature_default_dataset',
-                                                                             'visionature_default_acquisition_framework'))
-            INTO the_id_dataset;
+        SELECT coalesce(src_lpodatas.fct_c_get_dataset_from_observer_uid(new.item #>> '{observers,0,@uid}'),
+                        src_lpodatas.fct_c_get_or_insert_dataset_from_shortname(NULL,
+                                                                                'visionature_default_dataset',
+                                                                                'visionature_default_acquisition_framework'))
+        INTO the_id_dataset;
     END IF;
-    SELECT
-        ref_nomenclatures.fct_c_get_synonyms_nomenclature('NAT_OBJ_GEO', new.item #>> '{observers,0,precision}')
-        INTO the_id_nomenclature_geo_object_nature;
-    SELECT
-        gn_synthese.get_default_nomenclature_value('TYP_GRP'::CHARACTER VARYING)
-        INTO the_id_nomenclature_grp_typ;
+    SELECT ref_nomenclatures.fct_c_get_synonyms_nomenclature('NAT_OBJ_GEO', new.item #>> '{observers,0,precision}')
+    INTO the_id_nomenclature_geo_object_nature;
+    SELECT gn_synthese.get_default_nomenclature_value('TYP_GRP'::CHARACTER VARYING)
+    INTO the_id_nomenclature_grp_typ;
     -- SELECT gn_synthese.get_default_nomenclature_value('METH_OBS') INTO the_id_nomenclature_obs_meth;
     --         ref_nomenclatures.fct_c_get_synonyms_nomenclature('METH_OBS',
     --                                                          new.item #>> '{observers,0,details,0,condition}')
-    SELECT
-        ref_nomenclatures.get_id_nomenclature('METH_OBS', '21')
-        INTO the_id_nomenclature_obs_technique;
+    SELECT ref_nomenclatures.get_id_nomenclature('METH_OBS', '21')
+    INTO the_id_nomenclature_obs_technique;
     --         coalesce(
     --                 ref_nomenclatures.fct_c_get_synonyms_nomenclature('TECHNIQUE_OBS',
     --                                                                  new.item #>> '{observers,0,details,0,condition}'),
     --                 ref_nomenclatures.fct_c_get_synonyms_nomenclature('TECHNIQUE_OBS',
     --                                                                  new.item #>> '{observers,0,details,0,age}'))
     --     SELECT gn_synthese.get_default_nomenclature_value('STATUT_BIO') INTO the_id_nomenclature_bio_status;
-    SELECT
-        coalesce(coalesce(ref_nomenclatures.fct_c_get_synonyms_nomenclature('STATUT_BIO',
-                                                                            new.item #>>
-                                                                            '{observers,0,atlas_code}'),
-                          ref_nomenclatures.fct_c_get_synonyms_nomenclature('STATUT_BIO', new.item #>>
-                                                                                          '{observers,0,details,0,condition}')),
-                 ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '1'))
-        INTO the_id_nomenclature_bio_status;
-    SELECT
-        ref_nomenclatures.get_id_nomenclature('ETA_BIO', '1')
-        INTO the_id_nomenclature_bio_condition;
-    --         coalesce(
-    --                 ref_nomenclatures.fct_c_get_synonyms_nomenclature('ETA_BIO',
-    --                                                                  new.item #>> '{observers,0,details,0,condition}'),
-    --             , gn_synthese.get_default_nomenclature_value('ETA_BIO'))
-    SELECT
-        ref_nomenclatures.get_id_nomenclature('NATURALITE', '0')
-        INTO the_id_nomenclature_naturalness;
-    SELECT
-        CASE
-            WHEN new.item #> '{observers,0}' ? 'medias' THEN
-                ref_nomenclatures.get_id_nomenclature('PREUVE_EXIST', '1')
-            ELSE
-                ref_nomenclatures.get_id_nomenclature('PREUVE_EXIST', '2')
-            END
-        INTO the_id_nomenclature_exist_proof;
+    SELECT coalesce(coalesce(ref_nomenclatures.fct_c_get_synonyms_nomenclature('STATUT_BIO',
+                                                                               new.item #>>
+                                                                               '{observers,0,atlas_code}'),
+                             ref_nomenclatures.fct_c_get_synonyms_nomenclature('STATUT_BIO', new.item #>>
+                                                                                             '{observers,0,details,0,condition}')),
+                    ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '1'))
+    INTO the_id_nomenclature_bio_status;
+    SELECT CASE
+               WHEN new.item #> '{observers,0,extended_info}' ? 'mortality' THEN
+                   ref_nomenclatures.get_id_nomenclature('ETA_BIO', '3')
+               ELSE ref_nomenclatures.get_id_nomenclature('ETA_BIO', '2')
+               END
+    INTO the_id_nomenclature_bio_condition;
+    SELECT ref_nomenclatures.get_id_nomenclature('NATURALITE', '0')
+    INTO the_id_nomenclature_naturalness;
+    SELECT CASE
+               WHEN new.item #> '{observers,0}' ? 'medias' THEN
+                   ref_nomenclatures.get_id_nomenclature('PREUVE_EXIST', '1')
+               ELSE
+                   ref_nomenclatures.get_id_nomenclature('PREUVE_EXIST', '2')
+               END
+    INTO the_id_nomenclature_exist_proof;
     SELECT
         -- When chr or chn accepted then certain, when admin_hidden then is douteux else probable.
         CASE
@@ -204,146 +190,116 @@ BEGIN
             ELSE
                 ref_nomenclatures.get_id_nomenclature('STATUT_VALID', '2')
             END
-        INTO the_id_nomenclature_valid_status;
-    SELECT
-        CASE
-            -- Taxons sensibles, règle dans la table src_lpodatas.t_c_rules_diffusion_level
-            WHEN the_cd_nom IN (SELECT cd_nom FROM src_lpodatas.t_c_rules_diffusion_level)
-                THEN src_lpodatas.fct_c_get_taxon_diffusion_level(the_cd_nom)
-            -- Observation "cachée"
-            WHEN cast(new.item #>> '{observers,0,hidden}' IS NOT NULL AS BOOL) THEN
-                ref_nomenclatures.get_id_nomenclature('NIV_PRECIS', '2')
-            -- Observation "invalide" (> refused) ou en ffquestionnement (> question)
-            WHEN new.item #>> '{observers,0,admin_hidden_type}' IN ('refused', 'question') THEN
-                ref_nomenclatures.get_id_nomenclature('NIV_PRECIS', '4')
-            ELSE
-                ref_nomenclatures.get_id_nomenclature('NIV_PRECIS', '5')
-            END
-        INTO the_id_nomenclature_diffusion_level;
+    INTO the_id_nomenclature_valid_status;
+    SELECT CASE
+               -- Taxons sensibles, règle dans la table src_lpodatas.t_c_rules_diffusion_level
+               WHEN the_cd_nom IN (SELECT cd_nom FROM src_lpodatas.t_c_rules_diffusion_level)
+                   THEN src_lpodatas.fct_c_get_taxon_diffusion_level(the_cd_nom)
+               -- Observation "cachée"
+               WHEN cast(new.item #>> '{observers,0,hidden}' IS NOT NULL AS BOOL) THEN
+                   ref_nomenclatures.get_id_nomenclature('NIV_PRECIS', '2')
+               -- Observation "invalide" (> refused) ou en ffquestionnement (> question)
+               WHEN new.item #>> '{observers,0,admin_hidden_type}' IN ('refused', 'question') THEN
+                   ref_nomenclatures.get_id_nomenclature('NIV_PRECIS', '4')
+               ELSE
+                   ref_nomenclatures.get_id_nomenclature('NIV_PRECIS', '5')
+               END
+    INTO the_id_nomenclature_diffusion_level;
     SELECT
         --         coalesce(ref_nomenclatures.fct_c_get_synonyms_nomenclature('STADE_VIE',
         --                                                                   new.item #>> '{observers,0,details,0,age}'),
         --                  gn_synthese.get_default_nomenclature_value('STADE_VIE'))
         ref_nomenclatures.get_id_nomenclature('STADE_VIE', '0')
-        INTO the_id_nomenclature_life_stage;
-    SELECT
-        ref_nomenclatures.get_id_nomenclature('SEXE', '0')
-        INTO the_id_nomenclature_sex;
-    SELECT
-        ref_nomenclatures.get_id_nomenclature('OBJ_DENBR', 'IND')
-        INTO the_id_nomenclature_obj_count;
+    INTO the_id_nomenclature_life_stage;
+    SELECT ref_nomenclatures.get_id_nomenclature('SEXE', '0')
+    INTO the_id_nomenclature_sex;
+    SELECT ref_nomenclatures.get_id_nomenclature('OBJ_DENBR', 'IND')
+    INTO the_id_nomenclature_obj_count;
     SELECT
 --         ref_nomenclatures.fct_c_get_synonyms_nomenclature('STADE_VIE', new.item #>> '{observers,0,estimation_code}')
 ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
-        INTO the_id_nomenclature_type_count;
-    SELECT
-        CASE
-            WHEN cast(new.item #>> '{observers,0,hidden}' AS BOOLEAN) THEN
-                ref_nomenclatures.get_id_nomenclature('SENSIBILITE', '4')
-            ELSE
-                ref_nomenclatures.get_id_nomenclature('SENSIBILITE', '0')
-            END
-        INTO the_id_nomenclature_sensitivity;
-    SELECT
-        CASE
-            WHEN ((new.item #>> '{observers,0,count}' = '0'
-                AND new.item #>> '{observers,0,estimation_code}' LIKE 'EXACT_VALUE') OR
-                  (new.item #>> '{observers,0,atlas_code}' = '99')) THEN
-                ref_nomenclatures.get_id_nomenclature('STATUT_OBS', 'No')
-            ELSE
-                ref_nomenclatures.get_id_nomenclature('STATUT_OBS', 'Pr')
-            END
-        INTO the_id_nomenclature_observation_status;
-    SELECT
-        ref_nomenclatures.get_id_nomenclature('DEE_FLOU', 'NON')
-        INTO the_id_nomenclature_blurring;
-    SELECT
-        ref_nomenclatures.get_id_nomenclature('STATUT_SOURCE', 'Te')
-        INTO the_id_nomenclature_source_status;
-    SELECT
-        ref_nomenclatures.get_id_nomenclature('TYP_INF_GEO', '1')
-        INTO the_id_nomenclature_info_geo_type;
-    SELECT
-        cast(new.item #>> '{observers,0,count}' AS INTEGER)
-        INTO the_count_min;
-    SELECT
-        cast(new.item #>> '{observers,0,count}' AS INTEGER)
-        INTO the_count_max;
-    SELECT
-        cast(coalesce(src_lpodatas.fct_c_get_taxref_values_from_vn('cd_nom'::TEXT,
-                                                                   cast(new.item #>> '{species,@id}' AS INTEGER)),
-                      gn_commons.get_default_parameter('visionature_default_cd_nom')) AS INTEGER)
-        INTO the_cd_nom;
-    SELECT
-        src_lpodatas.fct_c_get_species_values_from_vn('latin_name'::TEXT, the_id_sp_source)
-        INTO the_nom_cite;
-    SELECT
-        gn_commons.get_default_parameter('taxref_version', NULL)
-        INTO the_meta_v_taxref;
-    SELECT
-        NULL
-        INTO the_sample_number_proof;
-    SELECT
-        src_lpodatas.fct_c_get_medias_url_from_visionature_medias_array(new.item #> '{observers,0,medias}')
-        INTO the_digital_proof;
-    SELECT
-        NULL
-        INTO the_non_digital_proof;
-    SELECT
-        cast(new.item #>> '{observers,0,altitude}' AS INTEGER)
-        INTO the_altitude_min;
-    SELECT
-        cast(new.item #>> '{observers,0,altitude}' AS INTEGER)
-        INTO the_altitude_max;
-    SELECT
-        public.st_setsrid(public.st_makepoint(cast(((new.item -> 'observers') -> 0) ->> 'coord_lon' AS FLOAT),
-                                              cast(((new.item -> 'observers') -> 0) ->> 'coord_lat' AS FLOAT)),
-                          4326)
-        INTO _the_geom_4326;
-    SELECT
-        _the_geom_4326
-        INTO _the_geom_point;
-    SELECT
-        public.st_transform(_the_geom_4326, (gn_commons.get_default_parameter('local_srid'))::INT)
-        INTO _the_geom_local;
-    SELECT
-        to_timestamp(cast(new.item #>> '{date,@timestamp}' AS DOUBLE PRECISION))
-        INTO the_date_min;
-    SELECT
-        to_timestamp(cast(new.item #>> '{date,@timestamp}' AS DOUBLE PRECISION))
-        INTO the_date_max;
-    SELECT
-        NULL
-        INTO the_validation_comment;
-    SELECT
-        CASE
-            WHEN (new.item #> '{observers,0}') ? 'second_hand' AND (new.item #>> '{observers,0,second_hand}') = '1'
-                THEN NULL
-            ELSE src_lpodatas.fct_c_get_role_name_from_visionature_uid(new.item #>> '{observers,0,@uid}', TRUE) END
-        INTO the_observers;
-    SELECT
-        CASE
-            WHEN (new.item #> '{observers,0}') ? 'second_hand' AND (new.item #>> '{observers,0,second_hand}') = '1'
-                THEN NULL
-            ELSE src_lpodatas.fct_c_get_role_name_from_visionature_uid(new.item #>> '{observers,0,@uid}', FALSE) END
-        INTO the_observers_extended;
+    INTO the_id_nomenclature_type_count;
+    SELECT CASE
+               WHEN cast(new.item #>> '{observers,0,hidden}' AS BOOLEAN) THEN
+                   ref_nomenclatures.get_id_nomenclature('SENSIBILITE', '4')
+               ELSE
+                   ref_nomenclatures.get_id_nomenclature('SENSIBILITE', '0')
+               END
+    INTO the_id_nomenclature_sensitivity;
+    SELECT CASE
+               WHEN ((new.item #>> '{observers,0,count}' = '0'
+                   AND new.item #>> '{observers,0,estimation_code}' LIKE 'EXACT_VALUE') OR
+                     (new.item #>> '{observers,0,atlas_code}' = '99')) THEN
+                   ref_nomenclatures.get_id_nomenclature('STATUT_OBS', 'No')
+               ELSE
+                   ref_nomenclatures.get_id_nomenclature('STATUT_OBS', 'Pr')
+               END
+    INTO the_id_nomenclature_observation_status;
+    SELECT ref_nomenclatures.get_id_nomenclature('DEE_FLOU', 'NON')
+    INTO the_id_nomenclature_blurring;
+    SELECT ref_nomenclatures.get_id_nomenclature('STATUT_SOURCE', 'Te')
+    INTO the_id_nomenclature_source_status;
+    SELECT ref_nomenclatures.get_id_nomenclature('TYP_INF_GEO', '1')
+    INTO the_id_nomenclature_info_geo_type;
+    SELECT cast(new.item #>> '{observers,0,count}' AS INTEGER)
+    INTO the_count_min;
+    SELECT cast(new.item #>> '{observers,0,count}' AS INTEGER)
+    INTO the_count_max;
+    SELECT cast(coalesce(src_lpodatas.fct_c_get_taxref_values_from_vn('cd_nom'::TEXT,
+                                                                      cast(new.item #>> '{species,@id}' AS INTEGER)),
+                         gn_commons.get_default_parameter('visionature_default_cd_nom')) AS INTEGER)
+    INTO the_cd_nom;
+    SELECT src_lpodatas.fct_c_get_species_values_from_vn('latin_name'::TEXT, the_id_sp_source)
+    INTO the_nom_cite;
+    SELECT gn_commons.get_default_parameter('taxref_version', NULL)
+    INTO the_meta_v_taxref;
+    SELECT NULL
+    INTO the_sample_number_proof;
+    SELECT src_lpodatas.fct_c_get_medias_url_from_visionature_medias_array(new.item #> '{observers,0,medias}')
+    INTO the_digital_proof;
+    SELECT NULL
+    INTO the_non_digital_proof;
+    SELECT cast(new.item #>> '{observers,0,altitude}' AS INTEGER)
+    INTO the_altitude_min;
+    SELECT cast(new.item #>> '{observers,0,altitude}' AS INTEGER)
+    INTO the_altitude_max;
+    SELECT public.st_setsrid(public.st_makepoint(cast(((new.item -> 'observers') -> 0) ->> 'coord_lon' AS FLOAT),
+                                                 cast(((new.item -> 'observers') -> 0) ->> 'coord_lat' AS FLOAT)),
+                             4326)
+    INTO _the_geom_4326;
+    SELECT _the_geom_4326
+    INTO _the_geom_point;
+    SELECT public.st_transform(_the_geom_4326, (gn_commons.get_default_parameter('gn_local_srid'))::INT)
+    INTO _the_geom_local;
+    SELECT to_timestamp(cast(new.item #>> '{observers,0,timing,@timestamp}' AS DOUBLE PRECISION))
+    INTO the_date_min;
+    SELECT to_timestamp(cast(new.item #>> '{observers,0,timing,@timestamp}' AS DOUBLE PRECISION))
+    INTO the_date_max;
+    SELECT NULL
+    INTO the_validation_comment;
+    SELECT CASE
+               WHEN (new.item #> '{observers,0}') ? 'second_hand' AND (new.item #>> '{observers,0,second_hand}') = '1'
+                   THEN NULL
+               ELSE src_lpodatas.fct_c_get_role_name_from_visionature_uid(new.item #>> '{observers,0,@uid}', TRUE) END
+    INTO the_observers;
+    SELECT CASE
+               WHEN (new.item #> '{observers,0}') ? 'second_hand' AND (new.item #>> '{observers,0,second_hand}') = '1'
+                   THEN NULL
+               ELSE src_lpodatas.fct_c_get_role_name_from_visionature_uid(new.item #>> '{observers,0,@uid}', FALSE) END
+    INTO the_observers_extended;
     SELECT the_observers INTO the_determiner;
-    SELECT
-        src_lpodatas.fct_c_get_id_role_from_visionature_uid(new.item #>> '{observers,0,@uid}', TRUE)
-        INTO the_id_digitiser;
-    SELECT
-        gn_synthese.get_default_nomenclature_value('METH_DETERMIN')
-        INTO the_id_nomenclature_determination_method;
+    SELECT src_lpodatas.fct_c_get_id_role_from_visionature_uid(new.item #>> '{observers,0,@uid}', TRUE)
+    INTO the_id_digitiser;
+    SELECT gn_synthese.get_default_nomenclature_value('METH_DETERMIN')
+    INTO the_id_nomenclature_determination_method;
     --         COALESCE(
     --                 ref_nomenclatures.fct_c_get_synonyms_nomenclature('METH_DETERMIN',
     --                                                                  new.item #>> '{observers,0,details,0,condition}'),
     --             , gn_synthese.get_default_nomenclature_value('METH_DETERMIN'))
-    SELECT
-        new.item #>> '{observers,0,comment}'
-        INTO the_comments;
-    SELECT
-        src_lpodatas.fct_c_get_source_url(the_id_source, the_entity_source_pk_value)
-        INTO the_reference_biblio;
+    SELECT new.item #>> '{observers,0,comment}'
+    INTO the_comments;
+    SELECT src_lpodatas.fct_c_get_source_url(the_id_source, the_entity_source_pk_value)
+    INTO the_reference_biblio;
     --     SELECT
 --         to_timestamp(cast(new.item #>> '{observers,0,insert_date}' AS DOUBLE PRECISION))
 --         INTO the_meta_create_date;
@@ -352,97 +308,72 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
 --         INTO the_meta_update_date;
 
     /* Partie .t_c_synthese_extended */
-    SELECT
-        src_lpodatas.fct_c_get_taxo_group_values_from_vn('name', new.site,
-                                                         cast(new.item #>> '{species,taxonomy}' AS INT))
-        INTO the_taxo_group;
-    SELECT
-            src_lpodatas.fct_c_get_taxref_values_from_vn('id_rang'::TEXT,
-                                                         cast(new.item #>> '{species,@id}' AS INTEGER)) IN
-            ('ES', 'SSES')
-        INTO the_taxo_real;
-    SELECT
-        CASE
-            WHEN src_lpodatas.fct_c_get_taxref_values_from_vn('nom_vern'::TEXT, the_id_sp_source) IS NOT NULL THEN
-                split_part(src_lpodatas.fct_c_get_taxref_values_from_vn('nom_vern'::TEXT, the_id_sp_source), ',', 1)
-            ELSE
-                src_lpodatas.fct_c_get_species_values_from_vn('french_name'::TEXT, the_id_sp_source)
-            END
-        INTO the_common_name;
-    SELECT
-        encode(hmac(cast((new.item #>> '{observers,0,@uid}') AS TEXT), 'cyifoE!A5r', 'sha1'), 'hex')
-        INTO the_pseudo_observer_uid;
-    SELECT
-        cast(new.item #>> '{observers,0,atlas_code}' AS INTEGER)
-        INTO the_bird_breed_code;
-    SELECT
-        CASE
-            WHEN (new.item #> '{observers,0}') ? 'atlas_code' THEN
-                ref_nomenclatures.get_nomenclature_label_by_cdnom_mnemonique('VN_ATLAS_CODE',
-                                                                             new.item #>>
-                                                                             '{observers,0,atlas_code}')
-            ELSE
-                NULL
-            END
-        INTO the_bird_breed_status;
-    SELECT
-        NULL
-        INTO the_bat_breed_colo;
-    SELECT
-        NULL
-        INTO the_bat_is_gite;
-    SELECT
-        NULL
-        INTO the_bat_period;
-    SELECT
-        new.item #>> '{observers,0,estimation_code}'
-        INTO the_estimation_code;
-    SELECT
-        cast(extract(YEAR FROM to_timestamp(cast(new.item #>> '{date,@timestamp}' AS DOUBLE PRECISION))) AS INTEGER)
-        INTO the_date_year;
-    SELECT
-        cast(((new.item #>> '{observers,0,extended_info,mortality}'::TEXT[]) IS NOT NULL) AS BOOLEAN)
-        INTO the_mortality;
-    SELECT
-        new.item #>> '{observers,0,extended_info, mortality, death_cause2}'
-        INTO the_mortality_cause;
-    SELECT
-        FALSE
-        INTO the_export_excluded;
-    SELECT
-        new.item #>> '{observers,0,project_code}'
-        INTO the_project_code;
-    SELECT
-        src_lpodatas.fct_c_get_entity_from_observer_site_uid(cast((new.item #>> '{observers,0,@uid}') AS INTEGER),
-                                                             new.site)
-        INTO the_juridical_person;
-    SELECT
-        src_lpodatas.fct_c_get_behaviours_texts_array_from_id_array(new.item #> '{observers,0,behaviours}')
-        INTO the_behaviour;
-    SELECT
-        new.item #>> '{observers,0,precision}'
-        INTO the_geo_accuracy;
-    SELECT
-        new.item #> '{observers,0,details}'
-        INTO the_details;
-    SELECT
-        cast(new.item #>> '{place,@id}' AS INTEGER)
-        INTO the_id_place;
-    SELECT
-        new.item #>> '{place,name}'
-        INTO the_place;
-    SELECT
-        new.id_form_universal
-        INTO the_id_form;
-    SELECT
-        coalesce(NOT cast(new.item #>> '{observers,0,admin_hidden}' AS BOOLEAN), TRUE)
-        INTO the_is_valid;
-    SELECT
-        new.item #>> '{observers,0,hidden_comment}'
-        INTO the_private_comment;
-    SELECT
-        cast(new.item #>> '{observers,0,hidden}' IS NOT NULL AS BOOL)
-        INTO the_is_hidden;
+    SELECT src_lpodatas.fct_c_get_taxo_group_values_from_vn('name', new.site,
+                                                            cast(new.item #>> '{species,taxonomy}' AS INT))
+    INTO the_taxo_group;
+    SELECT src_lpodatas.fct_c_get_taxref_values_from_vn('id_rang'::TEXT,
+                                                        cast(new.item #>> '{species,@id}' AS INTEGER)) IN
+           ('ES', 'SSES')
+    INTO the_taxo_real;
+    SELECT CASE
+               WHEN src_lpodatas.fct_c_get_taxref_values_from_vn('nom_vern'::TEXT, the_id_sp_source) IS NOT NULL THEN
+                   split_part(src_lpodatas.fct_c_get_taxref_values_from_vn('nom_vern'::TEXT, the_id_sp_source), ',', 1)
+               ELSE
+                   src_lpodatas.fct_c_get_species_values_from_vn('french_name'::TEXT, the_id_sp_source)
+               END
+    INTO the_common_name;
+    SELECT encode(hmac(cast((new.item #>> '{observers,0,@uid}') AS TEXT), 'cyifoE!A5r', 'sha1'), 'hex')
+    INTO the_pseudo_observer_uid;
+    SELECT cast(new.item #>> '{observers,0,atlas_code}' AS INTEGER)
+    INTO the_bird_breed_code;
+    SELECT CASE
+               WHEN (new.item #> '{observers,0}') ? 'atlas_code' THEN
+                   ref_nomenclatures.get_nomenclature_label_by_cdnom_mnemonique('VN_ATLAS_CODE',
+                                                                                new.item #>>
+                                                                                '{observers,0,atlas_code}')
+               ELSE
+                   NULL
+               END
+    INTO the_bird_breed_status;
+    SELECT NULL
+    INTO the_bat_breed_colo;
+    SELECT NULL
+    INTO the_bat_is_gite;
+    SELECT NULL
+    INTO the_bat_period;
+    SELECT new.item #>> '{observers,0,estimation_code}'
+    INTO the_estimation_code;
+    SELECT cast(extract(YEAR FROM to_timestamp(cast(new.item #>> '{date,@timestamp}' AS DOUBLE PRECISION))) AS INTEGER)
+    INTO the_date_year;
+    SELECT cast(((new.item #>> '{observers,0,extended_info,mortality}'::TEXT[]) IS NOT NULL) AS BOOLEAN)
+    INTO the_mortality;
+    SELECT new.item #>> '{observers,0,extended_info, mortality, death_cause2}'
+    INTO the_mortality_cause;
+    SELECT FALSE
+    INTO the_export_excluded;
+    SELECT new.item #>> '{observers,0,project_code}'
+    INTO the_project_code;
+    SELECT src_lpodatas.fct_c_get_entity_from_observer_site_uid(cast((new.item #>> '{observers,0,@uid}') AS INTEGER),
+                                                                new.site)
+    INTO the_juridical_person;
+    SELECT src_lpodatas.fct_c_get_behaviours_texts_array_from_id_array(new.item #> '{observers,0,behaviours}')
+    INTO the_behaviour;
+    SELECT new.item #>> '{observers,0,precision}'
+    INTO the_geo_accuracy;
+    SELECT new.item #> '{observers,0,details}'
+    INTO the_details;
+    SELECT cast(new.item #>> '{place,@id}' AS INTEGER)
+    INTO the_id_place;
+    SELECT new.item #>> '{place,name}'
+    INTO the_place;
+    SELECT new.id_form_universal
+    INTO the_id_form;
+    SELECT coalesce(NOT cast(new.item #>> '{observers,0,admin_hidden}' AS BOOLEAN), TRUE)
+    INTO the_is_valid;
+    SELECT new.item #>> '{observers,0,hidden_comment}'
+    INTO the_private_comment;
+    SELECT cast(new.item #>> '{observers,0,hidden}' IS NOT NULL AS BOOL)
+    INTO the_is_hidden;
 
     RAISE DEBUG '-- % -- Populate variables > ENDING : duration %', start_ts, (SELECT (clock_timestamp() - start_ts));
     IF (tg_op = 'UPDATE')
@@ -503,122 +434,118 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
 --           , meta_create_date                     = the_meta_create_date
 --           , meta_update_date                     = now()
           , last_action                          = 'U'
-            WHERE
-                unique_id_sinp = the_unique_id_sinp
-            RETURNING id_synthese INTO the_id_synthese;
+        WHERE unique_id_sinp = the_unique_id_sinp
+        RETURNING id_synthese INTO the_id_synthese;
         RAISE DEBUG '-- % -- Update statement synthese when found > ENDING : total duration %', start_ts, (SELECT (clock_timestamp() - start_ts));
         IF NOT found THEN
             RAISE DEBUG 'Data % from site % not found, proceed INSERT to synthese', new.id, new.site;
             RAISE DEBUG '-- % -- Update statement synthese when NOT found > BEGINNING : total duration %', start_ts, (SELECT (clock_timestamp() - start_ts));
-            INSERT INTO
-                gn_synthese.synthese ( unique_id_sinp
-                                     , unique_id_sinp_grp
-                                     , id_source
-                                     , entity_source_pk_value
-                                     , id_dataset
-                                     , id_nomenclature_geo_object_nature
-                                     , id_nomenclature_grp_typ
-                                     ,
+            INSERT INTO gn_synthese.synthese ( unique_id_sinp
+                                             , unique_id_sinp_grp
+                                             , id_source
+                                             , entity_source_pk_value
+                                             , id_dataset
+                                             , id_nomenclature_geo_object_nature
+                                             , id_nomenclature_grp_typ
+                                             ,
                 -- , id_nomenclature_obs_meth
-                                       id_nomenclature_obs_technique
-                                     , id_nomenclature_bio_status
-                                     , id_nomenclature_bio_condition
-                                     , id_nomenclature_naturalness
-                                     , id_nomenclature_exist_proof
-                                     , id_nomenclature_valid_status
-                                     , id_nomenclature_diffusion_level
-                                     , id_nomenclature_life_stage
-                                     , id_nomenclature_sex
-                                     , id_nomenclature_obj_count
-                                     , id_nomenclature_type_count
-                                     , id_nomenclature_sensitivity
-                                     , id_nomenclature_observation_status
-                                     , id_nomenclature_blurring
-                                     , id_nomenclature_source_status
-                                     , id_nomenclature_info_geo_type
-                                     , count_min
-                                     , count_max
-                                     , cd_nom
-                                     , nom_cite
-                                     , meta_v_taxref
-                                     , sample_number_proof
-                                     , digital_proof
-                                     , non_digital_proof
-                                     , altitude_min
-                                     , altitude_max
-                                     , the_geom_4326
-                                     , the_geom_point
-                                     , the_geom_local
-                                     , date_min
-                                     , date_max
-                                     , validation_comment
-                                     , observers
-                                     , id_digitiser
-                                     , id_nomenclature_determination_method
-                                     , comment_description
-                                     , reference_biblio
+                                               id_nomenclature_obs_technique
+                                             , id_nomenclature_bio_status
+                                             , id_nomenclature_bio_condition
+                                             , id_nomenclature_naturalness
+                                             , id_nomenclature_exist_proof
+                                             , id_nomenclature_valid_status
+                                             , id_nomenclature_diffusion_level
+                                             , id_nomenclature_life_stage
+                                             , id_nomenclature_sex
+                                             , id_nomenclature_obj_count
+                                             , id_nomenclature_type_count
+                                             , id_nomenclature_sensitivity
+                                             , id_nomenclature_observation_status
+                                             , id_nomenclature_blurring
+                                             , id_nomenclature_source_status
+                                             , id_nomenclature_info_geo_type
+                                             , count_min
+                                             , count_max
+                                             , cd_nom
+                                             , nom_cite
+                                             , meta_v_taxref
+                                             , sample_number_proof
+                                             , digital_proof
+                                             , non_digital_proof
+                                             , altitude_min
+                                             , altitude_max
+                                             , the_geom_4326
+                                             , the_geom_point
+                                             , the_geom_local
+                                             , date_min
+                                             , date_max
+                                             , validation_comment
+                                             , observers
+                                             , id_digitiser
+                                             , id_nomenclature_determination_method
+                                             , comment_description
+                                             , reference_biblio
 --                                      , meta_create_date
 --                                      , meta_update_date
-                                     , last_action)
-                VALUES
-                    ( the_unique_id_sinp
-                    , the_unique_id_sinp_grp
-                    , the_id_source
-                    , the_entity_source_pk_value
-                    , the_id_dataset
-                    , the_id_nomenclature_geo_object_nature
-                    , the_id_nomenclature_grp_typ
-                    ,
-                        -- , the_id_nomenclature_obs_meth
-                      the_id_nomenclature_obs_technique
-                    , the_id_nomenclature_bio_status
-                    , the_id_nomenclature_bio_condition
-                    , the_id_nomenclature_naturalness
-                    , the_id_nomenclature_exist_proof
-                    , the_id_nomenclature_valid_status
-                    , the_id_nomenclature_diffusion_level
-                    , the_id_nomenclature_life_stage
-                    , the_id_nomenclature_sex
-                    , the_id_nomenclature_obj_count
-                    , the_id_nomenclature_type_count
-                    , the_id_nomenclature_sensitivity
-                    , the_id_nomenclature_observation_status
-                    , the_id_nomenclature_blurring
-                    , the_id_nomenclature_source_status
-                    , the_id_nomenclature_info_geo_type
-                    , the_count_min
-                    , the_count_max
-                    , the_cd_nom
-                    , the_nom_cite
-                    , the_meta_v_taxref
-                    , the_sample_number_proof
-                    , the_digital_proof
-                    , the_non_digital_proof
-                    , the_altitude_min
-                    , the_altitude_max
-                    , _the_geom_4326
-                    , _the_geom_point
-                    , _the_geom_local
-                    , the_date_min
-                    , the_date_max
-                    , the_validation_comment
-                    , the_observers
-                    , the_id_digitiser
-                    , the_id_nomenclature_determination_method
-                    , the_comments
-                    , the_reference_biblio
+                                             , last_action)
+            VALUES ( the_unique_id_sinp
+                   , the_unique_id_sinp_grp
+                   , the_id_source
+                   , the_entity_source_pk_value
+                   , the_id_dataset
+                   , the_id_nomenclature_geo_object_nature
+                   , the_id_nomenclature_grp_typ
+                   ,
+                       -- , the_id_nomenclature_obs_meth
+                     the_id_nomenclature_obs_technique
+                   , the_id_nomenclature_bio_status
+                   , the_id_nomenclature_bio_condition
+                   , the_id_nomenclature_naturalness
+                   , the_id_nomenclature_exist_proof
+                   , the_id_nomenclature_valid_status
+                   , the_id_nomenclature_diffusion_level
+                   , the_id_nomenclature_life_stage
+                   , the_id_nomenclature_sex
+                   , the_id_nomenclature_obj_count
+                   , the_id_nomenclature_type_count
+                   , the_id_nomenclature_sensitivity
+                   , the_id_nomenclature_observation_status
+                   , the_id_nomenclature_blurring
+                   , the_id_nomenclature_source_status
+                   , the_id_nomenclature_info_geo_type
+                   , the_count_min
+                   , the_count_max
+                   , the_cd_nom
+                   , the_nom_cite
+                   , the_meta_v_taxref
+                   , the_sample_number_proof
+                   , the_digital_proof
+                   , the_non_digital_proof
+                   , the_altitude_min
+                   , the_altitude_max
+                   , _the_geom_4326
+                   , _the_geom_point
+                   , _the_geom_local
+                   , the_date_min
+                   , the_date_max
+                   , the_validation_comment
+                   , the_observers
+                   , the_id_digitiser
+                   , the_id_nomenclature_determination_method
+                   , the_comments
+                   , the_reference_biblio
 --                     , now()
 --                     , the_meta_update_date
-                    , 'U')
-                RETURNING id_synthese INTO the_id_synthese;
+                   , 'U')
+            RETURNING id_synthese INTO the_id_synthese;
             RAISE DEBUG '-- % -- Update statement synthese when NOT found > ENDING : total duration %', start_ts, (SELECT (clock_timestamp() - start_ts));
         END IF;
         -- Updating extended datas when raw data is updated
         RAISE DEBUG '-- % -- Update statement t_c_synthese_extended when found > BEGINNING : total duration %', start_ts, (SELECT (clock_timestamp() - start_ts));
         UPDATE
             src_lpodatas.t_c_synthese_extended
-        SET
-            id_synthese         = the_id_synthese
+        SET id_synthese         = the_id_synthese
           , id_sp_source        = the_id_sp_source
           , taxo_group          = the_taxo_group
           , taxo_real           = the_taxo_real
@@ -646,185 +573,179 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
           , private_comment     = the_private_comment
           , is_hidden           = the_is_hidden
           , observers           = the_observers_extended
-            WHERE
-                id_synthese = the_id_synthese;
+        WHERE id_synthese = the_id_synthese;
 
         IF NOT found THEN
             RAISE DEBUG 'Data % from site % not found, proceed INSERT to synthese_extended', new.id, new.site;
             RAISE DEBUG '-- % -- Update statement t_c_synthese_extended when NOT found > BEGINNING : total duration %', start_ts, (SELECT (clock_timestamp() - start_ts));
-            INSERT INTO
-                src_lpodatas.t_c_synthese_extended ( id_synthese
-                                                   , id_sp_source
-                                                   , taxo_group
-                                                   , taxo_real
-                                                   , common_name
-                                                   , pseudo_observer_uid
-                                                   , bird_breed_code
-                                                   , bird_breed_status
-                                                   , bat_breed_colo
-                                                   , bat_is_gite
-                                                   , bat_period
-                                                   , estimation_code
-                                                   , date_year
-                                                   , mortality
-                                                   , mortality_cause
-                                                   , export_excluded
-                                                   , project_code
-                                                   , juridical_person
-                                                   , behaviour
-                                                   , geo_accuracy
-                                                   , details
-                                                   , id_place
-                                                   , place
-                                                   , id_form
-                                                   , is_valid
-                                                   , private_comment
-                                                   , is_hidden
-                                                   , observers)
-                VALUES
-                    ( the_id_synthese
-                    , the_id_sp_source
-                    , the_taxo_group
-                    , the_taxo_real
-                    , the_common_name
-                    , the_pseudo_observer_uid
-                    , the_bird_breed_code
-                    , the_bird_breed_status
-                    , the_bat_breed_colo
-                    , the_bat_is_gite
-                    , the_bat_period
-                    , the_estimation_code
-                    , the_date_year
-                    , the_mortality
-                    , the_mortality_cause
-                    , the_export_excluded
-                    , the_project_code
-                    , the_juridical_person
-                    , the_behaviour
-                    , the_geo_accuracy
-                    , the_details
-                    , the_id_place
-                    , the_place
-                    , the_id_form
-                    , the_is_valid
-                    , the_private_comment
-                    , the_is_hidden
-                    , the_observers_extended);
+            INSERT INTO src_lpodatas.t_c_synthese_extended ( id_synthese
+                                                           , id_sp_source
+                                                           , taxo_group
+                                                           , taxo_real
+                                                           , common_name
+                                                           , pseudo_observer_uid
+                                                           , bird_breed_code
+                                                           , bird_breed_status
+                                                           , bat_breed_colo
+                                                           , bat_is_gite
+                                                           , bat_period
+                                                           , estimation_code
+                                                           , date_year
+                                                           , mortality
+                                                           , mortality_cause
+                                                           , export_excluded
+                                                           , project_code
+                                                           , juridical_person
+                                                           , behaviour
+                                                           , geo_accuracy
+                                                           , details
+                                                           , id_place
+                                                           , place
+                                                           , id_form
+                                                           , is_valid
+                                                           , private_comment
+                                                           , is_hidden
+                                                           , observers)
+            VALUES ( the_id_synthese
+                   , the_id_sp_source
+                   , the_taxo_group
+                   , the_taxo_real
+                   , the_common_name
+                   , the_pseudo_observer_uid
+                   , the_bird_breed_code
+                   , the_bird_breed_status
+                   , the_bat_breed_colo
+                   , the_bat_is_gite
+                   , the_bat_period
+                   , the_estimation_code
+                   , the_date_year
+                   , the_mortality
+                   , the_mortality_cause
+                   , the_export_excluded
+                   , the_project_code
+                   , the_juridical_person
+                   , the_behaviour
+                   , the_geo_accuracy
+                   , the_details
+                   , the_id_place
+                   , the_place
+                   , the_id_form
+                   , the_is_valid
+                   , the_private_comment
+                   , the_is_hidden
+                   , the_observers_extended);
         END IF;
     ELSEIF (tg_op = 'INSERT') THEN
         RAISE DEBUG 'Try insert data % from site %', new.id, new.site;
         RAISE DEBUG '-- % -- insert statement synthese when found > BEGINNING : total duration %', start_ts, (SELECT (clock_timestamp() - start_ts));
-        INSERT INTO
-            gn_synthese.synthese ( unique_id_sinp
-                                 , unique_id_sinp_grp
-                                 , id_source
-                                 , entity_source_pk_value
-                                 , id_dataset
-                                 , id_nomenclature_geo_object_nature
-                                 , id_nomenclature_grp_typ
-                                 ,
+        INSERT INTO gn_synthese.synthese ( unique_id_sinp
+                                         , unique_id_sinp_grp
+                                         , id_source
+                                         , entity_source_pk_value
+                                         , id_dataset
+                                         , id_nomenclature_geo_object_nature
+                                         , id_nomenclature_grp_typ
+                                         ,
             -- , id_nomenclature_obs_meth
-                                   id_nomenclature_obs_technique
-                                 , id_nomenclature_bio_status
-                                 , id_nomenclature_bio_condition
-                                 , id_nomenclature_naturalness
-                                 , id_nomenclature_exist_proof
-                                 , id_nomenclature_valid_status
-                                 , id_nomenclature_diffusion_level
-                                 , id_nomenclature_life_stage
-                                 , id_nomenclature_sex
-                                 , id_nomenclature_obj_count
-                                 , id_nomenclature_type_count
-                                 , id_nomenclature_sensitivity
-                                 , id_nomenclature_observation_status
-                                 , id_nomenclature_blurring
-                                 , id_nomenclature_source_status
-                                 , id_nomenclature_info_geo_type
-                                 , count_min
-                                 , count_max
-                                 , cd_nom
-                                 , nom_cite
-                                 , meta_v_taxref
-                                 , sample_number_proof
-                                 , digital_proof
-                                 , non_digital_proof
-                                 , altitude_min
-                                 , altitude_max
-                                 , the_geom_4326
-                                 , the_geom_point
-                                 , the_geom_local
-                                 , date_min
-                                 , date_max
-                                 , validation_comment
-                                 , observers
-                                 , id_digitiser
-                                 , id_nomenclature_determination_method
-                                 , comment_description
-                                 , reference_biblio
+                                           id_nomenclature_obs_technique
+                                         , id_nomenclature_bio_status
+                                         , id_nomenclature_bio_condition
+                                         , id_nomenclature_naturalness
+                                         , id_nomenclature_exist_proof
+                                         , id_nomenclature_valid_status
+                                         , id_nomenclature_diffusion_level
+                                         , id_nomenclature_life_stage
+                                         , id_nomenclature_sex
+                                         , id_nomenclature_obj_count
+                                         , id_nomenclature_type_count
+                                         , id_nomenclature_sensitivity
+                                         , id_nomenclature_observation_status
+                                         , id_nomenclature_blurring
+                                         , id_nomenclature_source_status
+                                         , id_nomenclature_info_geo_type
+                                         , count_min
+                                         , count_max
+                                         , cd_nom
+                                         , nom_cite
+                                         , meta_v_taxref
+                                         , sample_number_proof
+                                         , digital_proof
+                                         , non_digital_proof
+                                         , altitude_min
+                                         , altitude_max
+                                         , the_geom_4326
+                                         , the_geom_point
+                                         , the_geom_local
+                                         , date_min
+                                         , date_max
+                                         , validation_comment
+                                         , observers
+                                         , id_digitiser
+                                         , id_nomenclature_determination_method
+                                         , comment_description
+                                         , reference_biblio
 --                                  , meta_create_date
 --                                  , meta_update_date
-                                 , last_action)
-            VALUES
-                ( the_unique_id_sinp
-                , the_unique_id_sinp_grp
-                , the_id_source
-                , the_entity_source_pk_value
-                , the_id_dataset
-                , the_id_nomenclature_geo_object_nature
-                , the_id_nomenclature_grp_typ
-                ,
-                    -- , the_id_nomenclature_obs_meth
-                  the_id_nomenclature_obs_technique
-                , the_id_nomenclature_bio_status
-                , the_id_nomenclature_bio_condition
-                , the_id_nomenclature_naturalness
-                , the_id_nomenclature_exist_proof
-                , the_id_nomenclature_valid_status
-                , the_id_nomenclature_diffusion_level
-                , the_id_nomenclature_life_stage
-                , the_id_nomenclature_sex
-                , the_id_nomenclature_obj_count
-                , the_id_nomenclature_type_count
-                , the_id_nomenclature_sensitivity
-                , the_id_nomenclature_observation_status
-                , the_id_nomenclature_blurring
-                , the_id_nomenclature_source_status
-                , the_id_nomenclature_info_geo_type
-                , the_count_min
-                , the_count_max
-                , the_cd_nom
-                , the_nom_cite
-                , the_meta_v_taxref
-                , the_sample_number_proof
-                , the_digital_proof
-                , the_non_digital_proof
-                , the_altitude_min
-                , the_altitude_max
-                , _the_geom_4326
-                , _the_geom_point
-                , _the_geom_local
-                , the_date_min
-                , the_date_max
-                , the_validation_comment
-                , the_observers
-                , the_id_digitiser
-                , the_id_nomenclature_determination_method
-                , the_comments
-                , the_reference_biblio
+                                         , last_action)
+        VALUES ( the_unique_id_sinp
+               , the_unique_id_sinp_grp
+               , the_id_source
+               , the_entity_source_pk_value
+               , the_id_dataset
+               , the_id_nomenclature_geo_object_nature
+               , the_id_nomenclature_grp_typ
+               ,
+                   -- , the_id_nomenclature_obs_meth
+                 the_id_nomenclature_obs_technique
+               , the_id_nomenclature_bio_status
+               , the_id_nomenclature_bio_condition
+               , the_id_nomenclature_naturalness
+               , the_id_nomenclature_exist_proof
+               , the_id_nomenclature_valid_status
+               , the_id_nomenclature_diffusion_level
+               , the_id_nomenclature_life_stage
+               , the_id_nomenclature_sex
+               , the_id_nomenclature_obj_count
+               , the_id_nomenclature_type_count
+               , the_id_nomenclature_sensitivity
+               , the_id_nomenclature_observation_status
+               , the_id_nomenclature_blurring
+               , the_id_nomenclature_source_status
+               , the_id_nomenclature_info_geo_type
+               , the_count_min
+               , the_count_max
+               , the_cd_nom
+               , the_nom_cite
+               , the_meta_v_taxref
+               , the_sample_number_proof
+               , the_digital_proof
+               , the_non_digital_proof
+               , the_altitude_min
+               , the_altitude_max
+               , _the_geom_4326
+               , _the_geom_point
+               , _the_geom_local
+               , the_date_min
+               , the_date_max
+               , the_validation_comment
+               , the_observers
+               , the_id_digitiser
+               , the_id_nomenclature_determination_method
+               , the_comments
+               , the_reference_biblio
 --                 , the_meta_create_date
 --                 , the_meta_update_date
-                , 'U')
+               , 'U')
         ON CONFLICT (unique_id_sinp)
-            DO UPDATE SET
-                          unique_id_sinp_grp                   = the_unique_id_sinp_grp
+            DO UPDATE SET unique_id_sinp_grp                   = the_unique_id_sinp_grp
                         , id_source                            = the_id_source
                         , entity_source_pk_value               = the_entity_source_pk_value
                         , id_dataset                           = the_id_dataset
                         , id_nomenclature_geo_object_nature    = the_id_nomenclature_geo_object_nature
                         , id_nomenclature_grp_typ              = the_id_nomenclature_grp_typ
                         ,
-                          --   , id_nomenclature_obs_meth             = the_id_nomenclature_obs_meth
-                          id_nomenclature_obs_technique        = the_id_nomenclature_obs_technique
+                        --   , id_nomenclature_obs_meth             = the_id_nomenclature_obs_meth
+            id_nomenclature_obs_technique                      = the_id_nomenclature_obs_technique
                         , id_nomenclature_bio_status           = the_id_nomenclature_bio_status
                         , id_nomenclature_bio_condition        = the_id_nomenclature_bio_condition
                         , id_nomenclature_naturalness          = the_id_nomenclature_naturalness
@@ -864,70 +785,67 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
 --                         , meta_create_date                     = the_meta_create_date
 --                         , meta_update_date                     = the_meta_update_date
                         , last_action                          = 'U'
-            RETURNING id_synthese INTO the_id_synthese;
+        RETURNING id_synthese INTO the_id_synthese;
         RAISE DEBUG '-- % -- insert statement synthese when found > ENDING : total duration %', start_ts, (SELECT (clock_timestamp() - start_ts));
         RAISE DEBUG '-- % -- insert statement t_c_synthese_extended when found > BEGINNING : total duration %', start_ts, (SELECT (clock_timestamp() - start_ts));
-        INSERT INTO
-            src_lpodatas.t_c_synthese_extended ( id_synthese
-                                               , id_sp_source
-                                               , taxo_group
-                                               , taxo_real
-                                               , common_name
-                                               , pseudo_observer_uid
-                                               , bird_breed_code
-                                               , bird_breed_status
-                                               , bat_breed_colo
-                                               , bat_is_gite
-                                               , bat_period
-                                               , estimation_code
-                                               , date_year
-                                               , mortality
-                                               , mortality_cause
-                                               , export_excluded
-                                               , project_code
-                                               , juridical_person
-                                               , behaviour
-                                               , geo_accuracy
-                                               , details
-                                               , id_place
-                                               , place
-                                               , id_form
-                                               , is_valid
-                                               , private_comment
-                                               , is_hidden
-                                               , observers)
-            VALUES
-                ( the_id_synthese
-                , the_id_sp_source
-                , the_taxo_group
-                , the_taxo_real
-                , the_common_name
-                , the_pseudo_observer_uid
-                , the_bird_breed_code
-                , the_bird_breed_status
-                , the_bat_breed_colo
-                , the_bat_is_gite
-                , the_bat_period
-                , the_estimation_code
-                , the_date_year
-                , the_mortality
-                , the_mortality_cause
-                , the_export_excluded
-                , the_project_code
-                , the_juridical_person
-                , the_behaviour
-                , the_geo_accuracy
-                , the_details
-                , the_id_place
-                , the_place
-                , the_id_form
-                , the_is_valid
-                , the_private_comment
-                , the_is_hidden
-                , the_observers_extended)
+        INSERT INTO src_lpodatas.t_c_synthese_extended ( id_synthese
+                                                       , id_sp_source
+                                                       , taxo_group
+                                                       , taxo_real
+                                                       , common_name
+                                                       , pseudo_observer_uid
+                                                       , bird_breed_code
+                                                       , bird_breed_status
+                                                       , bat_breed_colo
+                                                       , bat_is_gite
+                                                       , bat_period
+                                                       , estimation_code
+                                                       , date_year
+                                                       , mortality
+                                                       , mortality_cause
+                                                       , export_excluded
+                                                       , project_code
+                                                       , juridical_person
+                                                       , behaviour
+                                                       , geo_accuracy
+                                                       , details
+                                                       , id_place
+                                                       , place
+                                                       , id_form
+                                                       , is_valid
+                                                       , private_comment
+                                                       , is_hidden
+                                                       , observers)
+        VALUES ( the_id_synthese
+               , the_id_sp_source
+               , the_taxo_group
+               , the_taxo_real
+               , the_common_name
+               , the_pseudo_observer_uid
+               , the_bird_breed_code
+               , the_bird_breed_status
+               , the_bat_breed_colo
+               , the_bat_is_gite
+               , the_bat_period
+               , the_estimation_code
+               , the_date_year
+               , the_mortality
+               , the_mortality_cause
+               , the_export_excluded
+               , the_project_code
+               , the_juridical_person
+               , the_behaviour
+               , the_geo_accuracy
+               , the_details
+               , the_id_place
+               , the_place
+               , the_id_form
+               , the_is_valid
+               , the_private_comment
+               , the_is_hidden
+               , the_observers_extended)
         ON CONFLICT (id_synthese)
-            DO UPDATE SET
-                          id_synthese         = the_id_synthese
+            DO UPDATE SET id_synthese         = the_id_synthese
                         , id_sp_source        = the_id_sp_source
                         , taxo_group          = the_taxo_group
                         , taxo_real           = the_taxo_real
@@ -1001,28 +919,20 @@ DECLARE
     the_id_synthese    INT;
     the_unique_id_sinp UUID;
 BEGIN
-    SELECT
-        coalesce(cast(old.item #>> '{observers,0,uuid}' AS UUID),
-                 src_lpodatas.fct_c_get_observation_uuid(old.site, old.id))
-        INTO the_unique_id_sinp;
-    SELECT
-        id_synthese
-        INTO the_id_synthese
-        FROM
-            gn_synthese.synthese
-        WHERE
-            unique_id_sinp = the_unique_id_sinp;
+    SELECT coalesce(cast(old.item #>> '{observers,0,uuid}' AS UUID),
+                    src_lpodatas.fct_c_get_observation_uuid(old.site, old.id))
+    INTO the_unique_id_sinp;
+    SELECT id_synthese
+    INTO the_id_synthese
+    FROM gn_synthese.synthese
+    WHERE unique_id_sinp = the_unique_id_sinp;
     RAISE DEBUG '<fct_tri_delete_observation_from_geonature> Delete data with uuid %', the_unique_id_sinp;
     DELETE
-        FROM
-            src_lpodatas.t_c_synthese_extended
-        WHERE
-            t_c_synthese_extended.id_synthese = the_id_synthese;
+    FROM src_lpodatas.t_c_synthese_extended
+    WHERE t_c_synthese_extended.id_synthese = the_id_synthese;
     DELETE
-        FROM
-            gn_synthese.synthese
-        WHERE
-            synthese.id_synthese = the_id_synthese;
+    FROM gn_synthese.synthese
+    WHERE synthese.id_synthese = the_id_synthese;
     IF NOT found THEN
         RETURN NULL;
     END IF;
@@ -1047,3 +957,4 @@ EXECUTE PROCEDURE src_lpodatas.fct_tri_c_delete_vn_observation_from_geonature()
 
 COMMIT
 ;
+
