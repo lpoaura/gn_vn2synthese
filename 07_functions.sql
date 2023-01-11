@@ -40,7 +40,7 @@ AS
 $$
 BEGIN
     EXECUTE format(
-            'SELECT taxref.%I from taxonomie.cor_c_vn_taxref join taxonomie.taxref on cor_c_vn_taxref.taxref_id = taxref.cd_nom where vn_id = $1 limit 1',
+            'SELECT taxref.%I from taxonomie.cor_c_vn_taxref join taxonomie.taxref on cor_c_vn_taxref.cd_nom = taxref.cd_nom where vn_id = $1 limit 1',
             _field_name) INTO _result
         USING _id_species;
 END;
