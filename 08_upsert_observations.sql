@@ -120,9 +120,10 @@ BEGIN
                     src_lpodatas.fct_c_get_observation_uuid(new.site, new.id))
     INTO the_unique_id_sinp;
     RAISE DEBUG 'UUID is %', the_unique_id_sinp;
-    /* TODO récupérer un UUID pour les formulaires */
-    SELECT NULL
-    INTO the_unique_id_sinp_grp;
+    SELECT uuid
+    INTO the_unique_id_sinp_grp
+    FROM src_vn_json.forms_json
+    WHERE (new.site, (new.item #>> '{observers,0,id_form}')::INT) = (forms_json.site, forms_json.id);
     SELECT src_lpodatas.fct_c_upsert_or_get_source_from_visionature(new.site)
     INTO the_id_source;
     SELECT new.id::TEXT
@@ -239,7 +240,10 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
     INTO the_id_nomenclature_blurring;
     SELECT ref_nomenclatures.get_id_nomenclature('STATUT_SOURCE', 'Te')
     INTO the_id_nomenclature_source_status;
-    SELECT ref_nomenclatures.get_id_nomenclature('TYP_INF_GEO', '1')
+    -- SELECT ref_nomenclatures.get_id_nomenclature('TYP_INF_GEO', '1')
+    SELECT coalesce(ref_nomenclatures.fct_c_get_synonyms_nomenclature('TYP_INF_GEO',
+                                                                      new.item #>> '{observers,0,precision}'),
+                    ref_nomenclatures.get_id_nomenclature('TYP_INF_GEO', '2'))
     INTO the_id_nomenclature_info_geo_type;
     SELECT cast(new.item #>> '{observers,0,count}' AS INTEGER)
     INTO the_count_min;
@@ -331,8 +335,6 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
                    ref_nomenclatures.get_nomenclature_label_by_cdnom_mnemonique('VN_ATLAS_CODE',
                                                                                 new.item #>>
                                                                                 '{observers,0,atlas_code}')
-               ELSE
-                   NULL
                END
     INTO the_bird_breed_status;
     SELECT NULL
