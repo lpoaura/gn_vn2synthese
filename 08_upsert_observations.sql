@@ -240,10 +240,11 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
     INTO the_id_nomenclature_blurring;
     SELECT ref_nomenclatures.get_id_nomenclature('STATUT_SOURCE', 'Te')
     INTO the_id_nomenclature_source_status;
-    -- SELECT ref_nomenclatures.get_id_nomenclature('TYP_INF_GEO', '1')
-    SELECT coalesce(ref_nomenclatures.fct_c_get_synonyms_nomenclature('TYP_INF_GEO',
-                                                                      new.item #>> '{observers,0,precision}'),
-                    ref_nomenclatures.get_id_nomenclature('TYP_INF_GEO', '2'))
+    SELECT ref_nomenclatures.get_id_nomenclature('TYP_INF_GEO', '1')
+    --SELECT coalesce(ref_nomenclatures.fct_c_get_synonyms_nomenclature(
+    -- 'TYP_INF_GEO',
+    -- new.item #>> '{observers,0,precision}'),
+    --ref_nomenclatures.get_id_nomenclature('TYP_INF_GEO', '2'))s
     INTO the_id_nomenclature_info_geo_type;
     SELECT cast(new.item #>> '{observers,0,count}' AS INTEGER)
     INTO the_count_min;
