@@ -241,10 +241,10 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
     SELECT ref_nomenclatures.get_id_nomenclature('STATUT_SOURCE', 'Te')
     INTO the_id_nomenclature_source_status;
     SELECT ref_nomenclatures.get_id_nomenclature('TYP_INF_GEO', '1')
-    --SELECT coalesce(ref_nomenclatures.fct_c_get_synonyms_nomenclature(
-    -- 'TYP_INF_GEO',
-    -- new.item #>> '{observers,0,precision}'),
-    --ref_nomenclatures.get_id_nomenclature('TYP_INF_GEO', '2'))s
+           --SELECT coalesce(ref_nomenclatures.fct_c_get_synonyms_nomenclature(
+           -- 'TYP_INF_GEO',
+           -- new.item #>> '{observers,0,precision}'),
+           --ref_nomenclatures.get_id_nomenclature('TYP_INF_GEO', '2'))s
     INTO the_id_nomenclature_info_geo_type;
     SELECT cast(new.item #>> '{observers,0,count}' AS INTEGER)
     INTO the_count_min;
@@ -336,6 +336,8 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
                    ref_nomenclatures.get_nomenclature_label_by_cdnom_mnemonique('VN_ATLAS_CODE',
                                                                                 new.item #>>
                                                                                 '{observers,0,atlas_code}')
+               ELSE src_lpodatas.fct_c_get_reproduction_status(
+                       (new.item #>> '{species,taxonomy}')::INT, new.item)
                END
     INTO the_bird_breed_status;
     SELECT NULL
