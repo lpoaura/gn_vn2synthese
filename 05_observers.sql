@@ -88,10 +88,10 @@ BEGIN
         -- Si utilisateur (via email) mais que la valeur id_universal n'est pas renseignée.
         -- Si nom/prenom/email est différent de ce qui est stocké alors ok sinon on update le mail et les noms
 
-        IF (_item ->> 'name',
-            _item ->> 'surname',
-            _item ->> 'email') <>
-           (therolerecord.nom_role, therolerecord.prenom_role, therolerecord.email) THEN
+        IF (_item ->> 'name' <> therolerecord.nom_role or
+            _item ->> 'surname' <> therolerecord.prenom_role or
+            _item ->> 'email' <> therolerecord.email)
+           THEN
             RAISE DEBUG 'Observer % with email % already exists', _item ->> 'id_universal', _item ->> 'email';
             RAISE DEBUG '_item %', (_item ->> 'name',
                                     _item ->> 'surname',

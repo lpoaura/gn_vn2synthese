@@ -156,12 +156,20 @@ BEGIN
     --                 ref_nomenclatures.fct_c_get_synonyms_nomenclature('TECHNIQUE_OBS',
     --                                                                  new.item #>> '{observers,0,details,0,age}'))
     --     SELECT gn_synthese.get_default_nomenclature_value('STATUT_BIO') INTO the_id_nomenclature_bio_status;
-    SELECT coalesce(coalesce(ref_nomenclatures.fct_c_get_synonyms_nomenclature('STATUT_BIO',
-                                                                               new.item #>>
-                                                                               '{observers,0,atlas_code}'),
-                             ref_nomenclatures.fct_c_get_synonyms_nomenclature('STATUT_BIO', new.item #>>
-                                                                                             '{observers,0,details,0,condition}')),
-                    ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '1'))
+    SELECT coalesce(
+                   coalesce(
+                           coalesce(
+                                   ref_nomenclatures.fct_c_get_synonyms_nomenclature('STATUT_BIO',
+                                                                                     new.item #>>
+                                                                                     '{observers,0,atlas_code}'),
+                                   CASE
+                                       WHEN src_lpodatas.fct_c_get_reproduction_status(
+                                                    (new.item #>> '{species,taxonomy}')::INT, new.item) IN
+                                            ('Possible', 'Probable', 'Certain')
+                                           THEN ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '3') END
+                               ), ref_nomenclatures.fct_c_get_synonyms_nomenclature('STATUT_BIO', new.item #>>
+                                                                                                  '{observers,0,details,0,condition}')),
+                   ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '1'))
     INTO the_id_nomenclature_bio_status;
     SELECT CASE
                WHEN new.item #> '{observers,0,extended_info}' ? 'mortality' THEN
@@ -222,7 +230,7 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
     INTO the_id_nomenclature_type_count;
     SELECT CASE
                WHEN cast(new.item #>> '{observers,0,hidden}' AS BOOLEAN) THEN
-                   ref_nomenclatures.get_id_nomenclature('SENSIBILITE', '4')
+                   ref_nomenclatures.get_id_nomenclature('SENSIBILITE', '2')
                ELSE
                    ref_nomenclatures.get_id_nomenclature('SENSIBILITE', '0')
                END
