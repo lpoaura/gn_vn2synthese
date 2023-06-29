@@ -23,7 +23,6 @@ $$
 DECLARE
     /* Log duration informations variables */
     start_ts                                 TIMESTAMP;
-    delta                                    INTERVAL;
 
     /* common_data */
     the_id_synthese                          INTEGER;
@@ -79,7 +78,7 @@ DECLARE
 
 
     /* t_c_synthese_extended data */
-    the_observation_detail                   JSONB;
+--     the_observation_detail                   JSONB;
     the_id_sp_source                         INTEGER;
     the_taxo_group                           VARCHAR(50);
     the_taxo_real                            BOOLEAN;
@@ -397,9 +396,8 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
         -- Updating data on gn_synthese.synthese when raw data is updated
         UPDATE
             gn_synthese.synthese
-        SET
---             unique_id_sinp                       = the_unique_id_sinp
-            unique_id_sinp_grp                   = the_unique_id_sinp_grp
+        SET unique_id_sinp                       = coalesce(unique_id_sinp, the_unique_id_sinp)
+          , unique_id_sinp_grp                   = the_unique_id_sinp_grp
           , id_source                            = the_id_source
           , entity_source_pk_value               = the_entity_source_pk_value
           , id_dataset                           = the_id_dataset
@@ -447,7 +445,8 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
 --           , meta_create_date                     = the_meta_create_date
 --           , meta_update_date                     = now()
           , last_action                          = 'U'
-        WHERE unique_id_sinp = the_unique_id_sinp
+        WHERE (unique_id_sinp = the_unique_id_sinp)
+           OR (id_source, entity_source_pk_value) = (the_id_source, the_entity_source_pk_value)
         RETURNING id_synthese INTO the_id_synthese;
         RAISE DEBUG '-- % -- Update statement synthese when found > ENDING : total duration %', start_ts, (SELECT (clock_timestamp() - start_ts));
         IF NOT found THEN
