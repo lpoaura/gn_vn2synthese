@@ -62,9 +62,9 @@ DECLARE
     the_non_digital_proof                    VARCHAR;
     the_altitude_min                         INTEGER;
     the_altitude_max                         INTEGER;
-    _the_geom_4326                           GEOMETRY(Geometry, 4326);
-    _the_geom_point                          GEOMETRY(Point, 4326);
-    _the_geom_local                          GEOMETRY(Geometry, :local_srid);
+    _the_geom_4326                           public.GEOMETRY(Geometry, 4326);
+    _the_geom_point                          public.GEOMETRY(Point, 4326);
+    _the_geom_local                          public.GEOMETRY(Geometry, :local_srid);
     the_date_min                             TIMESTAMP;
     the_date_max                             TIMESTAMP;
     the_validation_comment                   TEXT;
@@ -87,7 +87,7 @@ DECLARE
     the_pseudo_observer_uid                  VARCHAR(200);
     -- TODO Renseigner avec la fonction actuelle
     the_bird_breed_code                      INTEGER;
-    the_bird_breed_status                    VARCHAR(20);
+    the_breed_status                    VARCHAR(20);
     the_bat_breed_colo                       BOOLEAN;
     the_bat_is_gite                          BOOLEAN;
     the_bat_period                           VARCHAR(20);
@@ -346,7 +346,7 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
                ELSE src_lpodatas.fct_c_get_reproduction_status(
                        (new.item #>> '{species,taxonomy}')::INT, new.item)
                END
-    INTO the_bird_breed_status;
+    INTO the_breed_status;
     SELECT NULL
     INTO the_bat_breed_colo;
     SELECT NULL
@@ -564,7 +564,7 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
           , common_name         = the_common_name
           , pseudo_observer_uid = the_pseudo_observer_uid
           , bird_breed_code     = the_bird_breed_code
-          , bird_breed_status   = the_bird_breed_status
+          , breed_status   = the_breed_status
           , bat_breed_colo      = the_bat_breed_colo
           , bat_is_gite         = the_bat_is_gite
           , bat_period          = the_bat_period
@@ -597,7 +597,7 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
                                                            , common_name
                                                            , pseudo_observer_uid
                                                            , bird_breed_code
-                                                           , bird_breed_status
+                                                           , breed_status
                                                            , bat_breed_colo
                                                            , bat_is_gite
                                                            , bat_period
@@ -625,7 +625,7 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
                    , the_common_name
                    , the_pseudo_observer_uid
                    , the_bird_breed_code
-                   , the_bird_breed_status
+                   , the_breed_status
                    , the_bat_breed_colo
                    , the_bat_is_gite
                    , the_bat_period
@@ -807,7 +807,7 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
                                                        , common_name
                                                        , pseudo_observer_uid
                                                        , bird_breed_code
-                                                       , bird_breed_status
+                                                       , breed_status
                                                        , bat_breed_colo
                                                        , bat_is_gite
                                                        , bat_period
@@ -835,7 +835,7 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
                , the_common_name
                , the_pseudo_observer_uid
                , the_bird_breed_code
-               , the_bird_breed_status
+               , the_breed_status
                , the_bat_breed_colo
                , the_bat_is_gite
                , the_bat_period
@@ -864,7 +864,7 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
                         , common_name         = the_common_name
                         , pseudo_observer_uid = the_pseudo_observer_uid
                         , bird_breed_code     = the_bird_breed_code
-                        , bird_breed_status   = the_bird_breed_status
+                        , breed_status   = the_breed_status
                         , bat_breed_colo      = the_bat_breed_colo
                         , bat_is_gite         = the_bat_is_gite
                         , bat_period          = the_bat_period
