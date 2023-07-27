@@ -7,6 +7,70 @@ Custom views to consult lpo datas
 
 BEGIN;
 
+CREATE MATERIALIZED VIEW taxonomie.mv_c_cor_vn_taxref AS
+WITH prep_vn AS (SELECT DISTINCT sp.id                           AS vn_id,
+                                 tg.item ->> 'name'::TEXT        AS groupe_taxo_fr,
+                                 tg.item ->> 'latin_name'::TEXT  AS groupe_taxo_sci,
+                                 sp.item ->> 'french_name'::TEXT AS french_name,
+                                 sp.item ->> 'latin_name'::TEXT  AS latin_name
+                 FROM src_vn_json.species_json sp
+                          LEFT JOIN src_vn_json.taxo_groups_json tg
+                                    ON ((sp.item ->> 'id_taxo_group'::TEXT)::INTEGER) = tg.id AND
+                                       sp.site::TEXT = tg.site::TEXT
+                 GROUP BY sp.id, (tg.item ->> 'name'::TEXT), (tg.item ->> 'latin_name'::TEXT),
+                          (sp.item ->> 'french_name'::TEXT), (sp.item ->> 'latin_name'::TEXT))
+SELECT prep_vn.vn_id,
+       prep_vn.groupe_taxo_fr,
+       prep_vn.groupe_taxo_sci,
+       coalesce(prep_vn.french_name, tx.nom_vern::TEXT) AS vn_nom_fr,
+       coalesce(prep_vn.latin_name, tx.lb_nom::TEXT)    AS vn_nom_sci,
+       tx.cd_nom,
+       tx.cd_ref,
+       tx.group1_inpn                                   AS tx_group1_inpn,
+       tx.group2_inpn                                   AS tx_group2_inpn,
+       tx.id_rang                                       AS tx_id_rang,
+       tx.ordre                                         AS tx_ordre,
+       tx.classe                                        AS tx_classe,
+       tx.famille                                       AS tx_famille,
+       tx.nom_vern                                      AS tx_nom_fr,
+       tx.lb_nom                                        AS tx_nom_sci
+FROM taxonomie.taxref tx
+         LEFT JOIN taxonomie.cor_c_vn_taxref corr ON corr.cd_nom = tx.cd_nom
+         LEFT JOIN prep_vn ON prep_vn.vn_id = corr.vn_id
+WHERE tx.cd_nom = tx.cd_ref;
+
+ALTER MATERIALIZED VIEW taxonomie.mv_c_cor_vn_taxref OWNER TO dbadmin;
+
+CREATE INDEX taxonomie.mv_c_cor_vn_taxref_cd_nom_idx3
+    ON taxonomie.mv_c_cor_vn_taxref (cd_nom);
+
+CREATE INDEX taxonomie.mv_c_cor_vn_taxref_cd_ref_idx1
+    ON taxonomie.mv_c_cor_vn_taxref (cd_ref);
+
+CREATE INDEX taxonomie.mv_c_cor_vn_taxref_groupe_taxo_fr_idx3
+    ON taxonomie.mv_c_cor_vn_taxref (groupe_taxo_fr);
+
+CREATE INDEX taxonomie.mv_c_cor_vn_taxref_tx_group2_inpn_idx3
+    ON taxonomie.mv_c_cor_vn_taxref (tx_group2_inpn);
+
+CREATE INDEX taxonomie.mv_c_cor_vn_taxref_tx_id_rang_idx1
+    ON taxonomie.mv_c_cor_vn_taxref (tx_id_rang);
+
+CREATE INDEX taxonomie.mv_c_cor_vn_taxref_tx_nom_fr_idx3
+    ON taxonomie.mv_c_cor_vn_taxref (tx_nom_fr);
+
+CREATE INDEX taxonomie.mv_c_cor_vn_taxref_tx_nom_sci_idx3
+    ON taxonomie.mv_c_cor_vn_taxref (tx_nom_sci);
+
+CREATE INDEX taxonomie.mv_c_cor_vn_taxref_tx_ordre_idx1
+    ON taxonomie.mv_c_cor_vn_taxref (tx_ordre);
+
+CREATE INDEX taxonomie.mv_c_cor_vn_taxref_vn_nom_fr_idx3
+    ON taxonomie.mv_c_cor_vn_taxref (vn_nom_fr);
+
+CREATE INDEX taxonomie.mv_c_cor_vn_taxref_vn_nom_sci_idx3
+    ON taxonomie.mv_c_cor_vn_taxref (vn_nom_sci);
+
 CREATE OR REPLACE VIEW src_lpodatas.v_c_observations
             (id_synthese, uuid, source, desc_source, source_id_data, source_id_sp, taxref_cdnom, cd_nom, cd_ref,
              groupe_taxo, group1_inpn, group2_inpn, id_rang, taxon_vrai, nom_vern, nom_sci, observateur,
