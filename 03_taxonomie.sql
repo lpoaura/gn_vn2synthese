@@ -18,6 +18,9 @@ CREATE TABLE taxonomie.cor_c_vn_taxref
 CREATE UNIQUE INDEX i_uniq_cor_c_vn_taxref ON taxonomie.cor_c_vn_taxref (vn_id, cd_nom)
 ;
 
+ALTER TABLE taxonomie.cor_c_vn_taxref
+    ADD CONSTRAINT cor_c_vn_taxref_un UNIQUE (vn_id);
+
 COMMENT ON TABLE taxonomie.cor_c_vn_taxref IS 'Correlation between taxref cd_nom (taxref) and VisioNature species id (src_vn.species).'
 ;
 
