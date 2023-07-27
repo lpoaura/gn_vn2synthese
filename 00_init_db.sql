@@ -17,7 +17,7 @@ DROP TABLE IF EXISTS src_lpodatas.t_c_synthese_extended
 
 CREATE TABLE IF NOT EXISTS src_lpodatas.t_c_synthese_extended
 (
-    id_synthese         INTEGER PRIMARY KEY REFERENCES gn_synthese.synthese (id_synthese),
+    id_synthese         INTEGER PRIMARY KEY REFERENCES gn_synthese.synthese (id_synthese) ON DELETE CASCADE ON UPDATE NO ACTION,
     id_sp_source        INTEGER,
     taxo_group          VARCHAR(50),
     taxo_real           BOOLEAN,
