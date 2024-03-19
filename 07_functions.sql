@@ -7,35 +7,40 @@ A collection of various helper fonctions
 
 /* Function to get taxo group from visionature id_species */
 
-BEGIN
-;
+BEGIN;
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_taxo_group_values_from_vn (_key TEXT, _site TEXT, _id INTEGER, OUT _result TEXT)
-;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_taxo_group_values_from_vn (
+    _key TEXT, _site TEXT, _id INTEGER, OUT _result TEXT
+);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_taxo_group_values_from_vn(_key TEXT, _site TEXT, _id INTEGER, OUT _result TEXT)
-    RETURNS TEXT
-    LANGUAGE plpgsql
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_taxo_group_values_from_vn(
+    _key TEXT, _site TEXT, _id INTEGER, OUT _result TEXT
+)
+RETURNS TEXT
+LANGUAGE plpgsql
 AS
 $$
 BEGIN
     EXECUTE 'select item ->> $1 from src_vn_json.taxo_groups_json where taxo_groups_json.id = $3 and taxo_groups_json.site like $2 limit 1;' INTO _result
         USING _key, _site, _id;
 END;
-$$
-;
+$$;
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_taxo_group_values_from_vn (_key TEXT, _site TEXT, _id INTEGER, OUT _result TEXT) IS 'Function to get taxo group from visionature id_species'
-;
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_taxo_group_values_from_vn(
+    _key TEXT, _site TEXT, _id INTEGER, OUT _result TEXT
+) IS 'Function to get taxo group from visionature id_species';
 
 
 /* Function to get taxref datas from VN id_sp */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_taxref_values_from_vn (_field_name ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT)
-;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_taxref_values_from_vn (
+    _field_name ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT
+);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_taxref_values_from_vn(_field_name ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT)
-    RETURNS ANYELEMENT
-    LANGUAGE plpgsql
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_taxref_values_from_vn(
+    _field_name ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT
+)
+RETURNS ANYELEMENT
+LANGUAGE plpgsql
 AS
 $$
 BEGIN
@@ -44,61 +49,70 @@ BEGIN
             _field_name) INTO _result
         USING _id_species;
 END;
-$$
-;
+$$;
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_taxref_values_from_vn (_field_name ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT) IS 'Function to get taxref datas from VN id_sp'
-;
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_taxref_values_from_vn(
+    _field_name ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT
+) IS 'Function to get taxref datas from VN id_sp';
 
 
 /* Function to get visionature species datas from VN id_sp */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_species_values_from_vn (_key ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT)
-;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_species_values_from_vn (
+    _key ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT
+);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_species_values_from_vn(_key ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT)
-    RETURNS ANYELEMENT
-    LANGUAGE plpgsql
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_species_values_from_vn(
+    _key ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT
+)
+RETURNS ANYELEMENT
+LANGUAGE plpgsql
 AS
 $$
 BEGIN
     EXECUTE 'select item ->> $1 from src_vn_json.species_json where species_json.id = $2 limit 1;' INTO _result
         USING _key, _id_species;
 END;
-$$
-;
+$$;
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_species_values_from_vn (_key ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT) IS 'Function to get visionature species datas from VN id_sp'
-;
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_species_values_from_vn(
+    _key ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT
+) IS 'Function to get visionature species datas from VN id_sp';
 
 
 /* Function to get observer full name from VisioNature observer universal id*/
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_observer_full_name_from_vn (_id_universal INTEGER, OUT _result TEXT)
-;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_observer_full_name_from_vn (
+    _id_universal INTEGER, OUT _result TEXT
+);
 
-CREATE FUNCTION src_lpodatas.fct_c_get_observer_full_name_from_vn(_id_universal INTEGER, OUT _result TEXT)
-    RETURNS TEXT
-    LANGUAGE plpgsql
+CREATE FUNCTION src_lpodatas.fct_c_get_observer_full_name_from_vn(
+    _id_universal INTEGER, OUT _result TEXT
+)
+RETURNS TEXT
+LANGUAGE plpgsql
 AS
 $$
 BEGIN
     EXECUTE format('select concat(UPPER(item ->> ''name''), '' '', item ->> ''surname'') as text from src_vn_json.observers_json where observers_json.id_universal = $1 limit 1') INTO _result
         USING _id_universal;
 END;
-$$
-;
+$$;
 
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_observer_full_name_from_vn (_id_universal INTEGER, OUT _result TEXT) IS 'Function to get observer full name from VisioNature observer universal id'
-;
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_observer_full_name_from_vn(
+    _id_universal INTEGER, OUT _result TEXT
+) IS 'Function to get observer full name from VisioNature observer universal id';
 
 
 /* Function to get entity name from VisioNature observer universal id */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_entity_from_observer_site_uid (_uid INTEGER, _site TEXT, OUT _result TEXT)
-;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_entity_from_observer_site_uid (
+    _uid INTEGER, _site TEXT, OUT _result TEXT
+);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_entity_from_observer_site_uid(_uid INTEGER, _site TEXT, OUT _result TEXT)
-    RETURNS TEXT
-    LANGUAGE plpgsql
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_entity_from_observer_site_uid(
+    _uid INTEGER, _site TEXT, OUT _result TEXT
+)
+RETURNS TEXT
+LANGUAGE plpgsql
 AS
 $$
 BEGIN
@@ -118,20 +132,23 @@ BEGIN
               usr.id_universal = _uid
           AND usr.site = _site;
 END;
-$$
-;
+$$;
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_entity_from_observer_site_uid (_uid INTEGER, _site TEXT, OUT _result TEXT) IS 'Function to get entity name from VisioNature observer universal id'
-;
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_entity_from_observer_site_uid(
+    _uid INTEGER, _site TEXT, OUT _result TEXT
+) IS 'Function to get entity name from VisioNature observer universal id';
 
 
 /* Function to generate an array of behaviours from VisioNature datas */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_behaviours_texts_array_from_id_array (_behaviours JSONB, OUT _result TEXT[])
-;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_behaviours_texts_array_from_id_array (
+    _behaviours JSONB, OUT _result TEXT []
+);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_behaviours_texts_array_from_id_array(_behaviours JSONB, OUT _result TEXT[])
-    RETURNS TEXT[]
-    LANGUAGE plpgsql
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_behaviours_texts_array_from_id_array(
+    _behaviours JSONB, OUT _result TEXT []
+)
+RETURNS TEXT []
+LANGUAGE plpgsql
 AS
 $$
 DECLARE
@@ -161,20 +178,23 @@ BEGIN
             INTO _result;
     END IF;
 END;
-$$
-;
+$$;
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_behaviours_texts_array_from_id_array (_behaviours JSONB, OUT _result TEXT[]) IS 'Function to generate an array of behaviours from VisioNature datas'
-;
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_behaviours_texts_array_from_id_array(
+    _behaviours JSONB, OUT _result TEXT []
+) IS 'Function to generate an array of behaviours from VisioNature datas';
 
 
 /* list visionature medias URL from medias details */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_medias_url_from_visionature_medias_array (_medias JSONB, OUT _result TEXT)
-;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_medias_url_from_visionature_medias_array (
+    _medias JSONB, OUT _result TEXT
+);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_medias_url_from_visionature_medias_array(_medias JSONB, OUT _result TEXT)
-    RETURNS TEXT
-    LANGUAGE plpgsql
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_medias_url_from_visionature_medias_array(
+    _medias JSONB, OUT _result TEXT
+)
+RETURNS TEXT
+LANGUAGE plpgsql
 AS
 $$
 BEGIN
@@ -194,22 +214,25 @@ BEGIN
             INTO _result;
     END IF;
 END;
-$$
-;
+$$;
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_medias_url_from_visionature_medias_array (_medias JSONB, OUT _result TEXT) IS 'Function to list medias URL from VisioNature datas'
-;
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_medias_url_from_visionature_medias_array(
+    _medias JSONB, OUT _result TEXT
+) IS 'Function to list medias URL from VisioNature datas';
 
 
 /* Function to get observation generated UUID */
 /* NOTE: removed because uuid are now available in faune-france API */
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_observation_uuid (_site CHARACTER VARYING, _id INTEGER) CASCADE
-;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_observation_uuid (
+    _site CHARACTER VARYING, _id INTEGER
+) CASCADE;
 
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_observation_uuid(_site CHARACTER VARYING, _id INTEGER) RETURNS UUID
-    LANGUAGE plpgsql
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_observation_uuid(
+    _site CHARACTER VARYING, _id INTEGER
+) RETURNS UUID
+LANGUAGE plpgsql
 AS
 $$
 DECLARE
@@ -228,15 +251,15 @@ BEGIN
     END IF;
     RETURN the_uuid;
 END;
-$$
-;
+$$;
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_observation_uuid IS 'Function to get observation generated UUID'
-;
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_observation_uuidIS 'Function to get observation generated UUID';
 
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_taxon_diffusion_level(_cd_nom INT)
-    RETURNS INT AS
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_taxon_diffusion_level(
+    _cd_nom INT
+)
+RETURNS INT AS
 $$
 DECLARE
     the_nomenclature_id INT;
@@ -250,14 +273,16 @@ BEGIN
             cd_nom = _cd_nom;
     RETURN the_nomenclature_id;
 END;
-$$ LANGUAGE plpgsql
-;
+$$ LANGUAGE plpgsql;
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_committees_validation_status(_committees_validation JSONB)
-;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_committees_validation_status(
+    _committees_validation JSONB
+);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_committees_validation_status(_committees_validation JSONB)
-    RETURNS TEXT[] AS
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_committees_validation_status(
+    _committees_validation JSONB
+)
+RETURNS TEXT [] AS
 $$
 DECLARE
     the_values TEXT[];
@@ -271,14 +296,16 @@ BEGIN
         END LOOP;
     RETURN the_values;
 END;
-$$ LANGUAGE plpgsql
-;
+$$ LANGUAGE plpgsql;
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_committees_validation_is_accepted(_committees_validation JSONB)
-;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_committees_validation_is_accepted(
+    _committees_validation JSONB
+);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_committees_validation_is_accepted(_committees_validation JSONB)
-    RETURNS BOOLEAN AS
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_committees_validation_is_accepted(
+    _committees_validation JSONB
+)
+RETURNS BOOLEAN AS
 $$
 DECLARE
     is_accepted BOOLEAN;
@@ -286,9 +313,7 @@ BEGIN
     SELECT 'ACCEPTED' = ANY (src_lpodatas.fct_c_get_committees_validation_status(_committees_validation)) INTO is_accepted;
     RETURN is_accepted;
 END;
-$$ LANGUAGE plpgsql
-;
+$$ LANGUAGE plpgsql;
 
 
-COMMIT
-;
+COMMIT;

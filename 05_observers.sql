@@ -5,43 +5,44 @@ Various functions to import and get observers into UsersHub tables from VisioNat
 */
 
 
-BEGIN
-;
+BEGIN;
 
-DROP INDEX IF EXISTS utilisateurs.i_t_roles_champ_addi_id_universal
-;
+DROP INDEX IF EXISTS utilisateurs.i_t_roles_champ_addi_id_universal;
 
-CREATE INDEX IF NOT EXISTS i_t_roles_champ_addi_id_universal ON utilisateurs.t_roles ((champs_addi #>> '{from_vn, id_universal}'))
-;
+CREATE INDEX IF NOT EXISTS i_t_roles_champ_addi_id_universal ON utilisateurs.t_roles (
+    (champs_addi #>> '{from_vn, id_universal}')
+);
 
-CREATE UNIQUE INDEX IF NOT EXISTS i_uniq_t_roles_email ON utilisateurs.t_roles (email)
-;
+CREATE UNIQUE INDEX IF NOT EXISTS i_uniq_t_roles_email ON utilisateurs.t_roles (
+    email
+);
 
 
 CREATE OR REPLACE FUNCTION public.jsonb_arr_record_keys(JSONB)
-    RETURNS TEXT[]
-    LANGUAGE sql
-    IMMUTABLE AS
+RETURNS TEXT []
+LANGUAGE sql
+IMMUTABLE AS
 'SELECT array(
                 SELECT DISTINCT
                     k
                 FROM jsonb_array_elements($1) elem
                    , jsonb_object_keys(elem) k
-        )'
-;
+        )';
 
 COMMENT ON FUNCTION public.jsonb_arr_record_keys(JSONB) IS '
    Generates text array of unique keys in jsonb array of records.
-   Fails if any array element is not a record!'
-;
+   Fails if any array element is not a record!';
 
 
 /* Fonction to create observers if not already registered */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_create_usershub_roles_from_visionature (_site VARCHAR, _item JSONB, _rq TEXT)
-;
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_create_usershub_roles_from_visionature(_site CHARACTER VARYING, _item JSONB,
-                                                             _rq TEXT DEFAULT 'Utilisateur VisioNature'::TEXT) RETURNS INTEGER
-    LANGUAGE plpgsql
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_create_usershub_roles_from_visionature(
+    _site VARCHAR, _item JSONB, _rq TEXT
+);
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_create_usershub_roles_from_visionature(
+    _site CHARACTER VARYING, _item JSONB,
+    _rq TEXT DEFAULT 'Utilisateur VisioNature'::TEXT
+) RETURNS INTEGER
+LANGUAGE plpgsql
 AS
 $$
 DECLARE
@@ -189,16 +190,20 @@ $$;
 
 
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_create_usershub_roles_from_visionature (_site VARCHAR, _item JSONB, _rq TEXT) IS 'créée ou mets à jour un observervateur à partir des entrées json VisioNature'
-;
+COMMENT ON FUNCTION src_lpodatas.fct_c_create_usershub_roles_from_visionature(
+    _site VARCHAR, _item JSONB, _rq TEXT
+) IS 'créée ou mets à jour un observervateur à partir des entrées json VisioNature';
 
 
 /* Function that returns id_role from VisioNature user universal id */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_id_role_from_visionature_uid (_uid TEXT, _check_anonymous BOOL)
-;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_id_role_from_visionature_uid(
+    _uid TEXT, _check_anonymous BOOL
+);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_id_role_from_visionature_uid(_uid TEXT, _check_anonymous BOOL DEFAULT FALSE)
-    RETURNS INT
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_id_role_from_visionature_uid(
+    _uid TEXT, _check_anonymous BOOL DEFAULT FALSE
+)
+RETURNS INT
 AS
 $$
 DECLARE
@@ -214,19 +219,22 @@ BEGIN
     RETURN the_roleid;
 END
 $$
-    LANGUAGE plpgsql
-;
+LANGUAGE plpgsql;
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_id_role_from_visionature_uid (_uid TEXT, _check_anonymous BOOL ) IS 'Retourne un id_role à partir d''un id_universal de visionature'
-;
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_id_role_from_visionature_uid(
+    _uid TEXT, _check_anonymous BOOL
+) IS 'Retourne un id_role à partir d''un id_universal de visionature';
 
 
 /* Function that returns id_role from VisioNature user universal id */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_role_name_from_visionature_uid(_uid TEXT, _check_anonymous BOOL)
-;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_role_name_from_visionature_uid(
+    _uid TEXT, _check_anonymous BOOL
+);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_role_name_from_visionature_uid(_uid TEXT, _check_anonymous BOOL DEFAULT FALSE)
-    RETURNS TEXT
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_role_name_from_visionature_uid(
+    _uid TEXT, _check_anonymous BOOL DEFAULT FALSE
+)
+RETURNS TEXT
 AS
 $$
 DECLARE
@@ -242,11 +250,11 @@ BEGIN
     RETURN the_rolename;
 END
 $$
-    LANGUAGE plpgsql
-;
+LANGUAGE plpgsql;
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_role_name_from_visionature_uid (_uid TEXT, _check_anonymous BOOL) IS 'Retourne un id_role à partir d''un id_universal de visionature'
-;
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_role_name_from_visionature_uid(
+    _uid TEXT, _check_anonymous BOOL
+) IS 'Retourne un id_role à partir d''un id_universal de visionature';
 
 
 
@@ -278,14 +286,13 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_get_role_name_from_visionature_uid (_uid 
 /* Trigger pour peupler automatiquement la table t_roles à partir des entrées observateurs de VisioNature*/
 
 
-DROP TRIGGER IF EXISTS tri_upsert_vn_observers_to_geonature ON src_vn_json.observers_json
-;
+DROP TRIGGER IF EXISTS tri_upsert_vn_observers_to_geonature ON src_vn_json.observers_json;
 
 
 
 CREATE OR REPLACE FUNCTION src_lpodatas.fct_tri_c_vn_observers_to_usershub()
-    RETURNS TRIGGER
-    LANGUAGE plpgsql
+RETURNS TRIGGER
+LANGUAGE plpgsql
 AS
 $$
 BEGIN
@@ -293,20 +300,16 @@ BEGIN
         src_lpodatas.fct_c_create_usershub_roles_from_visionature(new.site, new.item);
     RETURN new;
 END;
-$$
-;
+$$;
 
-COMMENT ON FUNCTION src_lpodatas.fct_tri_c_vn_observers_to_usershub () IS 'Function de trigger permettant de peupler automatiquement la table des observateurs utilisateurs.t_roles à partir des données VisioNature'
-;
+COMMENT ON FUNCTION src_lpodatas.fct_tri_c_vn_observers_to_usershub() IS 'Function de trigger permettant de peupler automatiquement la table des observateurs utilisateurs.t_roles à partir des données VisioNature';
 
 CREATE TRIGGER tri_upsert_vn_observers_to_geonature
-    AFTER INSERT OR UPDATE
-    ON src_vn_json.observers_json
-    FOR EACH ROW
-EXECUTE FUNCTION src_lpodatas.fct_tri_c_vn_observers_to_usershub()
-;
+AFTER INSERT OR UPDATE
+ON src_vn_json.observers_json
+FOR EACH ROW
+EXECUTE FUNCTION src_lpodatas.fct_tri_c_vn_observers_to_usershub();
 
 COMMENT ON TRIGGER tri_upsert_vn_observers_to_geonature ON src_vn_json.observers_json IS 'Trigger permettant de peupler automatiquement la table des observateurs utilisateurs.t_roles à partir des données VisioNature';
 
-COMMIT
-;
+COMMIT;

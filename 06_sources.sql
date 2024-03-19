@@ -6,14 +6,16 @@ Create sources from sites, each VisioNature site become a source.
 
 BEGIN;
 
-CREATE INDEX IF NOT EXISTS i_source_name ON gn_synthese.t_sources (name_source)
-;
+CREATE INDEX IF NOT EXISTS i_source_name ON gn_synthese.t_sources (name_source);
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_upsert_or_get_source_from_visionature(_source TEXT)
-;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_upsert_or_get_source_from_visionature(
+    _source TEXT
+);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_upsert_or_get_source_from_visionature(_source TEXT)
-    RETURNS INTEGER
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_upsert_or_get_source_from_visionature(
+    _source TEXT
+)
+RETURNS INTEGER
 AS
 $$
 DECLARE
@@ -46,17 +48,20 @@ BEGIN
     RETURN thenewid;
 END
 $$
-    LANGUAGE plpgsql
-;
+LANGUAGE plpgsql;
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_upsert_or_get_source_from_visionature (_source TEXT) IS 'function to basically create new sources from VisioNature import'
-;
+COMMENT ON FUNCTION src_lpodatas.fct_c_upsert_or_get_source_from_visionature(
+    _source TEXT
+) IS 'function to basically create new sources from VisioNature import';
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_source_url(_id_source INT, _id_data TEXT)
-;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_source_url(
+    _id_source INT, _id_data TEXT
+);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_source_url(_id_source INT, _id_data TEXT DEFAULT NULL)
-    RETURNS TEXT
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_source_url(
+    _id_source INT, _id_data TEXT DEFAULT NULL
+)
+RETURNS TEXT
 AS
 $$
 DECLARE
@@ -72,7 +77,6 @@ BEGIN
     RETURN the_url;
 END ;
 $$
-    LANGUAGE plpgsql
-;
+LANGUAGE plpgsql;
 
 COMMIT;

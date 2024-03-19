@@ -7,12 +7,13 @@ Populate UsersHub organisms from VisioNature entities
 BEGIN;
 
 ALTER TABLE utilisateurs.bib_organismes
-    ADD COLUMN IF NOT EXISTS additional_data JSONB
-        DEFAULT '{}'::JSONB
-;
+ADD COLUMN IF NOT EXISTS additional_data JSONB
+DEFAULT '{}'::JSONB;
 
-CREATE OR REPLACE FUNCTION public.fct_c_slugify(_value TEXT, _disallow_unicode BOOLEAN DEFAULT TRUE)
-    RETURNS TEXT AS
+CREATE OR REPLACE FUNCTION public.fct_c_slugify(
+    _value TEXT, _disallow_unicode BOOLEAN DEFAULT TRUE
+)
+RETURNS TEXT AS
 $$
 
 WITH
@@ -41,17 +42,17 @@ SELECT
         normalized;
 
 $$ LANGUAGE sql STRICT
-                IMMUTABLE
-;
+IMMUTABLE;
 
 
-CREATE UNIQUE INDEX IF NOT EXISTS i_c_organism_adddata_vn_short_name ON utilisateurs.bib_organismes ((additional_data #>> '{from_vn, short_name}'))
-;
+CREATE UNIQUE INDEX IF NOT EXISTS i_c_organism_adddata_vn_short_name ON utilisateurs.bib_organismes (
+    (additional_data #>> '{from_vn, short_name}')
+);
 
 /* Function to basically create new dataset attached to an acquisition_framework find by name */
 CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_tri_upsert_entities()
-    RETURNS TRIGGER
-    LANGUAGE plpgsql
+RETURNS TRIGGER
+LANGUAGE plpgsql
 AS
 $upsert_entities$
 DECLARE
@@ -143,32 +144,31 @@ BEGIN
             );
     RETURN new;
 END
-$upsert_entities$
-;
+$upsert_entities$;
 
 -- ALTER FUNCTION src_lpodatas.fct_c_tri_upsert_entities(_site VARCHAR, _item JSONB) OWNER TO geonatadmin;
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_tri_upsert_entities() IS 'Upsert visionature entity to Usershub organisms'
-;
+COMMENT ON FUNCTION src_lpodatas.fct_c_tri_upsert_entities() IS 'Upsert visionature entity to Usershub organisms';
 
-DROP TRIGGER IF EXISTS tri_c_upsert_entities ON src_vn_json.entities_json
-;
+DROP TRIGGER IF EXISTS tri_c_upsert_entities ON src_vn_json.entities_json;
 
 CREATE TRIGGER tri_c_upsert_entities
-    BEFORE INSERT OR UPDATE
-    ON src_vn_json.entities_json
-    FOR EACH ROW
-EXECUTE FUNCTION src_lpodatas.fct_c_tri_upsert_entities()
-;
+BEFORE INSERT OR UPDATE
+ON src_vn_json.entities_json
+FOR EACH ROW
+EXECUTE FUNCTION src_lpodatas.fct_c_tri_upsert_entities();
 
 
 /* Function to get organism id from entity site/id */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_organisme_from_vn_id(_site VARCHAR, _id INT)
-;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_organisme_from_vn_id(
+    _site VARCHAR, _id INT
+);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_organisme_from_vn_id(_site VARCHAR, _id TEXT)
-    RETURNS INTEGER
-    LANGUAGE plpgsql AS
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_organisme_from_vn_id(
+    _site VARCHAR, _id TEXT
+)
+RETURNS INTEGER
+LANGUAGE plpgsql AS
 $get_organisme_from_vn_id$
 DECLARE
     theorganismid INT;
@@ -183,13 +183,14 @@ BEGIN
         LIMIT 1;
     RETURN theorganismid;
 END;
-$get_organisme_from_vn_id$
-;
+$get_organisme_from_vn_id$;
 
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_dataset_from_observer_uid(_uid TEXT)
-    RETURNS INTEGER
-    LANGUAGE plpgsql AS
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_dataset_from_observer_uid(
+    _uid TEXT
+)
+RETURNS INTEGER
+LANGUAGE plpgsql AS
 $get_organisme_from_vn_id$
 DECLARE
     thedatasetid INT;
@@ -208,8 +209,7 @@ BEGIN
     RETURN thedatasetid;
 END;
 $get_organisme_from_vn_id$
-    IMMUTABLE
-    STRICT
-;
+IMMUTABLE
+STRICT;
 
 COMMIT;

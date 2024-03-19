@@ -38,12 +38,9 @@ $$
 
         ROLLBACK;
     END
-$$
-;
+$$;
 
 
 ALTER TABLE gn_meta.t_acquisition_frameworks
-    ADD COLUMN IF NOT EXISTS additional_data JSONB
-        DEFAULT '{}'::JSONB
-;
-
+ADD COLUMN IF NOT EXISTS additional_data JSONB
+DEFAULT '{}'::JSONB;

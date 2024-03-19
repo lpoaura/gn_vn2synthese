@@ -70,5 +70,3 @@ echo -e "\e[1;32m+------------------------------------------------+\e[0m" | tee 
 echo -e "\e[1;32m| You can now execute files from ./tmp directory |\e[0m" | tee -a $logFile
 echo -e "\e[1;32m| \e[1;33mMay the force be with you!\e[0m                     \e[1;32m|\e[0m" | tee -a $logFile
 echo -e "\e[1;32m+------------------------------------------------+\e[0m" | tee -a $logFile
-
-

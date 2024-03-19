@@ -6,14 +6,16 @@ Various functions to generate metadata from VisioNature datas such as:
     - default values from gn_commons.t_parameters (if no project code)
 */
 
-BEGIN
-;
+BEGIN;
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_or_insert_basic_acquisition_framework (_name TEXT, _desc TEXT, _startdate DATE)
-;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_or_insert_basic_acquisition_framework(
+    _name TEXT, _desc TEXT, _startdate DATE
+);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_or_insert_basic_acquisition_framework(_name TEXT, _desc TEXT, _startdate DATE)
-    RETURNS INTEGER
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_or_insert_basic_acquisition_framework(
+    _name TEXT, _desc TEXT, _startdate DATE
+)
+RETURNS INTEGER
 AS
 $$
 DECLARE
@@ -50,19 +52,22 @@ BEGIN
     RETURN the_new_id;
 END
 $$
-    LANGUAGE plpgsql
-;
+LANGUAGE plpgsql;
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_or_insert_basic_acquisition_framework (_name TEXT, _desc TEXT, _startdate DATE) IS 'function to basically create acquisition framework'
-;
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_or_insert_basic_acquisition_framework(
+    _name TEXT, _desc TEXT, _startdate DATE
+) IS 'function to basically create acquisition framework';
 
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_id_acquisition_framework_by_name (_name TEXT)
-;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_id_acquisition_framework_by_name(
+    _name TEXT
+);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_id_acquisition_framework_by_name(_name TEXT)
-    RETURNS INTEGER
-    LANGUAGE plpgsql
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_id_acquisition_framework_by_name(
+    _name TEXT
+)
+RETURNS INTEGER
+LANGUAGE plpgsql
 AS
 $$
 DECLARE
@@ -78,20 +83,23 @@ BEGIN
         LIMIT 1;
     RETURN the_id_acquisition_framework;
 END;
-$$
-;
+$$;
 
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_id_acquisition_framework_by_name (_name TEXT) IS 'function to get acquisition framework id by name'
-;
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_id_acquisition_framework_by_name(
+    _name TEXT
+) IS 'function to get acquisition framework id by name';
 
 
 /* Function to basically create new dataset attached to an acquisition_framework find by name */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_or_insert_dataset_from_shortname_with_af_id (_shortname TEXT, _default_dataset TEXT, _id_framework INT)
-;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_or_insert_dataset_from_shortname_with_af_id(
+    _shortname TEXT, _default_dataset TEXT, _id_framework INT
+);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_or_insert_dataset_from_shortname_with_af_id(_shortname TEXT, _default_dataset TEXT, _id_framework INT)
-    RETURNS INTEGER
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_or_insert_dataset_from_shortname_with_af_id(
+    _shortname TEXT, _default_dataset TEXT, _id_framework INT
+)
+RETURNS INTEGER
 AS
 $$
 DECLARE
@@ -152,21 +160,24 @@ BEGIN
     RETURN the_id_dataset;
 END
 $$
-    LANGUAGE plpgsql
-;
+LANGUAGE plpgsql;
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_or_insert_dataset_from_shortname_with_af_id (_shortname TEXT, _default_dataset TEXT, _id_framework INT) IS 'function to basically create acquisition framework with id_framework'
-;
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_or_insert_dataset_from_shortname_with_af_id(
+    _shortname TEXT, _default_dataset TEXT, _id_framework INT
+) IS 'function to basically create acquisition framework with id_framework';
 
 
 /* Function to basically create new dataset attached to an acquisition_framework find by name */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_or_insert_dataset_from_shortname (_shortname TEXT, _default_dataset TEXT
-, _default_acquisition_framework TEXT)
-;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_or_insert_dataset_from_shortname(
+    _shortname TEXT, _default_dataset TEXT,
+    _default_acquisition_framework TEXT
+);
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_or_insert_dataset_from_shortname(_shortname TEXT
-, _default_dataset TEXT, _default_acquisition_framework TEXT)
-    RETURNS INTEGER
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_or_insert_dataset_from_shortname(
+    _shortname TEXT,
+    _default_dataset TEXT, _default_acquisition_framework TEXT
+)
+RETURNS INTEGER
 AS
 $$
 DECLARE
@@ -264,12 +275,12 @@ BEGIN
     RETURN the_id_dataset;
 END
 $$
-    LANGUAGE plpgsql
-;
+LANGUAGE plpgsql;
 
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_or_insert_dataset_from_shortname (_shortname TEXT, _default_dataset TEXT, _default_acquisition_framework TEXT) IS 'function to basically create acquisition framework'
-;
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_or_insert_dataset_from_shortname(
+    _shortname TEXT, _default_dataset TEXT, _default_acquisition_framework TEXT
+) IS 'function to basically create acquisition framework';
 
 
 /* TESTS */
@@ -290,9 +301,11 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_get_or_insert_dataset_from_shortname (_sh
 
 
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_id_dataset_by_shortname(_shortname TEXT)
-    RETURNS INTEGER
-    LANGUAGE plpgsql
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_id_dataset_by_shortname(
+    _shortname TEXT
+)
+RETURNS INTEGER
+LANGUAGE plpgsql
 AS
 $$
 DECLARE
@@ -307,13 +320,10 @@ BEGIN
             additional_data ->> 'standard_name' LIKE _shortname;
     RETURN the_id_dataset;
 END;
-$$
-;
+$$;
 
-COMMENT ON FUNCTION src_lpodatas.fct_c_get_id_dataset_by_shortname (_shortname TEXT) IS 'function to get dataset id by shortname'
-;
+COMMENT ON FUNCTION src_lpodatas.fct_c_get_id_dataset_by_shortname(
+    _shortname TEXT
+) IS 'function to get dataset id by shortname';
 
-COMMIT
-;
-
-
+COMMIT;

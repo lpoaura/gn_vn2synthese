@@ -983,4 +983,3 @@ EXECUTE PROCEDURE src_lpodatas.fct_tri_c_delete_vn_observation_from_geonature()
 
 COMMIT
 ;
-

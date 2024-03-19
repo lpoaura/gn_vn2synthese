@@ -9,5 +9,3 @@ dbSrid=2154
 # Customization
 schemaSource=src_vn_json
 schemaDestination=src_myowndata
-
-

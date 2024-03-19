@@ -21,8 +21,21 @@ BEGIN;
 
 DELETE FROM src_vn_json.observations_json
 WHERE st_disjoint(
-  public.st_setsrid (public.st_makepoint((item #>> '{observers,0,coord_lon}')::float, (item #>> '{observers,0,coord_lat}')::float), 4326),
-  st_transform((SELECT geom FROM ref_geo.l_areas WHERE id_type=ref_geo.get_id_area_type('VN_COVER')), 4326)
+    public.st_setsrid(
+        public.st_makepoint(
+            (item #>> '{observers,0,coord_lon}')::float,
+            (item #>> '{observers,0,coord_lat}')::float
+        ),
+        4326
+    ),
+    st_transform(
+        (
+            SELECT geom
+            FROM ref_geo.l_areas
+            WHERE id_type = ref_geo.get_id_area_type('VN_COVER')
+        ),
+        4326
+    )
 );
 
 COMMIT;
@@ -31,8 +44,8 @@ COMMIT;
 BEGIN;
 
 CREATE OR REPLACE FUNCTION src_vn_json.fct_tri_c_check_vn_cover()
-    RETURNS TRIGGER
-    LANGUAGE plpgsql
+RETURNS trigger
+LANGUAGE plpgsql
 AS
 $function$
 DECLARE
@@ -62,19 +75,15 @@ BEGIN
     END IF;
 
 END;
-$function$
-;
+$function$;
 
 
-DROP TRIGGER IF EXISTS tri_c_check_vn_cover ON src_vn_json.observations_json
-;
+DROP TRIGGER IF EXISTS tri_c_check_vn_cover ON src_vn_json.observations_json;
 
 CREATE TRIGGER tri_c_check_vn_cover
-    BEFORE INSERT OR UPDATE
-    ON src_vn_json.observations_json
-    FOR EACH ROW
-EXECUTE FUNCTION src_vn_json.fct_tri_c_check_vn_cover()
-;
+BEFORE INSERT OR UPDATE
+ON src_vn_json.observations_json
+FOR EACH ROW
+EXECUTE FUNCTION src_vn_json.fct_tri_c_check_vn_cover();
 
-COMMIT
-;
+COMMIT;

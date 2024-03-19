@@ -23,4 +23,3 @@
     * UUID Group
 
 On transmettra à Donovan et JP **un fichier de MaJ avec les UUID** et les données associées.
-

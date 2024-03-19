@@ -193,8 +193,6 @@ SET
                                   ref_nomenclatures.get_nomenclature_label_by_cdnom_mnemonique('VN_ATLAS_CODE',
                                                                                                obs.item #>>
                                                                                                '{observers,0,atlas_code}')
-                              ELSE
-                                  NULL
     END
   , bat_breed_colo      = NULL
   , bat_is_gite         = NULL
