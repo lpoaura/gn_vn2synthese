@@ -1,5 +1,14 @@
-tmp/*
-setup.log
-settings.ini
-.vscode/
 
+# Common
+!.gitkeep
+*.log
+tmp/*
+*.db
+*.*~
+
+# settings
+settings.ini
+
+# Python venv
+.venv
+venv
