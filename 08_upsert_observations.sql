@@ -87,7 +87,7 @@ DECLARE
     the_pseudo_observer_uid                  VARCHAR(200);
     -- TODO Renseigner avec la fonction actuelle
     the_bird_breed_code                      INTEGER;
-    the_breed_status                    VARCHAR(20);
+    the_breed_status                         VARCHAR(20);
     the_bat_breed_colo                       BOOLEAN;
     the_bat_is_gite                          BOOLEAN;
     the_bat_period                           VARCHAR(20);
@@ -127,11 +127,28 @@ BEGIN
     INTO the_id_source;
     SELECT new.id::TEXT
     INTO the_entity_source_pk_value;
-    IF new.item #> '{observers,0}' ? 'project_code'
+    SELECT public.st_setsrid(public.st_makepoint(cast(((new.item -> 'observers') -> 0) ->> 'coord_lon' AS FLOAT),
+                                                 cast(((new.item -> 'observers') -> 0) ->> 'coord_lat' AS FLOAT)),
+                             4326)
+    INTO _the_geom_4326;
+    IF /* MANAGE SYMPETRUM DATA */
+        new.item #> '{observers,0}' ? 'project_code'
     THEN
         SELECT src_lpodatas.fct_c_get_or_insert_dataset_from_shortname(new.item #>> '{observers,0,project_code}',
                                                                        'visionature_default_dataset',
                                                                        'visionature_default_acquisition_framework')
+        INTO the_id_dataset;
+    ELSEIF (st_intersects(_the_geom_4326, (SELECT geom FROM ref_geo.mv_c_sympetrum_cover))
+        AND new.item #>> '{species,taxonomy}' = '8')
+    THEN
+        SELECT src_lpodatas.fct_c_get_or_insert_dataset_from_shortname_with_af_id(
+                       'LPO_SYMPETRUM',
+                       NULL,
+                       src_lpodatas.fct_c_get_or_insert_basic_acquisition_framework(
+                               'LPO_SYMPETRUM',
+                               'CA LPO-SYMPETRUM',
+                               now()::DATE)
+               )
         INTO the_id_dataset;
     ELSE
         SELECT coalesce(src_lpodatas.fct_c_get_dataset_from_observer_uid(new.item #>> '{observers,0,@uid}'),
@@ -166,8 +183,8 @@ BEGIN
                                                     (new.item #>> '{species,taxonomy}')::INT, new.item) IN
                                             ('Possible', 'Probable', 'Certain')
                                            THEN ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '3') END
-                               ), ref_nomenclatures.fct_c_get_synonyms_nomenclature('STATUT_BIO', new.item #>>
-                                                                                                  '{observers,0,details,0,condition}')),
+                           ), ref_nomenclatures.fct_c_get_synonyms_nomenclature('STATUT_BIO', new.item #>>
+                                                                                              '{observers,0,details,0,condition}')),
                    ref_nomenclatures.get_id_nomenclature('STATUT_BIO', '1'))
     INTO the_id_nomenclature_bio_status;
     SELECT CASE
@@ -191,8 +208,8 @@ BEGIN
             WHEN src_lpodatas.fct_c_get_committees_validation_is_accepted(new.item #> '{observers,0,committees_validation}')
                 THEN
                 ref_nomenclatures.get_id_nomenclature('STATUT_VALID', '1')
-            WHEN cast(new.item #>> '{observers,0,admin_hidden}' AS BOOLEAN) OR
-                 NOT src_lpodatas.fct_c_get_committees_validation_is_accepted(new.item #> '{observers,0,committees_validation}')
+            WHEN cast(new.item #>> '{observers,0,admin_hidden}' AS BOOLEAN) OR -- TRUE si soumis à validation
+                 NOT src_lpodatas.fct_c_get_committees_validation_is_accepted(new.item #> '{observers,0,committees_validation}') -- TRUE si
                 THEN
                 ref_nomenclatures.get_id_nomenclature('STATUT_VALID', '3')
             ELSE
@@ -248,10 +265,10 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
     SELECT ref_nomenclatures.get_id_nomenclature('STATUT_SOURCE', 'Te')
     INTO the_id_nomenclature_source_status;
     SELECT ref_nomenclatures.get_id_nomenclature('TYP_INF_GEO', '1')
-           --SELECT coalesce(ref_nomenclatures.fct_c_get_synonyms_nomenclature(
-           -- 'TYP_INF_GEO',
-           -- new.item #>> '{observers,0,precision}'),
-           --ref_nomenclatures.get_id_nomenclature('TYP_INF_GEO', '2'))s
+    --SELECT coalesce(ref_nomenclatures.fct_c_get_synonyms_nomenclature(
+    -- 'TYP_INF_GEO',
+    -- new.item #>> '{observers,0,precision}'),
+    --ref_nomenclatures.get_id_nomenclature('TYP_INF_GEO', '2'))s
     INTO the_id_nomenclature_info_geo_type;
     SELECT cast(new.item #>> '{observers,0,count}' AS INTEGER)
     INTO the_count_min;
@@ -275,10 +292,7 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
     INTO the_altitude_min;
     SELECT cast(new.item #>> '{observers,0,altitude}' AS INTEGER)
     INTO the_altitude_max;
-    SELECT public.st_setsrid(public.st_makepoint(cast(((new.item -> 'observers') -> 0) ->> 'coord_lon' AS FLOAT),
-                                                 cast(((new.item -> 'observers') -> 0) ->> 'coord_lat' AS FLOAT)),
-                             4326)
-    INTO _the_geom_4326;
+
     SELECT _the_geom_4326
     INTO _the_geom_point;
     SELECT public.st_transform(_the_geom_4326, (gn_commons.get_default_parameter('gn_local_srid'))::INT)
@@ -403,9 +417,9 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
           , id_dataset                           = the_id_dataset
           , id_nomenclature_geo_object_nature    = the_id_nomenclature_geo_object_nature
           , id_nomenclature_grp_typ              = the_id_nomenclature_grp_typ
-          ,
+
           --   , id_nomenclature_obs_meth             = the_id_nomenclature_obs_meth
-            id_nomenclature_obs_technique        = the_id_nomenclature_obs_technique
+          , id_nomenclature_obs_technique        = the_id_nomenclature_obs_technique
           , id_nomenclature_bio_status           = the_id_nomenclature_bio_status
           , id_nomenclature_bio_condition        = the_id_nomenclature_bio_condition
           , id_nomenclature_naturalness          = the_id_nomenclature_naturalness
@@ -446,7 +460,7 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
 --           , meta_update_date                     = now()
           , last_action                          = 'U'
         WHERE (unique_id_sinp = the_unique_id_sinp)
-           OR (id_source, entity_source_pk_value) = (the_id_source, the_entity_source_pk_value)
+           OR (entity_source_pk_value, id_source) = (the_entity_source_pk_value, the_id_source)
         RETURNING id_synthese INTO the_id_synthese;
         RAISE DEBUG '-- % -- Update statement synthese when found > ENDING : total duration %', start_ts, (SELECT (clock_timestamp() - start_ts));
         IF NOT found THEN
@@ -564,7 +578,7 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
           , common_name         = the_common_name
           , pseudo_observer_uid = the_pseudo_observer_uid
           , bird_breed_code     = the_bird_breed_code
-          , breed_status   = the_breed_status
+          , breed_status        = the_breed_status
           , bat_breed_colo      = the_bat_breed_colo
           , bat_is_gite         = the_bat_is_gite
           , bat_period          = the_bat_period
@@ -864,7 +878,7 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
                         , common_name         = the_common_name
                         , pseudo_observer_uid = the_pseudo_observer_uid
                         , bird_breed_code     = the_bird_breed_code
-                        , breed_status   = the_breed_status
+                        , breed_status        = the_breed_status
                         , bat_breed_colo      = the_bat_breed_colo
                         , bat_is_gite         = the_bat_is_gite
                         , bat_period          = the_bat_period

@@ -5,7 +5,6 @@ Various functions to import and get observers into UsersHub tables from VisioNat
 */
 
 
-
 BEGIN
 ;
 
@@ -28,7 +27,7 @@ CREATE OR REPLACE FUNCTION public.jsonb_arr_record_keys(JSONB)
                     k
                 FROM jsonb_array_elements($1) elem
                    , jsonb_object_keys(elem) k
-            )'
+        )'
 ;
 
 COMMENT ON FUNCTION public.jsonb_arr_record_keys(JSONB) IS '
@@ -40,14 +39,14 @@ COMMENT ON FUNCTION public.jsonb_arr_record_keys(JSONB) IS '
 /* Fonction to create observers if not already registered */
 DROP FUNCTION IF EXISTS src_lpodatas.fct_c_create_usershub_roles_from_visionature (_site VARCHAR, _item JSONB, _rq TEXT)
 ;
-
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_create_usershub_roles_from_visionature(_site VARCHAR, _item JSONB, _rq TEXT DEFAULT 'Utilisateur VisioNature')
-    RETURNS INT
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_create_usershub_roles_from_visionature(_site CHARACTER VARYING, _item JSONB,
+                                                             _rq TEXT DEFAULT 'Utilisateur VisioNature'::TEXT) RETURNS INTEGER
+    LANGUAGE plpgsql
 AS
 $$
 DECLARE
-    therolerecord         RECORD;
-    theorganismid         INT;
+    therolerecord RECORD;
+    theorganismid INT;
 BEGIN
     /* PROCESS
        -------
@@ -82,7 +81,8 @@ BEGIN
         -- Si nom/prenom/email est différent de ce qui est stocké alors ok sinon on update le mail et les noms
 
         IF (_item ->> 'name' <> therolerecord.nom_role OR
-            _item ->> 'surname' <> therolerecord.prenom_role
+            _item ->> 'surname' <> therolerecord.prenom_role OR
+            _item ->> 'anonymous' <> therolerecord.champs_addi #>> '{from_vn,anonymous}'
 --             OR _item ->> 'email' <> therolerecord.email
             )
         THEN
@@ -95,6 +95,7 @@ BEGIN
                 utilisateurs.t_roles v
             SET nom_role    = _item ->> 'name'
               , prenom_role = _item ->> 'surname'
+              , champs_addi = jsonb_set(champs_addi, '{from_vn,anonymous}'::TEXT[], _item -> 'anonymous', TRUE)
 --               , email       = _item ->> 'email'
               , remarques   = _rq
             WHERE id_role = therolerecord.id_role;
@@ -137,6 +138,9 @@ BEGIN
 
         END IF;
         RAISE DEBUG 'Observer % with email % already exists', _item ->> 'id_universal', _item ->> 'email';
+        IF _item ->> 'anonymous' <> therolerecord.champs_addi #>> '{from_vn,anonymous}' THEN
+            PERFORM src_lpodatas.fct_c_update_user_observations(_item #>> '{id_universal}');
+        END IF;
     ELSE
         INSERT INTO utilisateurs.t_roles (nom_role, prenom_role, email, champs_addi, remarques, active, date_insert)
         VALUES ( _item ->> 'name'
@@ -181,9 +185,8 @@ BEGIN
     END IF;
     RETURN therolerecord.id_role;
 END
-$$
-    LANGUAGE plpgsql
-;
+$$;
+
 
 
 COMMENT ON FUNCTION src_lpodatas.fct_c_create_usershub_roles_from_visionature (_site VARCHAR, _item JSONB, _rq TEXT) IS 'créée ou mets à jour un observervateur à partir des entrées json VisioNature'

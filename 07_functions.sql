@@ -137,7 +137,7 @@ $$
 DECLARE
     _array_id TEXT[];
 BEGIN
-    IF _behaviours IS NOT NULL THEN
+   IF _behaviours IS NOT NULL THEN
         SELECT
             array_agg(u.x)::TEXT[]
             INTO _array_id
