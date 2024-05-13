@@ -10,7 +10,7 @@ BEGIN;
 
 DROP TRIGGER IF EXISTS tri_c_upsert_vn_observation_to_geonature ON src_vn_json.observations_json;
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature() CASCADE;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature () CASCADE;
 
 CREATE OR REPLACE FUNCTION src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature()
 RETURNS TRIGGER
@@ -919,7 +919,7 @@ FOR EACH ROW
 EXECUTE PROCEDURE src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature();
 
 -- TRUNCATE gn_synthese.synthese RESTART IDENTITY CASCADE;
-DROP FUNCTION IF EXISTS src_lpodatas.fct_tri_c_delete_vn_observation_from_geonature() CASCADE;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_tri_c_delete_vn_observation_from_geonature () CASCADE;
 
 CREATE OR REPLACE FUNCTION src_lpodatas.fct_tri_c_delete_vn_observation_from_geonature()
 RETURNS TRIGGER

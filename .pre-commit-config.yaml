@@ -23,8 +23,8 @@ repos:
           - "postgres"
       - id: sqlfluff-fix
         args:
-            - "--dialect"
-            - "postgres"
+          - "--dialect"
+          - "postgres"
 
 
 ci:

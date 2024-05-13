@@ -9,7 +9,7 @@ A collection of various helper fonctions
 
 BEGIN;
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_taxo_group_values_from_vn(
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_taxo_group_values_from_vn (
     _key TEXT, _site TEXT, _id INTEGER, OUT _result TEXT
 );
 
@@ -32,7 +32,7 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_get_taxo_group_values_from_vn(
 
 
 /* Function to get taxref datas from VN id_sp */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_taxref_values_from_vn(
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_taxref_values_from_vn (
     _field_name ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT
 );
 
@@ -57,7 +57,7 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_get_taxref_values_from_vn(
 
 
 /* Function to get visionature species datas from VN id_sp */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_species_values_from_vn(
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_species_values_from_vn (
     _key ANYELEMENT, _id_species INTEGER, OUT _result ANYELEMENT
 );
 
@@ -80,7 +80,7 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_get_species_values_from_vn(
 
 
 /* Function to get observer full name from VisioNature observer universal id*/
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_observer_full_name_from_vn(
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_observer_full_name_from_vn (
     _id_universal INTEGER, OUT _result TEXT
 );
 
@@ -104,7 +104,7 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_get_observer_full_name_from_vn(
 
 
 /* Function to get entity name from VisioNature observer universal id */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_entity_from_observer_site_uid(
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_entity_from_observer_site_uid (
     _uid INTEGER, _site TEXT, OUT _result TEXT
 );
 
@@ -137,7 +137,7 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_get_entity_from_observer_site_uid(
 
 
 /* Function to generate an array of behaviours from VisioNature datas */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_behaviours_texts_array_from_id_array(
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_behaviours_texts_array_from_id_array (
     _behaviours JSONB, OUT _result TEXT []
 );
 
@@ -172,7 +172,7 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_get_behaviours_texts_array_from_id_array(
 
 
 /* list visionature medias URL from medias details */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_medias_url_from_visionature_medias_array(
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_medias_url_from_visionature_medias_array (
     _medias JSONB, OUT _result TEXT
 );
 
@@ -204,7 +204,7 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_get_medias_url_from_visionature_medias_ar
 /* Function to get observation generated UUID */
 /* NOTE: removed because uuid are now available in faune-france API */
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_observation_uuid(
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_observation_uuid (
     _site CHARACTER VARYING, _id INTEGER
 ) CASCADE;
 
@@ -247,7 +247,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_committees_validation_status(
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_committees_validation_status (
     _committees_validation JSONB
 );
 
@@ -269,7 +269,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_committees_validation_is_accepted(
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_committees_validation_is_accepted (
     _committees_validation JSONB
 );
 

@@ -35,7 +35,7 @@ COMMENT ON FUNCTION public.jsonb_arr_record_keys(JSONB) IS '
 
 
 /* Fonction to create observers if not already registered */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_create_usershub_roles_from_visionature(
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_create_usershub_roles_from_visionature (
     _site VARCHAR, _item JSONB, _rq TEXT
 );
 CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_create_usershub_roles_from_visionature(
@@ -196,7 +196,7 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_create_usershub_roles_from_visionature(
 
 
 /* Function that returns id_role from VisioNature user universal id */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_id_role_from_visionature_uid(
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_id_role_from_visionature_uid (
     _uid TEXT, _check_anonymous BOOL
 );
 
@@ -227,7 +227,7 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_get_id_role_from_visionature_uid(
 
 
 /* Function that returns id_role from VisioNature user universal id */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_role_name_from_visionature_uid(
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_role_name_from_visionature_uid (
     _uid TEXT, _check_anonymous BOOL
 );
 

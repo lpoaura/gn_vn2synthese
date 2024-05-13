@@ -8,7 +8,7 @@ Various functions to generate metadata from VisioNature datas such as:
 
 BEGIN;
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_or_insert_basic_acquisition_framework(
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_or_insert_basic_acquisition_framework (
     _name TEXT, _desc TEXT, _startdate DATE
 );
 
@@ -59,7 +59,7 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_get_or_insert_basic_acquisition_framework
 ) IS 'function to basically create acquisition framework';
 
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_id_acquisition_framework_by_name(
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_id_acquisition_framework_by_name (
     _name TEXT
 );
 
@@ -92,7 +92,7 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_get_id_acquisition_framework_by_name(
 
 
 /* Function to basically create new dataset attached to an acquisition_framework find by name */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_or_insert_dataset_from_shortname_with_af_id(
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_or_insert_dataset_from_shortname_with_af_id (
     _shortname TEXT, _default_dataset TEXT, _id_framework INT
 );
 
@@ -168,7 +168,7 @@ COMMENT ON FUNCTION src_lpodatas.fct_c_get_or_insert_dataset_from_shortname_with
 
 
 /* Function to basically create new dataset attached to an acquisition_framework find by name */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_or_insert_dataset_from_shortname(
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_or_insert_dataset_from_shortname (
     _shortname TEXT, _default_dataset TEXT,
     _default_acquisition_framework TEXT
 );

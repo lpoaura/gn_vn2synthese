@@ -8,26 +8,26 @@ BEGIN;
 
 CREATE TABLE IF NOT EXISTS ref_nomenclatures.t_c_synonyms
 (
-    id_type          INTEGER
-        CONSTRAINT fk_t_c_synonymes_id_type REFERENCES ref_nomenclatures.bib_nomenclatures_types,
-    type_mnemonique  VARCHAR(255),
-    cd_nomenclature  VARCHAR(255),
-    mnemonique       VARCHAR(255),
-    label_default    VARCHAR(255),
-    initial_value    VARCHAR(255),
-    id_nomenclature  INTEGER
-        CONSTRAINT fk_t_c_synonymes_id_nomenclature REFERENCES ref_nomenclatures.t_nomenclatures,
+    id_type INTEGER
+    CONSTRAINT fk_t_c_synonymes_id_type REFERENCES ref_nomenclatures.bib_nomenclatures_types,
+    type_mnemonique VARCHAR(255),
+    cd_nomenclature VARCHAR(255),
+    mnemonique VARCHAR(255),
+    label_default VARCHAR(255),
+    initial_value VARCHAR(255),
+    id_nomenclature INTEGER
+    CONSTRAINT fk_t_c_synonymes_id_nomenclature REFERENCES ref_nomenclatures.t_nomenclatures,
     meta_create_date TIMESTAMP DEFAULT now(),
     meta_update_date TIMESTAMP DEFAULT now(),
-    id_synonyme      SERIAL NOT NULL
-        CONSTRAINT pk_t_synonymes PRIMARY KEY,
-    addon_values     JSONB,
-    id_source        INTEGER
-        CONSTRAINT fk_t_synonymes_id_source REFERENCES gn_synthese.t_sources
+    id_synonyme SERIAL NOT NULL
+    CONSTRAINT pk_t_synonymes PRIMARY KEY,
+    addon_values JSONB,
+    id_source INTEGER
+    CONSTRAINT fk_t_synonymes_id_source REFERENCES gn_synthese.t_sources
 );
 
 ALTER TABLE ref_nomenclatures.t_c_synonyms
-    OWNER TO geonatadmin;
+OWNER TO geonatadmin;
 
 COMMENT ON TABLE ref_nomenclatures.t_c_synonyms IS 'Table de correspondances des nomenclatures avec une source tierce';
 
@@ -44,32 +44,37 @@ CREATE INDEX i_t_synonymes_type_mnemonique ON ref_nomenclatures.t_c_synonyms (ty
 DROP VIEW IF EXISTS ref_nomenclatures.v_c_synonyms;
 
 CREATE OR REPLACE VIEW ref_nomenclatures.v_c_synonyms AS
-SELECT DISTINCT bib_nomenclatures_types.id_type       AS types_id_type,
-                bib_nomenclatures_types.mnemonique    AS types_mnemonique,
-                bib_nomenclatures_types.label_default AS types_label_default,
-                t_nomenclatures.id_nomenclature       AS nomenclatures_id_nomenclature,
-                t_nomenclatures.cd_nomenclature       AS nomenclatures_cd_nomenclature,
-                t_nomenclatures.mnemonique            AS nomenclatures_mnemonique,
-                t_nomenclatures.label_default         AS nomenclatures_label_default,
-                t_c_synonyms.initial_value            AS synonyms_initial_value,
-                t_c_synonyms.meta_create_date         AS synonyms_meta_create_date,
-                t_c_synonyms.meta_update_date         AS synonyms_meta_update_date,
-                t_c_synonyms.id_source                AS synonyms_id_source,
-                t_c_synonyms.addon_values             AS synonyms_addon_values,
-                t_sources.name_source                 AS source_name
+SELECT DISTINCT
+    bib_nomenclatures_types.id_type AS types_id_type,
+    bib_nomenclatures_types.mnemonique AS types_mnemonique,
+    bib_nomenclatures_types.label_default AS types_label_default,
+    t_nomenclatures.id_nomenclature AS nomenclatures_id_nomenclature,
+    t_nomenclatures.cd_nomenclature AS nomenclatures_cd_nomenclature,
+    t_nomenclatures.mnemonique AS nomenclatures_mnemonique,
+    t_nomenclatures.label_default AS nomenclatures_label_default,
+    t_c_synonyms.initial_value AS synonyms_initial_value,
+    t_c_synonyms.meta_create_date AS synonyms_meta_create_date,
+    t_c_synonyms.meta_update_date AS synonyms_meta_update_date,
+    t_c_synonyms.id_source AS synonyms_id_source,
+    t_c_synonyms.addon_values AS synonyms_addon_values,
+    t_sources.name_source AS source_name
 FROM ref_nomenclatures.t_c_synonyms
-         JOIN ref_nomenclatures.bib_nomenclatures_types ON t_c_synonyms.id_type = bib_nomenclatures_types.id_type
-         JOIN ref_nomenclatures.t_nomenclatures ON t_c_synonyms.id_nomenclature = t_nomenclatures.id_nomenclature
-         JOIN gn_synthese.t_sources ON t_c_synonyms.id_source = t_sources.id_source;
+INNER JOIN ref_nomenclatures.bib_nomenclatures_types ON t_c_synonyms.id_type = bib_nomenclatures_types.id_type
+INNER JOIN ref_nomenclatures.t_nomenclatures ON t_c_synonyms.id_nomenclature = t_nomenclatures.id_nomenclature
+INNER JOIN gn_synthese.t_sources ON t_c_synonyms.id_source = t_sources.id_source;
 
 
 /* Function permettant de retrouver l'id_nomenclature à partir des données VisioNature */
-DROP FUNCTION IF EXISTS ref_nomenclatures.fct_c_get_synonyms_nomenclature (_type CHARACTER VARYING, _value CHARACTER VARYING);
+DROP FUNCTION IF EXISTS ref_nomenclatures.fct_c_get_synonyms_nomenclature (
+    _type CHARACTER VARYING, _value CHARACTER VARYING
+);
 
-CREATE OR REPLACE FUNCTION ref_nomenclatures.fct_c_get_synonyms_nomenclature(_type CHARACTER VARYING, _value CHARACTER VARYING)
-    RETURNS INTEGER
-    IMMUTABLE
-    LANGUAGE plpgsql
+CREATE OR REPLACE FUNCTION ref_nomenclatures.fct_c_get_synonyms_nomenclature(
+    _type CHARACTER VARYING, _value CHARACTER VARYING
+)
+RETURNS INTEGER
+IMMUTABLE
+LANGUAGE plpgsql
 AS
 $$
 DECLARE
@@ -87,7 +92,9 @@ BEGIN
 END;
 $$;
 
-COMMENT ON FUNCTION ref_nomenclatures.fct_c_get_synonyms_nomenclature (_type CHARACTER VARYING, _value CHARACTER VARYING) IS 'Fonction de recherche des id_nomenclatures'
+COMMENT ON FUNCTION ref_nomenclatures.fct_c_get_synonyms_nomenclature(
+    _type CHARACTER VARYING, _value CHARACTER VARYING
+) IS 'Fonction de recherche des id_nomenclatures'
 
 /* Manage reproduction status */
 
@@ -102,14 +109,13 @@ CREATE TABLE IF NOT EXISTS ref_nomenclatures.t_c_vn_repro_matching_values
     repro_status     VARCHAR,
     json_path        JSONPATH,
     priority         INT
-)
-;
+);
 
 
 CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_reproduction_status(_taxo_group_id INTEGER, _item JSONB)
-    RETURNS VARCHAR
-    IMMUTABLE
-    LANGUAGE plpgsql
+RETURNS VARCHAR
+IMMUTABLE
+LANGUAGE plpgsql
 AS
 $$
 DECLARE

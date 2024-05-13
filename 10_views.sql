@@ -42,8 +42,8 @@ SELECT
     coalesce(prep_vn.french_name, tx.nom_vern::TEXT) AS vn_nom_fr,
     coalesce(prep_vn.latin_name, tx.lb_nom::TEXT) AS vn_nom_sci
 FROM taxonomie.taxref AS tx
-LEFT JOIN taxonomie.cor_c_vn_taxref AS corr ON corr.cd_nom = tx.cd_nom
-LEFT JOIN prep_vn ON prep_vn.vn_id = corr.vn_id
+LEFT JOIN taxonomie.cor_c_vn_taxref AS corr ON tx.cd_nom = corr.cd_nom
+LEFT JOIN prep_vn ON corr.vn_id = prep_vn.vn_id
 WHERE tx.cd_nom = tx.cd_ref;
 
 ALTER MATERIALIZED VIEW taxonomie.mv_c_cor_vn_taxref OWNER TO dbadmin;
@@ -199,7 +199,7 @@ LEFT JOIN
 INNER JOIN gn_synthese.t_sources AS ts ON s.id_source = ts.id_source
 LEFT JOIN
     taxonomie.mv_c_cor_vn_taxref AS cor
-    ON cor.cd_nom = s.cd_nom AND cor.cd_nom IS NOT NULL;
+    ON s.cd_nom = cor.cd_nom AND cor.cd_nom IS NOT NULL;
 
 
 CREATE VIEW src_lpodatas.v_c_observations_light
@@ -323,6 +323,6 @@ LEFT JOIN
 INNER JOIN gn_synthese.t_sources AS ts ON s.id_source = ts.id_source
 LEFT JOIN
     taxonomie.mv_c_cor_vn_taxref AS cor
-    ON cor.cd_nom = s.cd_nom AND cor.cd_nom IS NOT NULL;
+    ON s.cd_nom = cor.cd_nom AND cor.cd_nom IS NOT NULL;
 
 COMMIT;

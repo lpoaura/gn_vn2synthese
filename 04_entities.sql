@@ -160,7 +160,7 @@ EXECUTE FUNCTION src_lpodatas.fct_c_tri_upsert_entities();
 
 
 /* Function to get organism id from entity site/id */
-DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_organisme_from_vn_id(
+DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_organisme_from_vn_id (
     _site VARCHAR, _id INT
 );
 
