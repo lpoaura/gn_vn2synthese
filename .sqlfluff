@@ -1,0 +1,4 @@
+[sqlfluff]
+large_file_skip_byte_limit = 0
+max_line_length = 120
+fix_even_unparsable = True

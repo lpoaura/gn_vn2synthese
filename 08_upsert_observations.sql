@@ -6,18 +6,15 @@ Data are then stored into gn_synthese.synthese and src_lpodatas.t_c_synthese_ext
 with id_synthese as common field.
 */
 
-BEGIN
-;
+BEGIN;
 
-DROP TRIGGER IF EXISTS tri_c_upsert_vn_observation_to_geonature ON src_vn_json.observations_json
-;
+DROP TRIGGER IF EXISTS tri_c_upsert_vn_observation_to_geonature ON src_vn_json.observations_json;
 
-DROP FUNCTION IF EXISTS src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature () CASCADE
-;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature() CASCADE;
 
 CREATE OR REPLACE FUNCTION src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature()
-    RETURNS TRIGGER
-    LANGUAGE plpgsql
+RETURNS TRIGGER
+LANGUAGE plpgsql
 AS
 $$
 DECLARE
@@ -131,6 +128,16 @@ BEGIN
                                                  cast(((new.item -> 'observers') -> 0) ->> 'coord_lat' AS FLOAT)),
                              4326)
     INTO _the_geom_4326;
+    SELECT to_timestamp(cast(new.item #>> '{observers,0,timing,@timestamp}' AS DOUBLE PRECISION))
+    INTO the_date_min;
+    SELECT the_date_min
+    INTO the_date_max;
+    SELECT cast(coalesce(src_lpodatas.fct_c_get_taxref_values_from_vn('cd_nom'::TEXT,
+                                                                      cast(new.item #>> '{species,@id}' AS INTEGER)),
+                         gn_commons.get_default_parameter('visionature_default_cd_nom')) AS INTEGER)
+    INTO the_cd_nom;
+    SELECT cast(new.item #>> '{observers,0,atlas_code}' AS INTEGER)
+    INTO the_bird_breed_code;
     IF /* MANAGE SYMPETRUM DATA */
         new.item #> '{observers,0}' ? 'project_code'
     THEN
@@ -216,19 +223,8 @@ BEGIN
                 ref_nomenclatures.get_id_nomenclature('STATUT_VALID', '2')
             END
     INTO the_id_nomenclature_valid_status;
-    SELECT CASE
-               -- Taxons sensibles, règle dans la table src_lpodatas.t_c_rules_diffusion_level
-               WHEN the_cd_nom IN (SELECT cd_nom FROM src_lpodatas.t_c_rules_diffusion_level)
-                   THEN src_lpodatas.fct_c_get_taxon_diffusion_level(the_cd_nom)
-               -- Observation "cachée"
-               WHEN cast(new.item #>> '{observers,0,hidden}' IS NOT NULL AS BOOL) THEN
-                   ref_nomenclatures.get_id_nomenclature('NIV_PRECIS', '2')
-               -- Observation "invalide" (> refused) ou en ffquestionnement (> question)
-               WHEN new.item #>> '{observers,0,admin_hidden_type}' IN ('refused', 'question') THEN
-                   ref_nomenclatures.get_id_nomenclature('NIV_PRECIS', '4')
-               ELSE
-                   ref_nomenclatures.get_id_nomenclature('NIV_PRECIS', '5')
-               END
+    SELECT src_lpodatas.fct_c_get_diffusion_level(the_cd_nom, the_date_min,
+                                                  the_bird_breed_code, new.item)
     INTO the_id_nomenclature_diffusion_level;
     SELECT
         --         coalesce(ref_nomenclatures.fct_c_get_synonyms_nomenclature('STADE_VIE',
@@ -274,10 +270,7 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
     INTO the_count_min;
     SELECT cast(new.item #>> '{observers,0,count}' AS INTEGER)
     INTO the_count_max;
-    SELECT cast(coalesce(src_lpodatas.fct_c_get_taxref_values_from_vn('cd_nom'::TEXT,
-                                                                      cast(new.item #>> '{species,@id}' AS INTEGER)),
-                         gn_commons.get_default_parameter('visionature_default_cd_nom')) AS INTEGER)
-    INTO the_cd_nom;
+
     SELECT src_lpodatas.fct_c_get_species_values_from_vn('latin_name'::TEXT, the_id_sp_source)
     INTO the_nom_cite;
     SELECT gn_commons.get_default_parameter('taxref_version', NULL)
@@ -297,10 +290,7 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
     INTO _the_geom_point;
     SELECT public.st_transform(_the_geom_4326, (gn_commons.get_default_parameter('gn_local_srid'))::INT)
     INTO _the_geom_local;
-    SELECT to_timestamp(cast(new.item #>> '{observers,0,timing,@timestamp}' AS DOUBLE PRECISION))
-    INTO the_date_min;
-    SELECT to_timestamp(cast(new.item #>> '{observers,0,timing,@timestamp}' AS DOUBLE PRECISION))
-    INTO the_date_max;
+
     SELECT NULL
     INTO the_validation_comment;
     SELECT CASE
@@ -350,8 +340,7 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
     INTO the_common_name;
     SELECT encode(hmac(cast((new.item #>> '{observers,0,@uid}') AS TEXT), 'cyifoE!A5r', 'sha1'), 'hex')
     INTO the_pseudo_observer_uid;
-    SELECT cast(new.item #>> '{observers,0,atlas_code}' AS INTEGER)
-    INTO the_bird_breed_code;
+
     SELECT CASE
                WHEN (new.item #> '{observers,0}') ? 'atlas_code' THEN
                    ref_nomenclatures.get_nomenclature_label_by_cdnom_mnemonique('VN_ATLAS_CODE',
@@ -916,29 +905,25 @@ ref_nomenclatures.get_id_nomenclature('TYP_DENBR', 'ind')
     RETURN new;
 END ;
 
-$$
-;
+$$;
 
-COMMENT ON FUNCTION src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature () IS 'Trigger function to upsert datas from VisioNature to synthese and custom child table'
-;
+COMMENT ON FUNCTION src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature()
+IS 'Trigger function to upsert datas from VisioNature to synthese and custom child table';
 
-DROP TRIGGER IF EXISTS fct_tri_c_upsert_vn_observation_to_geonature ON src_vn_json.observations_json
-;
+DROP TRIGGER IF EXISTS fct_tri_c_upsert_vn_observation_to_geonature ON src_vn_json.observations_json;
 
 CREATE TRIGGER fct_tri_c_upsert_vn_observation_to_geonature
-    AFTER INSERT OR UPDATE
-    ON src_vn_json.observations_json
-    FOR EACH ROW
-EXECUTE PROCEDURE src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature()
-;
+AFTER INSERT OR UPDATE
+ON src_vn_json.observations_json
+FOR EACH ROW
+EXECUTE PROCEDURE src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature();
 
 -- TRUNCATE gn_synthese.synthese RESTART IDENTITY CASCADE;
-DROP FUNCTION IF EXISTS src_lpodatas.fct_tri_c_delete_vn_observation_from_geonature () CASCADE
-;
+DROP FUNCTION IF EXISTS src_lpodatas.fct_tri_c_delete_vn_observation_from_geonature() CASCADE;
 
 CREATE OR REPLACE FUNCTION src_lpodatas.fct_tri_c_delete_vn_observation_from_geonature()
-    RETURNS TRIGGER
-    LANGUAGE plpgsql
+RETURNS TRIGGER
+LANGUAGE plpgsql
 AS
 $$
 DECLARE
@@ -965,21 +950,17 @@ BEGIN
     RETURN old;
 END;
 
-$$
-;
+$$;
 
-COMMENT ON FUNCTION src_lpodatas.fct_tri_c_delete_vn_observation_from_geonature () IS 'Trigger function to delete datas from gnadm synthese and extended table when DELETE on VisioNature source datas'
-;
+COMMENT ON FUNCTION src_lpodatas.fct_tri_c_delete_vn_observation_from_geonature()
+IS 'Trigger function to delete datas from gnadm synthese and extended table when DELETE on VisioNature source datas';
 
-DROP TRIGGER IF EXISTS tri_c_delete_vn_observation_from_geonature ON src_vn_json.observations_json
-;
+DROP TRIGGER IF EXISTS tri_c_delete_vn_observation_from_geonature ON src_vn_json.observations_json;
 
 CREATE TRIGGER tri_c_delete_vn_observation_from_geonature
-    AFTER DELETE
-    ON src_vn_json.observations_json
-    FOR EACH ROW
-EXECUTE PROCEDURE src_lpodatas.fct_tri_c_delete_vn_observation_from_geonature()
-;
+AFTER DELETE
+ON src_vn_json.observations_json
+FOR EACH ROW
+EXECUTE PROCEDURE src_lpodatas.fct_tri_c_delete_vn_observation_from_geonature();
 
-COMMIT
-;
+COMMIT;
