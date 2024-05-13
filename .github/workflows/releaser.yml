@@ -1,0 +1,32 @@
+name: "🚀 Releaser"
+
+on:
+  push:
+    tags:
+      - "*.*.*"
+
+# env:
+#   PROJECT_FOLDER: "plugin_qgis_lpo"
+#   PYTHON_VERSION: 3.9
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create changelog diff
+        id: changelog_diff
+        run: |
+          sed -n "/^## \[${GITHUB_REF/refs\/tags\//}\]/,/^## \[$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))\]/{/^## \[$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))\]/!p;}" CHANGELOG.md > release.md
+
+      - name: Create release on GitHub
+        uses: ncipollo/release-action@v1.14.0
+        with:
+          bodyFile: release.md
+          generateReleaseNotes: true
+      - name: Delete release file
+        run: rm release.md

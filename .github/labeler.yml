@@ -1,0 +1,16 @@
+ci-cd:
+  - changed-files:
+      - any-glob-to-any-file: [".github/workflows/*", ".github/labeler.yml"]
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: ["docs/**/*"]
+
+quality:
+  - changed-files:
+      - any-glob-to-any-file: ["tests/**/*"]
+
+tooling:
+  - changed-files:
+      - any-glob-to-any-file:
+          [".pre-commit-config.yaml", ".vscode/**/*", "pyproject.toml",".sqlfluff"]
