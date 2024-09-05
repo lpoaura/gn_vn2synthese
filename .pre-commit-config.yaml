@@ -12,19 +12,13 @@ repos:
       - id: fix-byte-order-marker
       - id: fix-encoding-pragma
         args: [--remove]
-      - id: trailing-whitespace
-        args: [--markdown-linebreak-ext=md]
-  - repo: https://github.com/sqlfluff/sqlfluff
-    rev: 2.1.2
+      # - id: trailing-whitespace
+      #   args: [--markdown-linebreak-ext=md]
+  - repo: https://github.com/amureki/pre-commit-pgFormatter
+    rev: v1.3.0  # Use the sha / tag you want to point at
     hooks:
-      - id: sqlfluff-lint
-        args:
-          - "--dialect"
-          - "postgres"
-      - id: sqlfluff-fix
-        args:
-          - "--dialect"
-          - "postgres"
+      - id: pg_format
+        args: [-b,-f1,-C,-U2,-k,-g,-w80]
 
 
 ci:
