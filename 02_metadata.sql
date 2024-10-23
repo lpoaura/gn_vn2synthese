@@ -15,48 +15,38 @@ DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_or_insert_basic_acquisition_frame
 CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_or_insert_basic_acquisition_framework(
     _name TEXT, _desc TEXT, _startdate DATE
 )
-RETURNS INTEGER
+    RETURNS INTEGER
 AS
 $$
 DECLARE
     the_new_id INT;
 BEGIN
-    IF (
-        SELECT
-            exists(
-                    SELECT
-                        1
-                        FROM
-                            gn_meta.t_acquisition_frameworks
-                        WHERE
-                            t_acquisition_frameworks.additional_data #>> '{standard_name}' LIKE _name)) THEN
-        SELECT
-            id_acquisition_framework
-            INTO the_new_id
-            FROM
-                gn_meta.t_acquisition_frameworks
-            WHERE
-                t_acquisition_frameworks.additional_data #>> '{standard_name}' LIKE _name;
+    IF (SELECT EXISTS(SELECT 1
+                      FROM gn_meta.t_acquisition_frameworks
+                      WHERE t_acquisition_frameworks.additional_data #>> '{standard_name}' LIKE _name)) THEN
+        SELECT id_acquisition_framework
+        INTO the_new_id
+        FROM gn_meta.t_acquisition_frameworks
+        WHERE t_acquisition_frameworks.additional_data #>> '{standard_name}' LIKE _name;
         RAISE DEBUG 'Acquisition framework named % already exists', _name;
     ELSE
-        INSERT INTO
-            gn_meta.t_acquisition_frameworks ( acquisition_framework_name
-                                             , acquisition_framework_desc
-                                             , acquisition_framework_start_date
-                                             , additional_data
-                                             , meta_create_date)
-            VALUES (_name, _desc, _startdate, jsonb_build_object('standard_name', _name), now())
-            RETURNING id_acquisition_framework INTO the_new_id;
+        INSERT INTO gn_meta.t_acquisition_frameworks ( acquisition_framework_name
+                                                     , acquisition_framework_desc
+                                                     , acquisition_framework_start_date
+                                                     , additional_data
+                                                     , meta_create_date)
+        VALUES (_name, _desc, _startdate, JSONB_BUILD_OBJECT('standard_name', _name), NOW())
+        RETURNING id_acquisition_framework INTO the_new_id;
         RAISE DEBUG 'Acquisition framework named % inserted with id %', _name, the_new_id;
     END IF;
     RETURN the_new_id;
 END
 $$
-LANGUAGE plpgsql;
+    LANGUAGE plpgsql;
 
 COMMENT ON FUNCTION src_lpodatas.fct_c_get_or_insert_basic_acquisition_framework(
     _name TEXT, _desc TEXT, _startdate DATE
-) IS 'function to basically create acquisition framework';
+    ) IS 'function to basically create acquisition framework';
 
 
 DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_id_acquisition_framework_by_name (
@@ -66,21 +56,18 @@ DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_id_acquisition_framework_by_name 
 CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_id_acquisition_framework_by_name(
     _name TEXT
 )
-RETURNS INTEGER
-LANGUAGE plpgsql
+    RETURNS INTEGER
+    LANGUAGE plpgsql
 AS
 $$
 DECLARE
     the_id_acquisition_framework INTEGER;
 BEGIN
     --Retrouver l'id du module par son code
-    SELECT INTO the_id_acquisition_framework
-        id_acquisition_framework
-        FROM
-            gn_meta.t_acquisition_frameworks
-        WHERE
-            additional_data ->> 'standard_name' ILIKE _name
-        LIMIT 1;
+    SELECT INTO the_id_acquisition_framework id_acquisition_framework
+    FROM gn_meta.t_acquisition_frameworks
+    WHERE additional_data ->> 'standard_name' ILIKE _name
+    LIMIT 1;
     RETURN the_id_acquisition_framework;
 END;
 $$;
@@ -88,7 +75,7 @@ $$;
 
 COMMENT ON FUNCTION src_lpodatas.fct_c_get_id_acquisition_framework_by_name(
     _name TEXT
-) IS 'function to get acquisition framework id by name';
+    ) IS 'function to get acquisition framework id by name';
 
 
 /* Function to basically create new dataset attached to an acquisition_framework find by name */
@@ -99,7 +86,7 @@ DROP FUNCTION IF EXISTS src_lpodatas.fct_c_get_or_insert_dataset_from_shortname_
 CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_or_insert_dataset_from_shortname_with_af_id(
     _shortname TEXT, _default_dataset TEXT, _id_framework INT
 )
-RETURNS INTEGER
+    RETURNS INTEGER
 AS
 $$
 DECLARE
@@ -113,58 +100,46 @@ BEGIN
      Si Dataset basé sur ce shortname existe, alors on récupère l'ID de ce dataset
      Sinon, on le créée et on récupère son ID
      */
-    SELECT
-        coalesce(_shortname, gn_commons.get_default_parameter(_default_dataset))
-        INTO the_shortname;
+    SELECT COALESCE(_shortname, gn_commons.get_default_parameter(_default_dataset, NULL))
+    INTO the_shortname;
     RAISE DEBUG '<fct_c_get_or_insert_dataset_from_shortname> Data dataset is % ', the_shortname;
-    IF (
-        SELECT
-            exists(
-                    SELECT
-                        1
-                        FROM
-                            gn_meta.t_datasets
-                        WHERE
-                            additional_data #>> '{standard_name}' LIKE the_shortname)) THEN
+    IF (SELECT EXISTS(SELECT 1
+                      FROM gn_meta.t_datasets
+                      WHERE additional_data #>> '{standard_name}' LIKE the_shortname)) THEN
         /* Si le JDD par défaut existe déjà, on récupère son ID */
-        SELECT
-            id_dataset
-            INTO the_id_dataset
-            FROM
-                gn_meta.t_datasets
-            WHERE
-                additional_data #>> '{standard_name}' LIKE the_shortname;
+        SELECT id_dataset
+        INTO the_id_dataset
+        FROM gn_meta.t_datasets
+        WHERE additional_data #>> '{standard_name}' LIKE the_shortname;
         RAISE DEBUG '<fct_c_get_or_insert_dataset_from_shortname> Dataset with shortname % exists with get ID : %', the_shortname, the_id_dataset;
     ELSE
-        INSERT INTO
-            gn_meta.t_datasets ( id_acquisition_framework
-                               , dataset_name
-                               , dataset_shortname
-                               , dataset_desc
-                               , marine_domain
-                               , terrestrial_domain
-                               , additional_data
-                               , meta_create_date)
-            VALUES
-                ( _id_framework
-                , '[' || the_shortname || '] Jeu de données compléter'
-                , the_shortname
-                , 'A compléter'
-                , FALSE
-                , TRUE
-                , jsonb_build_object('standard_name', the_shortname)
-                , now())
-            RETURNING id_dataset INTO the_id_dataset;
+        INSERT INTO gn_meta.t_datasets ( id_acquisition_framework
+                                       , dataset_name
+                                       , dataset_shortname
+                                       , dataset_desc
+                                       , marine_domain
+                                       , terrestrial_domain
+                                       , additional_data
+                                       , meta_create_date)
+        VALUES ( _id_framework
+               , '[' || the_shortname || '] Jeu de données compléter'
+               , the_shortname
+               , 'A compléter'
+               , FALSE
+               , TRUE
+               , JSONB_BUILD_OBJECT('standard_name', the_shortname)
+               , NOW())
+        RETURNING id_dataset INTO the_id_dataset;
         RAISE DEBUG '<fct_c_get_or_insert_dataset_from_shortname> Data dataset doesn''t exists, new dataset with shortname % created with ID : %', the_shortname, the_id_dataset;
     END IF;
     RETURN the_id_dataset;
 END
 $$
-LANGUAGE plpgsql;
+    LANGUAGE plpgsql;
 
 COMMENT ON FUNCTION src_lpodatas.fct_c_get_or_insert_dataset_from_shortname_with_af_id(
     _shortname TEXT, _default_dataset TEXT, _id_framework INT
-) IS 'function to basically create acquisition framework with id_framework';
+    ) IS 'function to basically create acquisition framework with id_framework';
 
 
 /* Function to basically create new dataset attached to an acquisition_framework find by name */
@@ -177,7 +152,7 @@ CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_or_insert_dataset_from_shortna
     _shortname TEXT,
     _default_dataset TEXT, _default_acquisition_framework TEXT
 )
-RETURNS INTEGER
+    RETURNS INTEGER
 AS
 $$
 DECLARE
@@ -191,82 +166,59 @@ BEGIN
      Si Dataset basé sur ce shortname existe, alors on récupère l'ID de ce dataset
      Sinon, on le créée et on récupère son ID
      */
-    SELECT
-        coalesce(_shortname, gn_commons.get_default_parameter(_default_dataset))
-        INTO the_shortname;
+    SELECT COALESCE(_shortname, gn_commons.get_default_parameter(_default_dataset, NULL))
+    INTO the_shortname;
     RAISE DEBUG '<fct_c_get_or_insert_dataset_from_shortname> Data dataset is % ', the_shortname;
-    IF (
-        SELECT
-            exists(
-                    SELECT
-                        1
-                        FROM
-                            gn_meta.t_datasets
-                        WHERE
-                            additional_data ->> 'standard_name' LIKE the_shortname)) THEN
+    IF (SELECT EXISTS(SELECT 1
+                      FROM gn_meta.t_datasets
+                      WHERE additional_data ->> 'standard_name' LIKE the_shortname)) THEN
         /* Si le JDD par défaut existe déjà, on récupère son ID */
-        SELECT
-            id_dataset
-            INTO the_id_dataset
-            FROM
-                gn_meta.t_datasets
-            WHERE
-                additional_data ->> 'standard_name' LIKE the_shortname;
+        SELECT id_dataset
+        INTO the_id_dataset
+        FROM gn_meta.t_datasets
+        WHERE additional_data ->> 'standard_name' LIKE the_shortname;
         RAISE DEBUG '<fct_c_get_or_insert_dataset_from_shortname> Dataset with shortname % exists with get ID : %', the_shortname, the_id_dataset;
     ELSE
-        INSERT INTO
-            gn_meta.t_datasets ( id_acquisition_framework
-                               , dataset_name
-                               , dataset_shortname
-                               , dataset_desc
-                               , marine_domain
-                               , terrestrial_domain
-                               , additional_data
-                               , meta_create_date)
-            VALUES
-                ( src_lpodatas.fct_c_get_id_acquisition_framework_by_name(gn_commons.get_default_parameter(_default_acquisition_framework))
-                , '[' || the_shortname || '] Jeu de données compléter'
-                , the_shortname
-                , 'A compléter'
-                , FALSE
-                , TRUE
-                , jsonb_build_object('standard_name', the_shortname)
-                , now())
-            RETURNING id_dataset INTO the_id_dataset;
-        INSERT INTO
-            gn_meta.cor_dataset_actor (id_dataset, id_organism, id_nomenclature_actor_role)
-        SELECT
-            the_id_dataset
-          , id_organisme
-          , ref_nomenclatures.get_id_nomenclature('ROLE_ACTEUR', '6')
-            FROM
-                utilisateurs.bib_organismes
-            WHERE
-                additional_data #>> '{from_vn, short_name}' = _shortname
-            LIMIT 1
+        INSERT INTO gn_meta.t_datasets ( id_acquisition_framework
+                                       , dataset_name
+                                       , dataset_shortname
+                                       , dataset_desc
+                                       , marine_domain
+                                       , terrestrial_domain
+                                       , additional_data
+                                       , meta_create_date)
+        VALUES ( src_lpodatas.fct_c_get_or_insert_basic_acquisition_framework(
+                         gn_commons.get_default_parameter(_default_acquisition_framework, NULL), ''::TEXT, NOW()::DATE)
+               , '[' || the_shortname || '] Jeu de données compléter'
+               , the_shortname
+               , 'A compléter'
+               , FALSE
+               , TRUE
+               , JSONB_BUILD_OBJECT('standard_name', the_shortname)
+               , NOW())
+        RETURNING id_dataset INTO the_id_dataset;
+        INSERT INTO gn_meta.cor_dataset_actor (id_dataset, id_organism, id_nomenclature_actor_role)
+        SELECT the_id_dataset
+             , id_organisme
+             , ref_nomenclatures.get_id_nomenclature('ROLE_ACTEUR', '6')
+        FROM utilisateurs.bib_organismes
+        WHERE additional_data #>> '{from_vn, short_name}' = _shortname
+        LIMIT 1
         ON CONFLICT ON CONSTRAINT check_is_unique_cor_dataset_actor_organism DO NOTHING;
 
 
-        IF (SELECT
-                exists(
-                        SELECT
-                            1
-                            FROM
-                                utilisateurs.bib_organismes
-                            WHERE
-                                    id_organisme = gn_commons.get_default_parameter('visionature_default_actor')::INT))
+        IF (SELECT EXISTS(SELECT 1
+                          FROM utilisateurs.bib_organismes
+                          WHERE
+                              id_organisme = gn_commons.get_default_parameter('visionature_default_actor', NULL)::INT))
         THEN
-            INSERT INTO
-                gn_meta.cor_dataset_actor (id_dataset, id_organism, id_nomenclature_actor_role)
-            SELECT
-                the_id_dataset
-              , gn_commons.get_default_parameter('visionature_default_metadata_actor')::INT
-              , ref_nomenclatures.get_id_nomenclature('ROLE_ACTEUR', '8')
-                FROM
-                    utilisateurs.bib_organismes
-                WHERE
-                    additional_data #>> '{from_vn, short_name}' = _shortname
-                LIMIT 1
+            INSERT INTO gn_meta.cor_dataset_actor (id_dataset, id_organism, id_nomenclature_actor_role)
+            SELECT the_id_dataset
+                 , gn_commons.get_default_parameter('visionature_default_metadata_actor', NULL)::INT
+                 , ref_nomenclatures.get_id_nomenclature('ROLE_ACTEUR', '8')
+            FROM utilisateurs.bib_organismes
+            WHERE additional_data #>> '{from_vn, short_name}' = _shortname
+            LIMIT 1
             ON CONFLICT ON CONSTRAINT check_is_unique_cor_dataset_actor_organism DO NOTHING;
         END IF;
 
@@ -275,55 +227,35 @@ BEGIN
     RETURN the_id_dataset;
 END
 $$
-LANGUAGE plpgsql;
+    LANGUAGE plpgsql;
 
 
 COMMENT ON FUNCTION src_lpodatas.fct_c_get_or_insert_dataset_from_shortname(
     _shortname TEXT, _default_dataset TEXT, _default_acquisition_framework TEXT
-) IS 'function to basically create acquisition framework';
-
-
-/* TESTS */
---
--- SELECT gn_meta.create_default_dataset_with_shortname('<unclassified>', 'test');
--- DELETE
---     FROM
---         gn_meta.t_datasets
---     WHERE
---             id_acquisition_framework IN
---             (SELECT
---                  id_acquisition_framework
---                  FROM
---                      gn_meta.t_acquisition_frameworks
---                  WHERE
---                      acquisition_framework_name LIKE '<unclassified>');
-/* New function to get acquisition framework id by name */
+    ) IS 'function to basically create acquisition framework';
 
 
 
 CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_get_id_dataset_by_shortname(
     _shortname TEXT
 )
-RETURNS INTEGER
-LANGUAGE plpgsql
+    RETURNS INTEGER
+    LANGUAGE plpgsql
 AS
 $$
 DECLARE
     the_id_dataset INTEGER;
 BEGIN
     --Retrouver l'id du module par son code
-    SELECT INTO the_id_dataset
-        id_dataset
-        FROM
-            gn_meta.t_datasets
-        WHERE
-            additional_data ->> 'standard_name' LIKE _shortname;
+    SELECT INTO the_id_dataset id_dataset
+    FROM gn_meta.t_datasets
+    WHERE additional_data ->> 'standard_name' LIKE _shortname;
     RETURN the_id_dataset;
 END;
 $$;
 
 COMMENT ON FUNCTION src_lpodatas.fct_c_get_id_dataset_by_shortname(
     _shortname TEXT
-) IS 'function to get dataset id by shortname';
+    ) IS 'function to get dataset id by shortname';
 
 COMMIT;

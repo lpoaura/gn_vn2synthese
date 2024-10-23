@@ -6,7 +6,7 @@ Specific table to manage taxa matching between VisioNature and taxref repository
 
 BEGIN;
 
-CREATE TABLE taxonomie.cor_c_vn_taxref
+CREATE TABLE IF NOT EXISTS taxonomie.cor_c_vn_taxref
 (
     vn_id INTEGER,
     cd_nom INTEGER REFERENCES taxonomie.taxref (cd_nom),
@@ -14,7 +14,7 @@ CREATE TABLE taxonomie.cor_c_vn_taxref
     meta_update_date TIMESTAMP
 );
 
-CREATE UNIQUE INDEX i_uniq_cor_c_vn_taxref ON taxonomie.cor_c_vn_taxref (
+CREATE UNIQUE INDEX IF NOT EXISTS i_uniq_cor_c_vn_taxref ON taxonomie.cor_c_vn_taxref (
     vn_id, cd_nom
 );
 

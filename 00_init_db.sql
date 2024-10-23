@@ -5,8 +5,10 @@ Generate extended data table to store specific datas not in GeoNature Synthese t
 Adapted to store data from VisioNature and dbChiroWeb
 */
 
-
 BEGIN;
+
+ALTER TABLE src_vn_json.forms_json
+ADD COLUMN IF NOT EXISTS uuid UUID DEFAULT (public.uuid_generate_v4());
 
 CREATE SCHEMA IF NOT EXISTS src_lpodatas;
 
@@ -24,7 +26,7 @@ CREATE TABLE IF NOT EXISTS src_lpodatas.t_c_synthese_extended
     pseudo_observer_uid VARCHAR(200),
     observers VARCHAR(200),
     bird_breed_code INTEGER,
-    bird_breed_status VARCHAR(20),
+    breed_status VARCHAR(20),
     bat_breed_colo BOOLEAN,
     bat_is_gite BOOLEAN,
     bat_period VARCHAR(20),
@@ -98,154 +100,41 @@ COMMENT ON COLUMN src_lpodatas.t_c_synthese_extended.private_comment IS 'Comment
 
 COMMENT ON COLUMN src_lpodatas.t_c_synthese_extended.is_hidden IS 'Donnée cachée';
 
-CREATE INDEX i_t_c_synthese_extended_id_sp_source ON src_lpodatas.t_c_synthese_extended (
+CREATE INDEX IF NOT EXISTS i_t_c_synthese_extended_id_sp_source ON src_lpodatas.t_c_synthese_extended (
     id_sp_source
 );
 
-CREATE INDEX i_t_c_synthese_extended_taxo_group ON src_lpodatas.t_c_synthese_extended (
+CREATE INDEX IF NOT EXISTS i_t_c_synthese_extended_taxo_group ON src_lpodatas.t_c_synthese_extended (
     taxo_group
 );
 
-CREATE INDEX i_t_c_synthese_extended_common_name ON src_lpodatas.t_c_synthese_extended (
+CREATE INDEX IF NOT EXISTS i_t_c_synthese_extended_common_name ON src_lpodatas.t_c_synthese_extended (
     common_name
 );
 
-CREATE INDEX i_t_c_synthese_extended_id_place ON src_lpodatas.t_c_synthese_extended (
+CREATE INDEX IF NOT EXISTS i_t_c_synthese_extended_id_place ON src_lpodatas.t_c_synthese_extended (
     id_place
 );
 
-CREATE INDEX i_t_c_synthese_extended_is_valid ON src_lpodatas.t_c_synthese_extended (
+CREATE INDEX IF NOT EXISTS i_t_c_synthese_extended_is_valid ON src_lpodatas.t_c_synthese_extended (
     is_valid
 );
 
-CREATE INDEX i_t_c_synthese_extended_is_hidden ON src_lpodatas.t_c_synthese_extended (
+CREATE INDEX IF NOT EXISTS i_t_c_synthese_extended_is_hidden ON src_lpodatas.t_c_synthese_extended (
     is_hidden
 );
 
-CREATE INDEX i_t_c_synthese_extended_bird_breed_code_txt ON src_lpodatas.t_c_synthese_extended (
+CREATE INDEX IF NOT EXISTS i_t_c_synthese_extended_bird_breed_code_txt ON src_lpodatas.t_c_synthese_extended (
     cast(bird_breed_code AS TEXT)
 );
 
-CREATE INDEX i_t_c_synthese_extended_bird_breed_code ON src_lpodatas.t_c_synthese_extended (
+CREATE INDEX IF NOT EXISTS i_t_c_synthese_extended_bird_breed_code ON src_lpodatas.t_c_synthese_extended (
     bird_breed_code
 );
 
-CREATE INDEX i_t_c_synthese_extended_project_code ON src_lpodatas.t_c_synthese_extended (
+CREATE INDEX IF NOT EXISTS i_t_c_synthese_extended_project_code ON src_lpodatas.t_c_synthese_extended (
     project_code
 );
-
-CREATE VIEW src_lpodatas.v_c_observations
-(
-    id_synthese,
-    uuid,
-    source,
-    source_id_data,
-    source_id_sp,
-    taxref_cdnom,
-    groupe_taxo,
-    group1_inpn,
-    group2_inpn,
-    taxon_vrai,
-    nom_vern,
-    nom_sci,
-    observateur,
-    pseudo_observer_uid,
-    oiso_code_nidif,
-    oiso_statut_nidif,
-    cs_colo_repro,
-    cs_is_gite,
-    cs_periode,
-    nombre_total,
-    code_estimation,
-    date,
-    date_an,
-    altitude,
-    mortalite,
-    mortalite_cause,
-    geom,
-    exp_excl,
-    code_etude,
-    commentaires,
-    pers_morale,
-    comportement,
-    precision,
-    details,
-    place,
-    id_formulaire,
-    derniere_maj,
-    is_valid,
-    donnee_cachee,
-    is_present
-)
-AS
-SELECT
-    s.id_synthese,
-    s.unique_id_sinp AS uuid,
-    ts.name_source AS source,
-    s.entity_source_pk_value AS source_id_data,
-    se.id_sp_source AS source_id_sp,
-    s.cd_nom AS taxref_cdnom,
-    se.taxo_group AS groupe_taxo,
-    t.group1_inpn,
-    t.group2_inpn,
-    se.taxo_real AS taxon_vrai,
-    se.common_name AS nom_vern,
-    t.lb_nom AS nom_sci,
-    s.observers AS observateur,
-    se.pseudo_observer_uid,
-    se.bird_breed_code AS oiso_code_nidif,
-    se.bird_breed_status AS oiso_statut_nidif,
-    se.bat_breed_colo AS cs_colo_repro,
-    se.bat_is_gite AS cs_is_gite,
-    se.bat_period AS cs_periode,
-    s.count_max AS nombre_total,
-    se.estimation_code AS code_estimation,
-    s.date_max AS date,
-    se.date_year AS date_an,
-    s.altitude_max AS altitude,
-    se.mortality AS mortalite,
-    se.mortality_cause AS mortalite_cause,
-    s.the_geom_local AS geom,
-    se.export_excluded AS exp_excl,
-    se.project_code AS code_etude,
-    s.comment_description AS commentaires,
-    se.juridical_person AS pers_morale,
-    se.behaviour AS comportement,
-    se.geo_accuracy AS precision,
-    se.details,
-    se.place,
-    se.id_form AS id_formulaire,
-    s.meta_update_date AS derniere_maj,
-    se.is_hidden AS donnee_cachee,
-    (s.id_nomenclature_valid_status IN (
-        SELECT t_nomenclatures.id_nomenclature
-        FROM ref_nomenclatures.t_nomenclatures
-        WHERE
-            t_nomenclatures.id_type
-            = ref_nomenclatures.get_id_nomenclature_type(
-                cast('STATUT_VALID' AS CHARACTER VARYING)
-            )
-            AND (
-                cast(t_nomenclatures.cd_nomenclature AS TEXT)
-                = any(
-                    ARRAY[
-                        cast(cast('1' AS CHARACTER VARYING) AS TEXT),
-                        cast(cast('2' AS CHARACTER VARYING) AS TEXT)
-                    ]
-                )
-            )
-    )) AS is_valid,
-    s.id_nomenclature_observation_status
-    = ref_nomenclatures.get_id_nomenclature(
-        cast('STATUT_OBS' AS CHARACTER VARYING),
-        cast('Pr' AS CHARACTER VARYING)
-    ) AS is_present
-FROM gn_synthese.synthese AS s
-LEFT JOIN
-    src_lpodatas.t_c_synthese_extended AS se
-    ON s.id_synthese = se.id_synthese
-INNER JOIN gn_synthese.t_sources AS ts ON s.id_source = ts.id_source
-INNER JOIN taxonomie.taxref AS t ON s.cd_nom = t.cd_nom;
 
 
 CREATE TABLE src_lpodatas.t_c_rules_diffusion_level
@@ -295,13 +184,4 @@ CREATE UNIQUE INDEX ON src_lpodatas.t_c_rules_diffusion_level (
 );
 
 
-ALTER TABLE src_vn_json.forms_json
-ADD COLUMN uuid UUID DEFAULT (public.uuid_generate_v4());
-
 COMMIT;
-
-SELECT *
-FROM gn_synthese.synthese
-WHERE
-    id_source = 2
-    AND unique_id_sinp_grp IS NOT NULL;

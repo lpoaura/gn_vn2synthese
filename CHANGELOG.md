@@ -6,7 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 <!-- ## Unreleased [{version_tag}](https://github.com/opengisch/qgis-plugin-ci/releases/tag/{version_tag}) - YYYY-MM-DD -->
 
-## unreleased
+## 1.4.0 - 2024-10-23
+
+### Changes
+
+- Rename field `src_lpodatas.t_c_synthese_extended.bird_breed_status` to `breed_status`, no used for all taxa groups and populated from interpretation of various data (behaviour, life stage)
+- Add `IF EXISTS / IF NOT EXISTS` to secure scripts application.
+- View `src_lpodatas.v_c_observations` and `taxonomie.mv_c_cor_vn_taxref` are now part of [lpoaura/PluginQGIS-LPOData](https://github.com/lpoaura/PluginQGis-LPOData/tree/master/config) project
+- Adapt insert of parameters in `gn_commons.t_parameters` due to new constraint on organisms foreign key.
+- Better management for specific LPO-Sympetrum data (specific AuRA case) are now conditionned to existing view.
+- Add sample code to generate portal area coverage to exclude data out of coverage.
+
+### TODO on update
+
+1. Apply script `migrations/1.3.1_to_1.4.0.sql`
+2. Apply scripts in order:
+    1. `02_metadata.sql`
+    2. `07_functions.sql`
+    3. `08_upsert_observations.sql`
+    
+
+
 
 ## 1.3.1 - 2024-05-13
 

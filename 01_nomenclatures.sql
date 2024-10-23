@@ -26,18 +26,16 @@ CREATE TABLE IF NOT EXISTS ref_nomenclatures.t_c_synonyms
     CONSTRAINT fk_t_synonymes_id_source REFERENCES gn_synthese.t_sources
 );
 
-ALTER TABLE ref_nomenclatures.t_c_synonyms
-OWNER TO geonatadmin;
 
 COMMENT ON TABLE ref_nomenclatures.t_c_synonyms IS 'Table de correspondances des nomenclatures avec une source tierce';
 
-CREATE INDEX i_t_synonymes_initial_value ON ref_nomenclatures.t_c_synonyms (initial_value);
+CREATE INDEX IF NOT EXISTS i_t_synonymes_initial_value ON ref_nomenclatures.t_c_synonyms (initial_value);
 
-CREATE INDEX i_t_synonymes_id_type ON ref_nomenclatures.t_c_synonyms (id_type);
+CREATE INDEX IF NOT EXISTS i_t_synonymes_id_type ON ref_nomenclatures.t_c_synonyms (id_type);
 
-CREATE INDEX i_t_synonymes_id_nomenclature ON ref_nomenclatures.t_c_synonyms (id_nomenclature);
+CREATE INDEX IF NOT EXISTS i_t_synonymes_id_nomenclature ON ref_nomenclatures.t_c_synonyms (id_nomenclature);
 
-CREATE INDEX i_t_synonymes_type_mnemonique ON ref_nomenclatures.t_c_synonyms (type_mnemonique);
+CREATE INDEX IF NOT EXISTS i_t_synonymes_type_mnemonique ON ref_nomenclatures.t_c_synonyms (type_mnemonique);
 
 
 /* Vue avec types et nomenclatures */
@@ -146,7 +144,5 @@ BEGIN
     RETURN the_repro_status;
 END;
 $$;
-
-
 
 COMMIT;

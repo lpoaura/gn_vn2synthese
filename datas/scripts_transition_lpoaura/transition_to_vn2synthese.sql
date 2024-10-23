@@ -14,3 +14,4 @@ ALTER TABLE src_vn_json.forms_json DISABLE TRIGGER stoc_releve_delete_from_vn_tr
 TRUNCATE src_vn_json.observations_json;
 
 TRUNCATE src_vn_json.forms_json;
+

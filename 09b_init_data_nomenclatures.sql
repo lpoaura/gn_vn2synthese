@@ -1987,7 +1987,6 @@ VALUES (
     ref_nomenclatures.get_id_nomenclature('METH_DETERMIN', '22'), now(), now(), NULL, NULL
 );
 
-
 /* Reproduction status matching values */
 INSERT INTO ref_nomenclatures.t_c_vn_repro_matching_values (
     groupe_taxo_text, group_taxo_id, data_type, label,
