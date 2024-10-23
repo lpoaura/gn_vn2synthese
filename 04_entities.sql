@@ -102,7 +102,7 @@ END
 $upsert_entities$;
 
 -- ALTER FUNCTION src_lpodatas.fct_c_tri_upsert_entities(_site VARCHAR, _item
---  JSONB) OWNER TO geonatadmin;
+--   JSONB) OWNER TO geonatadmin;
 COMMENT ON FUNCTION src_lpodatas.fct_c_tri_upsert_entities () IS 'Upsert visionature entity to Usershub organisms';
 
 DROP TRIGGER IF EXISTS tri_c_upsert_entities ON src_vn_json.entities_json;
