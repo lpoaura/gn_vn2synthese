@@ -8,8 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ## 1.4.1 - 2024-11-04
 
-- Fix empty `the_geom_local` caused by a change on `gn_commons.get_default_parameters` function.
-
+- Fix empty `the_geom_local` caused by a change on `gn_commons.get_default_parameters` function (fix #23).
+- Fix missing string word (`Jeu de données compléter` -> `Jeu de données à compléter`) (fix #11)
 
 ## 1.4.0 - 2024-10-23
 

@@ -109,7 +109,7 @@ BEGIN
 	    , dataset_shortname , dataset_desc , marine_domain ,
 	    terrestrial_domain , additional_data , meta_create_date)
 	    VALUES (_id_framework , '[' || the_shortname ||
-		'] Jeu de données compléter' , the_shortname , 'A compléter' , FALSE ,
+		'] Jeu de données à compléter' , the_shortname , 'A compléter' , FALSE ,
 		TRUE , jsonb_build_object('standard_name' , the_shortname) ,
 		now())
         RETURNING id_dataset INTO the_id_dataset;
@@ -169,7 +169,7 @@ BEGIN
 		(gn_commons.get_default_parameter
 		(_default_acquisition_framework , NULL) , ''::TEXT ,
 		now()::DATE) , '[' || the_shortname ||
-		'] Jeu de données compléter' , the_shortname , 'A compléter' , FALSE ,
+		'] Jeu de données à compléter' , the_shortname , 'A compléter' , FALSE ,
 		TRUE , jsonb_build_object('standard_name' , the_shortname) ,
 		now())
         RETURNING id_dataset INTO the_id_dataset;
