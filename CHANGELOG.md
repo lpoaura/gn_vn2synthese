@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 <!-- ## Unreleased [{version_tag}](https://github.com/opengisch/qgis-plugin-ci/releases/tag/{version_tag}) - YYYY-MM-DD -->
 
+## 1.4.1 - 2024-11-04
+
+- Fix empty `the_geom_local` caused by a change on `gn_commons.get_default_parameters` function.
+
+
 ## 1.4.0 - 2024-10-23
 
 ### Changes
