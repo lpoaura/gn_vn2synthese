@@ -8,12 +8,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ## 1.4.1 - 2024-11-04
 
+### Changes
+
 - Fix empty `the_geom_local` caused by a change on `gn_commons.get_default_parameters` function (fix #23).
 - Fix missing string word (`Jeu de données compléter` -> `Jeu de données à compléter`) (fix #11)
 
+### TODO on update
+
+1. Apply scripts in order:
+    1. `02_metadata.sql`
+    2. `08_upsert_observations.sql`
+    
+
 ## 1.4.0 - 2024-10-23
 
-### Changes
+### Changes
 
 - Rename field `src_lpodatas.t_c_synthese_extended.bird_breed_status` to `breed_status`, no used for all taxa groups and populated from interpretation of various data (behaviour, life stage)
 - Add `IF EXISTS / IF NOT EXISTS` to secure scripts application.
@@ -22,7 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - Better management for specific LPO-Sympetrum data (specific AuRA case) are now conditionned to existing view.
 - Add sample code to generate portal area coverage to exclude data out of coverage.
 
-### TODO on update
+### TODO on update
 
 1. Apply script `migrations/1.3.1_to_1.4.0.sql`
 2. Apply scripts in order:
