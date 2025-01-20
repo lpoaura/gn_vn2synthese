@@ -14,11 +14,11 @@ repos:
         args: [--remove]
       # - id: trailing-whitespace
       #   args: [--markdown-linebreak-ext=md]
-  - repo: https://github.com/amureki/pre-commit-pgFormatter
-    rev: v1.3.0  # Use the sha / tag you want to point at
-    hooks:
-      - id: pg_format
-        args: [-b,-f1,-C,-U2,-k,-g,-w80, -W80]
+  # - repo: https://github.com/amureki/pre-commit-pgFormatter
+  #   rev: v1.3.0  # Use the sha / tag you want to point at
+  #   hooks:
+  #     - id: pg_format
+  #       args: [-b,-f1,-C,-U2,-k,-g,-w80, -W80]
 
 
 ci:
