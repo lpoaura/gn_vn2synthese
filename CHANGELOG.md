@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 <!-- ## Unreleased [{version_tag}](https://github.com/opengisch/qgis-plugin-ci/releases/tag/{version_tag}) - YYYY-MM-DD -->
 
+## 1.5.0 - 2025-01-22
+
+### Changes
+
+- Fix missing `COMMIT;` on `09d_init_data_taxonomie.sql`
+- New `taxonomie.t_c_taxref_ajout` to manage custom taxa on taxref. cd_ref and cd_nom are negative to avoid conflicts on official values. Insert/Update/Delete on this table will reflect changes on `taxonomie.taxref` table. `09d_init_data_taxonomie.sql` now contains also those new taxa, expected to populate data from faune-france.
+
+### TODO
+
+1. Execute script folowing query `migrations/1.4.1_to_1.5.0.sql`
+2. Execute script `09d_init_data_taxonomie.sql`
+
 ## 1.4.1 - 2024-11-04
 
 ### Changes

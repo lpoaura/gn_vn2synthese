@@ -1,37 +1,11 @@
-/*
-TAXONOMY
---------
-Specific table to manage taxa matching between VisioNature and taxref repository
-*/
-
 BEGIN;
 
-CREATE TABLE IF NOT EXISTS taxonomie.cor_c_vn_taxref
-(
-    vn_id INTEGER,
-    cd_nom INTEGER REFERENCES taxonomie.taxref (cd_nom) on delete cascade,
-    meta_create_date TIMESTAMP,
-    meta_update_date TIMESTAMP
-);
+ALTER TABLE taxonomie.cor_c_vn_taxref 
+  ADD CONSTRAINT cd_nom 
+  FOREIGN KEY (cd_nom) 
+  REFERENCES taxonomie.taxref (cd_nom)
+  ON DELETE SET NULL;
 
-CREATE UNIQUE INDEX IF NOT EXISTS i_uniq_cor_c_vn_taxref ON taxonomie.cor_c_vn_taxref (
-    vn_id, cd_nom
-);
-
-ALTER TABLE taxonomie.cor_c_vn_taxref
-ADD CONSTRAINT cor_c_vn_taxref_un UNIQUE (vn_id);
-
-COMMENT ON TABLE taxonomie.cor_c_vn_taxref IS 'Correlation between taxref cd_nom (taxref) and VisioNature species id (src_vn.species).';
-
-COMMENT ON COLUMN taxonomie.cor_c_vn_taxref.vn_id IS 'Link to src_vn.species';
-
-COMMENT ON COLUMN taxonomie.cor_c_vn_taxref.cd_nom IS 'Link to taxonomie.taxref';
-
-CREATE TRIGGER tri_meta_dates_change_cor_c_vn_taxref
-BEFORE INSERT OR UPDATE
-ON taxonomie.cor_c_vn_taxref
-FOR EACH ROW
-EXECUTE PROCEDURE public.fct_trg_meta_dates_change();
 
 CREATE TABLE taxonomie.t_c_taxref_ajout (
     cd_nom           INTEGER NOT NULL
@@ -110,7 +84,5 @@ COMMENT ON FUNCTION taxonomie.fct_tri_c_upsert_taxref() IS 'Trigger function to 
 CREATE TRIGGER trg_upsert_taxref_ajout
 AFTER INSERT OR UPDATE OR DELETE ON taxonomie.t_c_taxref_ajout
 FOR EACH ROW EXECUTE FUNCTION taxonomie.fct_tri_c_upsert_taxref();
-
-
 
 COMMIT;
