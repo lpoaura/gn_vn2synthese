@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 <!-- ## Unreleased [{version_tag}](https://github.com/opengisch/qgis-plugin-ci/releases/tag/{version_tag}) - YYYY-MM-DD -->
 
+## 1.5.1 - 2025-01-28
+
+### Changes
+
+- Add missing `src_lpodatas.fct_c_update_user_observations(_observer_uid text)` function, required on user anonymous status changes.
+
+### TODO
+
+1. Execute script `migrations/1.5.0_to_1.5.1.sql`
+
 ## 1.5.0 - 2025-01-22
 
 ### Changes
