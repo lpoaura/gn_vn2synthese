@@ -14,7 +14,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ### TODO
 
-1. Execute script `migrations/1.5.1_to_1.5.2.sql`
+1. Apply scripts in order:
+    1. `08_upsert_observations.sql`
+    2. Execute script `migrations/1.5.1_to_1.5.2.sql`
 
 ## 1.5.1 - 2025-01-28
 
@@ -24,9 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ### TODO
 
-1. Apply scripts in order:
-    1. `08_upsert_observations.sql`
-    2. Execute script `migrations/1.5.0_to_1.5.1.sql`
+1. Execute script `migrations/1.5.0_to_1.5.1.sql`
 
 
 ## 1.5.0 - 2025-01-22
