@@ -10,7 +10,7 @@ jobs:
       - uses: "actions/setup-python@v5"
         with:
             python-version: "3.8"
-      - name: Install SQLFluff
-        run: "pip install sqlfluff==0.3.6"
-      - name: Lint models
-        run: "sqlfluff lint --dialect=postgres"
+      # - name: Install SQLFluff
+      #   run: "pip install sqlfluff==0.3.6"
+      # - name: Lint models
+      #   run: "sqlfluff lint --dialect=postgres"

@@ -8,18 +8,18 @@ BEGIN;
 
 CREATE TABLE IF NOT EXISTS taxonomie.cor_c_vn_taxref
 (
-    vn_id INTEGER,
-    cd_nom INTEGER REFERENCES taxonomie.taxref (cd_nom) on delete cascade,
+    vn_id            INTEGER,
+    cd_nom           INTEGER REFERENCES taxonomie.taxref (cd_nom) ON DELETE CASCADE,
     meta_create_date TIMESTAMP,
     meta_update_date TIMESTAMP
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS i_uniq_cor_c_vn_taxref ON taxonomie.cor_c_vn_taxref (
-    vn_id, cd_nom
-);
+                                                                                       vn_id, cd_nom
+    );
 
 ALTER TABLE taxonomie.cor_c_vn_taxref
-ADD CONSTRAINT cor_c_vn_taxref_un UNIQUE (vn_id);
+    ADD CONSTRAINT cor_c_vn_taxref_un UNIQUE (vn_id);
 
 COMMENT ON TABLE taxonomie.cor_c_vn_taxref IS 'Correlation between taxref cd_nom (taxref) and VisioNature species id (src_vn.species).';
 
@@ -28,77 +28,86 @@ COMMENT ON COLUMN taxonomie.cor_c_vn_taxref.vn_id IS 'Link to src_vn.species';
 COMMENT ON COLUMN taxonomie.cor_c_vn_taxref.cd_nom IS 'Link to taxonomie.taxref';
 
 CREATE TRIGGER tri_meta_dates_change_cor_c_vn_taxref
-BEFORE INSERT OR UPDATE
-ON taxonomie.cor_c_vn_taxref
-FOR EACH ROW
+    BEFORE INSERT OR UPDATE
+    ON taxonomie.cor_c_vn_taxref
+    FOR EACH ROW
 EXECUTE PROCEDURE public.fct_trg_meta_dates_change();
 
-CREATE TABLE taxonomie.t_c_taxref_ajout (
+CREATE TABLE taxonomie.t_c_taxref_ajout
+(
     cd_nom           INTEGER NOT NULL
         CONSTRAINT t_c_taxref_ajout_pk PRIMARY KEY
         CONSTRAINT chk_cd_nom_negative CHECK (cd_nom < 0),
-    id_statut character(1),
-    id_habitat integer,
-    id_rang character varying(10),
-    regne character varying(20),
-    phylum character varying(50),
-    classe character varying(50),
-    ordre character varying(50),
-    famille character varying(50),
-    sous_famille character varying(50),
-    tribu character varying(50),
-    cd_taxsup integer,
-    cd_sup integer,
-    cd_ref integer CONSTRAINT chk_cd_ref_negative CHECK (cd_ref < 0),
-    lb_nom character varying(100),
-    lb_auteur character varying(500),
-    nom_complet character varying(500),
-    nom_complet_html character varying(500),
-    nom_valide character varying(500),
-    nom_vern character varying(1000),
-    nom_vern_eng character varying(500),
-    group1_inpn character varying(255),
-    group2_inpn character varying(255),
-    group3_inpn character varying(255),
-    url text
+    id_statut        CHARACTER(1),
+    id_habitat       INTEGER,
+    id_rang          CHARACTER VARYING(10),
+    regne            CHARACTER VARYING(20),
+    phylum           CHARACTER VARYING(50),
+    classe           CHARACTER VARYING(50),
+    ordre            CHARACTER VARYING(50),
+    famille          CHARACTER VARYING(50),
+    sous_famille     CHARACTER VARYING(50),
+    tribu            CHARACTER VARYING(50),
+    cd_taxsup        INTEGER,
+    cd_sup           INTEGER,
+    cd_ref           INTEGER
+        CONSTRAINT chk_cd_ref_negative CHECK (cd_ref < 0),
+    lb_nom           CHARACTER VARYING(100),
+    lb_auteur        CHARACTER VARYING(500),
+    nom_complet      CHARACTER VARYING(500),
+    nom_complet_html CHARACTER VARYING(500),
+    nom_valide       CHARACTER VARYING(500),
+    nom_vern         CHARACTER VARYING(1000),
+    nom_vern_eng     CHARACTER VARYING(500),
+    group1_inpn      CHARACTER VARYING(255),
+    group2_inpn      CHARACTER VARYING(255),
+    group3_inpn      CHARACTER VARYING(255),
+    url              TEXT
 );
 
 CREATE OR REPLACE FUNCTION taxonomie.fct_tri_c_upsert_taxref()
-RETURNS TRIGGER AS $$
+    RETURNS TRIGGER AS
+$$
 BEGIN
     -- Upsert operation
-    IF (TG_OP = 'INSERT' OR TG_OP = 'UPDATE') THEN
-        INSERT INTO taxonomie.taxref (cd_nom, id_statut, id_habitat, id_rang, regne, phylum, classe, ordre, famille, sous_famille, tribu, cd_taxsup, cd_sup, cd_ref, lb_nom, lb_auteur, nom_complet, nom_complet_html, nom_valide, nom_vern, nom_vern_eng, group1_inpn, group2_inpn, url)
-        VALUES (NEW.cd_nom, NEW.id_statut, NEW.id_habitat, NEW.id_rang, NEW.regne, NEW.phylum, NEW.classe, NEW.ordre, NEW.famille, NEW.sous_famille, NEW.tribu, NEW.cd_taxsup, NEW.cd_sup, NEW.cd_ref, NEW.lb_nom, NEW.lb_auteur, NEW.nom_complet, NEW.nom_complet_html, NEW.nom_valide, NEW.nom_vern, NEW.nom_vern_eng, NEW.group1_inpn, NEW.group2_inpn, NEW.url)
+    IF (tg_op = 'INSERT' OR tg_op = 'UPDATE') THEN
+        INSERT INTO taxonomie.taxref ( cd_nom, id_statut, id_habitat, id_rang, regne, phylum, classe, ordre, famille
+                                     , sous_famille, tribu, cd_taxsup, cd_sup, cd_ref, lb_nom, lb_auteur, nom_complet
+                                     , nom_complet_html, nom_valide, nom_vern, nom_vern_eng, group1_inpn, group2_inpn
+                                     , url)
+        VALUES ( new.cd_nom, new.id_statut, new.id_habitat, new.id_rang, new.regne, new.phylum, new.classe, new.ordre
+               , new.famille, new.sous_famille, new.tribu, new.cd_taxsup, new.cd_sup, new.cd_ref, new.lb_nom
+               , new.lb_auteur, new.nom_complet, new.nom_complet_html, new.nom_valide, new.nom_vern, new.nom_vern_eng
+               , new.group1_inpn, new.group2_inpn, new.url)
         ON CONFLICT (cd_nom) DO UPDATE
-        SET id_statut = EXCLUDED.id_statut,
-            id_habitat = EXCLUDED.id_habitat,
-            id_rang = EXCLUDED.id_rang,
-            regne = EXCLUDED.regne,
-            phylum = EXCLUDED.phylum,
-            classe = EXCLUDED.classe,
-            ordre = EXCLUDED.ordre,
-            famille = EXCLUDED.famille,
-            sous_famille = EXCLUDED.sous_famille,
-            tribu = EXCLUDED.tribu,
-            cd_taxsup = EXCLUDED.cd_taxsup,
-            cd_sup = EXCLUDED.cd_sup,
-            cd_ref = EXCLUDED.cd_ref,
-            lb_nom = EXCLUDED.lb_nom,
-            lb_auteur = EXCLUDED.lb_auteur,
-            nom_complet = EXCLUDED.nom_complet,
-            nom_complet_html = EXCLUDED.nom_complet_html,
-            nom_valide = EXCLUDED.nom_valide,
-            nom_vern = EXCLUDED.nom_vern,
-            nom_vern_eng = EXCLUDED.nom_vern_eng,
-            group1_inpn = EXCLUDED.group1_inpn,
-            group2_inpn = EXCLUDED.group2_inpn,
-            group3_inpn = EXCLUDED.group3_inpn;
-        RETURN NEW;
+            SET id_statut        = excluded.id_statut
+              , id_habitat       = excluded.id_habitat
+              , id_rang          = excluded.id_rang
+              , regne            = excluded.regne
+              , phylum           = excluded.phylum
+              , classe           = excluded.classe
+              , ordre            = excluded.ordre
+              , famille          = excluded.famille
+              , sous_famille     = excluded.sous_famille
+              , tribu            = excluded.tribu
+              , cd_taxsup        = excluded.cd_taxsup
+              , cd_sup           = excluded.cd_sup
+              , cd_ref           = excluded.cd_ref
+              , lb_nom           = excluded.lb_nom
+              , lb_auteur        = excluded.lb_auteur
+              , nom_complet      = excluded.nom_complet
+              , nom_complet_html = excluded.nom_complet_html
+              , nom_valide       = excluded.nom_valide
+              , nom_vern         = excluded.nom_vern
+              , nom_vern_eng     = excluded.nom_vern_eng
+              , group1_inpn      = excluded.group1_inpn
+              , group2_inpn      = excluded.group2_inpn
+              , group3_inpn      = excluded.group3_inpn;
+        RETURN new;
 
-    ELSIF (TG_OP = 'DELETE') THEN
-        DELETE FROM taxonomie.taxref WHERE cd_nom = OLD.cd_nom;
-        RETURN OLD;
+    ELSIF (tg_op = 'DELETE') THEN
+        DELETE FROM taxonomie.taxref WHERE cd_nom = old.cd_nom;
+        RETURN old;
     END IF;
 
     RETURN NULL; -- Result is ignored for AFTER triggers
@@ -108,8 +117,10 @@ $$ LANGUAGE plpgsql;
 COMMENT ON FUNCTION taxonomie.fct_tri_c_upsert_taxref() IS 'Trigger function to manage additional taxa from taxonomie.t_c_taxref_ajout to taxononomie.taxref';
 
 CREATE TRIGGER trg_upsert_taxref_ajout
-AFTER INSERT OR UPDATE OR DELETE ON taxonomie.t_c_taxref_ajout
-FOR EACH ROW EXECUTE FUNCTION taxonomie.fct_tri_c_upsert_taxref();
+    AFTER INSERT OR UPDATE OR DELETE
+    ON taxonomie.t_c_taxref_ajout
+    FOR EACH ROW
+EXECUTE FUNCTION taxonomie.fct_tri_c_upsert_taxref();
 
 
 

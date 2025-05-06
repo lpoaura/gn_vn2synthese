@@ -425,9 +425,9 @@ DECLARE
 BEGIN
     the_query := FORMAT('select geom from %s', _relation_name);
     IF src_lpodatas.fct_c_check_relation_exists(_relation_name) THEN
-        EXECUTE the_query into the_geom ;
+        EXECUTE the_query INTO the_geom ;
     END IF;
-    return the_geom;
+    RETURN the_geom;
 END;
 $$ LANGUAGE plpgsql;
 
