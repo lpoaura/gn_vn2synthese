@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 <!-- ## Unreleased [{version_tag}](https://github.com/opengisch/qgis-plugin-ci/releases/tag/{version_tag}) - YYYY-MM-DD -->
 
+## 1.6.0 - 
+
+### Changes
+
+- Store anonymous_in_export value in utilisateurs.t_roles.champs_addi field.
+- Fix perfs issues due to some id_form_universal = 0
+- Update matching species table
+- Update custom taxa list on t_c_taxref_ajout table
+
+
+
+
 ## 1.5.2 - 2025-05-06
 
 ### Changes

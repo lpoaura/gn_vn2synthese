@@ -5,6 +5,7 @@
    Import mensuel complet des 2 derniers mois tous les mois
    Check
    */
+BEGIN;
 
 CREATE SCHEMA IF NOT EXISTS dbadmin;
 
@@ -110,7 +111,9 @@ BEGIN
         FROM src_vn_json_check.observations_json obs_check
                  FULL JOIN src_vn_json.observations_json obs_orig
                            ON (obs_check.id, obs_check.site) = (obs_orig.id, obs_orig.site)
-        WHERE obs_orig IS NULL RETURNING 1)
+        WHERE obs_orig IS NULL
+        ON CONFLICT (id, site) DO NOTHING
+        RETURNING 1)
     INSERT
     INTO dbadmin.monitoring_vn_check_to_prod(action, count)
     SELECT 'insert', COUNT(*)
@@ -145,3 +148,5 @@ BEGIN
     END IF;
 END;
 $$;
+
+COMMIT;

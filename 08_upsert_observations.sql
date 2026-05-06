@@ -15,8 +15,8 @@ DROP TRIGGER IF EXISTS tri_c_upsert_vn_observation_to_geonature ON
 DROP FUNCTION IF EXISTS
     src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature () CASCADE;
 
-CREATE OR REPLACE FUNCTION src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature()
-    RETURNS TRIGGER
+
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature() RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
 $$
@@ -30,6 +30,7 @@ DECLARE
     /* gn_synthese.synthese data */
     the_unique_id_sinp                       uuid;
     the_unique_id_sinp_grp                   uuid;
+    the_comment_form                         TEXT;
     the_id_source                            INTEGER;
     the_entity_source_pk_value               VARCHAR;
     the_id_dataset                           INTEGER;
@@ -120,7 +121,8 @@ BEGIN
         the_unique_id_sinp;
     RAISE DEBUG 'UUID is %' , the_unique_id_sinp;
     SELECT uuid
-    INTO the_unique_id_sinp_grp
+         , (item ->> 'comment')::TEXT
+    INTO the_unique_id_sinp_grp, the_comment_form
     FROM src_vn_json.forms_json
     WHERE (new.site, (new.item #>> '{observers,0,id_form}')::INT) = (forms_json.site,
                                                                      forms_json.id);
@@ -181,9 +183,9 @@ BEGIN
     INTO the_id_nomenclature_grp_typ;
     -- SELECT gn_synthese.get_default_nomenclature_value('METH_OBS') INTO
     --	      the_id_nomenclature_obs_meth;
-    -- 
+    --
     --	  ref_nomenclatures.fct_c_get_synonyms_nomenclature('METH_OBS',
-    --								       
+    --
     -- new.item
     --     #>>
     --	      '{observers,0,details,0,condition}')
@@ -191,17 +193,17 @@ BEGIN
                                                  '21')
     INTO the_id_nomenclature_obs_technique;
     --	 coalesce(
-    -- 
-    --	     
+    --
+    --
     -- ref_nomenclatures.fct_c_get_synonyms_nomenclature('TECHNIQUE_OBS',
-    -- 
+    --
     --	 new.item
     --	     #>>
     --	      '{observers,0,details,0,condition}'),
-    -- 
-    --	     
+    --
+    --
     -- ref_nomenclatures.fct_c_get_synonyms_nomenclature('TECHNIQUE_OBS',
-    -- 
+    --
     --	 new.item
     --	     #>>
     --	      '{observers,0,details,0,age}'))
@@ -370,10 +372,10 @@ BEGIN
     INTO
         the_id_nomenclature_determination_method;
     --	 COALESCE(
-    -- 
-    -- 
+    --
+    --
     --  ref_nomenclatures.fct_c_get_synonyms_nomenclature('METH_DETERMIN',
-    -- 
+    --
     --	 new.item
     --	     #>>
     --	      '{observers,0,details,0,condition}'),
@@ -450,7 +452,8 @@ BEGIN
     SELECT new.item #> '{observers,0,details}' INTO the_details;
     SELECT CAST(new.item #>> '{place,@id}' AS INTEGER) INTO the_id_place;
     SELECT new.item #>> '{place,name}' INTO the_place;
-    SELECT new.id_form_universal INTO the_id_form;
+    SELECT CASE WHEN new.id_form_universal IS NOT NULL AND new.id_form_universal != '0' THEN new.id_form_universal END
+    INTO the_id_form;
     SELECT COALESCE(NOT CAST(new.item #>> '{observers,0,admin_hidden}' AS BOOLEAN), TRUE)
     INTO the_is_valid;
     SELECT new.item #>> '{observers,0,hidden_comment}' INTO the_private_comment;
@@ -620,6 +623,7 @@ BEGIN
           , is_hidden           =
             the_is_hidden
           , observers           = the_observers_extended
+          , comment_form        = the_comment_form
         WHERE id_synthese = the_id_synthese;
 
         IF NOT found THEN
@@ -631,13 +635,13 @@ BEGIN
                                                            , estimation_code, date_year, mortality, mortality_cause
                                                            , export_excluded, project_code, juridical_person, behaviour
                                                            , geo_accuracy, details, id_place, place, id_form, is_valid
-                                                           , private_comment, is_hidden, observers)
+                                                           , private_comment, is_hidden, observers, comment_form)
             VALUES ( the_id_synthese, the_id_sp_source, the_taxo_group, the_taxo_real, the_common_name
                    , the_pseudo_observer_uid, the_bird_breed_code, the_breed_status, the_bat_breed_colo
                    , the_bat_is_gite, the_bat_period, the_estimation_code, the_date_year, the_mortality
                    , the_mortality_cause, the_export_excluded, the_project_code, the_juridical_person, the_behaviour
                    , the_geo_accuracy, the_details, the_id_place, the_place, the_id_form, the_is_valid
-                   , the_private_comment, the_is_hidden, the_observers_extended);
+                   , the_private_comment, the_is_hidden, the_observers_extended, the_comment_form);
         END IF;
     ELSEIF (tg_op = 'INSERT') THEN
         RAISE DEBUG 'Try insert data % from site %' , new.id , new.site;
@@ -760,13 +764,13 @@ BEGIN
                                                        , date_year, mortality, mortality_cause, export_excluded
                                                        , project_code, juridical_person, behaviour, geo_accuracy
                                                        , details, id_place, place, id_form, is_valid, private_comment
-                                                       , is_hidden, observers)
+                                                       , is_hidden, observers, comment_form)
         VALUES ( the_id_synthese, the_id_sp_source, the_taxo_group, the_taxo_real, the_common_name
                , the_pseudo_observer_uid, the_bird_breed_code, the_breed_status, the_bat_breed_colo, the_bat_is_gite
                , the_bat_period, the_estimation_code, the_date_year, the_mortality, the_mortality_cause
                , the_export_excluded, the_project_code, the_juridical_person, the_behaviour, the_geo_accuracy
                , the_details, the_id_place, the_place, the_id_form, the_is_valid, the_private_comment, the_is_hidden
-               , the_observers_extended)
+               , the_observers_extended, the_comment_form)
         ON CONFLICT (id_synthese)
             DO UPDATE SET id_synthese         = the_id_synthese
                         , id_sp_source        = the_id_sp_source
@@ -804,7 +808,8 @@ BEGIN
                         , private_comment     = the_private_comment
                         , is_hidden           =
                 the_is_hidden
-                        , observers           = the_observers_extended;
+                        , observers           = the_observers_extended
+                        , comment_form        = the_comment_form;
         RAISE DEBUG '-- % -- insert statement t_c_synthese_extended when found > ENDING : total duration %' , start_ts , (SELECT (CLOCK_TIMESTAMP() - start_ts));
 
         RAISE DEBUG 'NEW upsert data %' , the_id_synthese;
@@ -825,8 +830,8 @@ BEGIN
     --			   , the_id_dataset);
     RETURN new;
 END;
-
 $$;
+
 
 COMMENT ON FUNCTION src_lpodatas.fct_tri_c_upsert_vn_observation_to_geonature
     () IS 'Trigger function to upsert datas from VisioNature to synthese and custom child table';

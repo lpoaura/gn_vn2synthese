@@ -38,7 +38,7 @@ COMMENT ON FUNCTION public.jsonb_arr_record_keys(jsonb) IS '
 DROP FUNCTION IF EXISTS src_lpodatas.fct_c_create_usershub_roles_from_visionature (
     _site VARCHAR, _item jsonb, _rq TEXT
 );
-CREATE FUNCTION src_lpodatas.fct_c_create_usershub_roles_from_visionature(_site CHARACTER VARYING, _item jsonb,
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_create_usershub_roles_from_visionature(_site CHARACTER VARYING, _item jsonb,
                                                                           _rq TEXT DEFAULT 'Utilisateur VisioNature'::TEXT) RETURNS INTEGER
     LANGUAGE plpgsql
 AS
@@ -64,24 +64,14 @@ BEGIN
         INTO therolerecord
         FROM utilisateurs.t_roles
         WHERE t_roles.champs_addi #>> '{from_vn,id_universal}' LIKE _item ->> 'id_universal';
-        --         RAISE NOTICE 'from_vn exists %',therolerecord.champs_addi ? 'from_vn';
---         RAISE NOTICE 'id_universal exists %',therolerecord.champs_addi #> '{from_vn}' ? 'id_universal';
---         RAISE NOTICE 'from_vn or id_univorsal %',(therolerecord.champs_addi ? 'from_vn' OR
---                                                   therolerecord.champs_addi #> '{from_vn}' ? 'id_universal');
---         IF NOT (therolerecord.champs_addi ? 'from_vn' OR therolerecord.champs_addi #> '{from_vn}' ? 'id_universal') THEN
---             RAISE DEBUG 'Create site % key within "from_vn" for role %', _site,therolerecord.id_role;
---             UPDATE utilisateurs.t_roles
---             SET
---                 champs_addi = jsonb_set(champs_addi, ('{from_vn,id_universal}')::TEXT[], _item -> 'id_universal', TRUE)
---                 WHERE
---                     id_role = therolerecord.id_role;
---         END IF;
         -- Si utilisateur (via email) mais que la valeur id_universal n'est pas renseignée.
-        -- Si nom/prenom/email est différent de ce qui est stocké alors ok sinon on update le mail et les noms
+        -- Si nom/prenom/email/statut anonymous_in_export est différent de ce qui est stocké alors ok sinon on update le mail et les noms
 
         IF (_item ->> 'name' <> therolerecord.nom_role OR
             _item ->> 'surname' <> therolerecord.prenom_role OR
-            _item ->> 'anonymous' <> therolerecord.champs_addi #>> '{from_vn,anonymous}'
+            _item ->> 'anonymous' <> therolerecord.champs_addi #>> '{from_vn,anonymous}' OR
+            TO_JSONB((_item ->> 'anonymous_in_export') = 'anonymous'::TEXT) !=
+            COALESCE(therolerecord.champs_addi #> '{from_vn,anonymous_in_export}', TO_JSONB(TRUE))
 --             OR _item ->> 'email' <> therolerecord.email
             )
         THEN
@@ -94,7 +84,36 @@ BEGIN
                 utilisateurs.t_roles v
             SET nom_role    = _item ->> 'name'
               , prenom_role = _item ->> 'surname'
-              , champs_addi = JSONB_SET(champs_addi, '{from_vn,anonymous}'::TEXT[], _item -> 'anonymous', TRUE)
+              , champs_addi = JSONB_SET(
+                    COALESCE(champs_addi, '{}'::jsonb),
+                    '{from_vn}',
+                    COALESCE(champs_addi -> 'from_vn', '{}'::jsonb)
+                        || JSONB_BUILD_OBJECT(
+                            'anonymous_in_export',
+                            TO_JSONB((_item ->> 'anonymous_in_export') = 'anonymize'::TEXT),
+                            'anonymous_in_export_ts_update',
+                            CASE
+                                WHEN (
+                                    COALESCE(
+                                            (champs_addi #>> '{from_vn,anonymous_in_export}')::BOOLEAN,
+                                            FALSE
+                                    ) IS DISTINCT FROM COALESCE((_item ->> 'anonymous_in_export') = 'anonymize'::TEXT, FALSE)
+                                    )
+                                    THEN TO_JSONB(NOW())
+                                ELSE COALESCE(
+                                        champs_addi #> '{from_vn,anonymous_in_export_ts_update}',
+                                        TO_JSONB(NOW())
+                                     )
+                                END
+                           ),
+                    TRUE
+                              )
+
+                /*JSONB_SET(
+                  JSONB_SET(champs_addi, '{from_vn,anonymous}'::TEXT[], _item -> 'anonymous', TRUE),
+                  '{from_vn,anonymous_in_export}'::TEXT[],
+                  TO_JSONB((_item ->> 'anonymous_in_export') = 'anonymize'::TEXT),
+                  TRUE)*/
 --               , email       = _item ->> 'email'
               , remarques   = _rq
             WHERE id_role = therolerecord.id_role;
@@ -137,7 +156,10 @@ BEGIN
 
         END IF;
         RAISE DEBUG 'Observer % with email % already exists', _item ->> 'id_universal', _item ->> 'email';
-        IF _item ->> 'anonymous' <> therolerecord.champs_addi #>> '{from_vn,anonymous}' THEN
+        IF _item ->> 'anonymous' <> therolerecord.champs_addi #>> '{from_vn,anonymous}'
+            OR TO_JSONB(_item ->> 'anonymous_in_export' = 'anonymize'::TEXT) !=
+               COALESCE(therolerecord.champs_addi #> '{from_vn,anonymous_in_export}', TO_JSONB(TRUE))
+        THEN
             PERFORM src_lpodatas.fct_c_update_user_observations(_item #>> '{id_universal}');
         END IF;
     ELSE
@@ -151,16 +173,14 @@ BEGIN
                          'from_vn',
                          JSONB_BUILD_OBJECT(
                                  _site,
-                                 JSONB_BUILD_OBJECT(
-                                         'id_entity',
-                                         _item ->>
-                                         'id_entity'),
-                                 'id_universal',
-                                 _item ->>
-                                 'id_universal',
-                                 'anonymous',
-                                 _item ->>
-                                 'anonymous'))
+                                 JSONB_BUILD_OBJECT('id_entity', _item ->> 'id_entity'),
+                                 'id_universal', _item ->> 'id_universal',
+                                 'anonymous', _item ->> 'anonymous',
+                                 'anonymous_in_export',
+                                 TO_JSONB((_item ->> 'anonymous_in_export') = 'anonymize'::TEXT),
+                                 'anonymous_in_export_ts_update',
+                                 TO_JSONB(NOW())
+                         ))
                , _rq
                , FALSE
                , NOW())
@@ -168,18 +188,30 @@ BEGIN
             DO UPDATE SET nom_role     = _item ->> 'name'
                         , prenom_role  = _item ->> 'surname'
                         , id_organisme = src_lpodatas.fct_c_get_organisme_from_vn_id(_site, _item ->> 'id_entity')
-                        , champs_addi  = JSONB_SET(t_roles.champs_addi, '{from_vn}',
-                                                   JSONB_BUILD_OBJECT(
-                                                           _site,
-                                                           JSONB_BUILD_OBJECT(
-                                                                   'id_entity',
-                                                                   _item ->>
-                                                                   'id_entity'), 'id_universal',
-                                                           _item ->>
-                                                           'id_universal',
-                                                           'anonymous',
-                                                           _item ->>
-                                                           'anonymous'))
+                        , champs_addi  = JSONB_SET(
+                    COALESCE(t_roles.champs_addi, '{}'::jsonb),
+                    '{from_vn}',
+                    COALESCE(t_roles.champs_addi -> 'from_vn', '{}'::jsonb)
+                        || JSONB_BUILD_OBJECT(
+                            'anonymous_in_export',
+                            TO_JSONB((_item ->> 'anonymous_in_export') = 'anonymize'::TEXT),
+                            'anonymous_in_export_ts_update',
+                            CASE
+                                WHEN (
+                                    COALESCE(
+                                            (t_roles.champs_addi #>> '{from_vn,anonymous_in_export}')::BOOLEAN,
+                                            TRUE
+                                    ) IS DISTINCT FROM COALESCE((_item ->> 'anonymous_in_export') = 'anonymize'::TEXT, TRUE)
+                                    )
+                                    THEN TO_JSONB(NOW())
+                                ELSE COALESCE(
+                                        t_roles.champs_addi #> '{from_vn,anonymous_in_export_ts_update}',
+                                        TO_JSONB(NOW())
+                                     )
+                                END
+                           ),
+                    TRUE
+                                         )
                         , remarques    = _rq
         RETURNING id_role INTO therolerecord;
         RAISE DEBUG 'Observer % inserted with id %', _item ->> 'id_universal', therolerecord.id_role;
@@ -192,7 +224,7 @@ $$;
 
 COMMENT ON FUNCTION src_lpodatas.fct_c_create_usershub_roles_from_visionature(
     _site VARCHAR, _item jsonb, _rq TEXT
-    ) IS 'créée ou mets à jour un observervateur à partir des entrées json VisioNature';
+    ) IS 'créée ou mets à jour un observateur à partir des entrées json VisioNature';
 
 
 /* Function that returns id_role from VisioNature user universal id */

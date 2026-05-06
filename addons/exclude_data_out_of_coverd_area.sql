@@ -19,22 +19,22 @@ Si des données hors-zone sont déjà présentes dans la bdd. Il est possible de
 */
 
 INSERT INTO ref_geo.bib_areas_types(type_name, type_code, type_desc, ref_name, ref_version, num_version, size_hierarchy)
-VALUES ('Zone de couverture faune-bfc', 'VN_COVER', NULL, NULL, NULL, NULL, NULL);
+VALUES ('Zone de couverture faune-paca', 'VN_COVER', NULL, NULL, NULL, NULL, NULL);
+
 WITH t1 AS (SELECT st_simplify(st_buffer(st_union(geom), 500), 250) AS geom
             FROM ref_geo.l_areas
             WHERE id_type = ref_geo.get_id_area_type('DEP')
-              AND area_code IN ('21', '25', '39', '58', '70', '71', '89', '90'))
-
+              AND area_code IN ('04', '05', '06', '13', '83', '84'))
 INSERT
 INTO ref_geo.l_areas( id_type, area_name, area_code, geom, centroid, source, comment, additional_data
                     , meta_create_date, meta_update_date, geom_4326)
 SELECT ref_geo.get_id_area_type('VN_COVER')
-     , 'Région BFC pour VN'
-     , '27'
+     , 'Couverture du portail faune-xxx'
+     , 'VN_COVER'
      , geom
      , st_centroid(geom)
      , 'Généré en bdd'
-     , 'Zonage utilisé pour filtrer les données entrantes Faune BFC'
+     , 'Zonage utilisé pour filtrer les données entrantes de faune-xxx'
      , '{}'::jsonb
      , NOW()
      , NOW()
