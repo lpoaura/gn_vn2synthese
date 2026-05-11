@@ -49,7 +49,8 @@ CREATE TABLE IF NOT EXISTS src_lpodatas.t_c_synthese_extended
     is_valid            BOOLEAN,
     private_comment
                         TEXT,
-    is_hidden           BOOLEAN DEFAULT FALSE
+    is_hidden           BOOLEAN DEFAULT FALSE,
+    anonymous_in_export    BOOLEAN DEFAULT FALSE
 );
 
 COMMENT ON COLUMN src_lpodatas.t_c_synthese_extended.id_sp_source IS 'Code espèce de la source (VisioNature/dbChiroWeb)';

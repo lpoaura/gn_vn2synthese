@@ -6,16 +6,51 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 <!-- ## Unreleased [{version_tag}](https://github.com/opengisch/qgis-plugin-ci/releases/tag/{version_tag}) - YYYY-MM-DD -->
 
-## 1.6.0 - 
+## 1.6.0 - 2026-05-11
 
 ### Changes
 
-- Store anonymous_in_export value in utilisateurs.t_roles.champs_addi field.
-- Fix perfs issues due to some id_form_universal = 0
+- Store `anonymous_in_export` value in `utilisateurs.t_roles.champs_addi` field.
+- Fix perfs issues due to some `id_form_universal = 0`
 - Update matching species table
-- Update custom taxa list on t_c_taxref_ajout table
+- Update custom taxa list on `taxonomie.t_c_taxref_ajout` table
+
+### TODO
+
+1. Apply scripts in order:
+    1. `migrations/1.5.2_to_1.6.0.sql`
+    1. `05_observers.sql`
+    1. `07_functions.sql`
+    1. `08_upsert_observations.sql`
 
 
+Next, configure the data sources to handle the anonymous status of observers in the data by modifying the following SQL code :
+
+```sql
+BEGIN;
+
+/* Update the status of the data sources to be managed for data anonymization */
+
+UPDATE gn_synthese.t_sources
+SET additional_data = JSONB_SET(additional_data, '{data_management}', JSONB_BUILD_OBJECT(
+        'source_key', 'from_vn', 'anonymous_in_export_last_check', '2000-01-01 00:00:00'::DATE
+                                                                      ), TRUE)
+WHERE id_source = <visionature source id>;
+
+UPDATE gn_synthese.t_sources
+SET additional_data = JSONB_SET(additional_data, '{data_management}', JSONB_BUILD_OBJECT(
+        'source_key', 'from_dbchiro', 'anonymous_in_export_last_check', '2000-01-01 00:00:00'::DATE
+                                                                      ), TRUE)
+WHERE id_source = <dbchiroweb source id>;
+
+/* Apply changes */
+
+SELECT src_lpodatas.fct_c_set_anonymous_status();
+
+```
+
+> [!IMPORTANT]
+> SQL function `SELECT src_lpodatas.fct_c_set_anonymous_status();`  must then be run after each observers synchronization.
 
 
 ## 1.5.2 - 2025-05-06
@@ -28,7 +63,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 1. Apply scripts in order:
     1. `08_upsert_observations.sql`
-    2. Execute script `migrations/1.5.1_to_1.5.2.sql`
+    2. `migrations/1.5.1_to_1.5.2.sql`
 
 ## 1.5.1 - 2025-01-28
 

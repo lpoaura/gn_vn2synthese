@@ -432,4 +432,90 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+CREATE OR REPLACE FUNCTION src_lpodatas.fct_c_set_anonymous_status()
+    RETURNS TABLE
+            (
+                message TEXT
+            )
+AS
+$fct_c_set_anonymous_status$
+DECLARE
+    the_process_start_ts TIMESTAMP := NOW();
+    the_source           RECORD;
+    updated_count        INTEGER;
+BEGIN
+    SET SESSION_REPLICATION_ROLE TO replica;
+
+    FOR the_source IN (SELECT id_source
+                            , additional_data #>> '{data_management,source_key}'                                  AS source_key
+                            , (additional_data #>> '{data_management,anonymous_in_export_last_check}')::TIMESTAMP AS last_check
+                       FROM gn_synthese.t_sources
+                       WHERE additional_data ? 'data_management')
+        LOOP
+
+            RAISE NOTICE 'Start to manage anonymous data from source "%"', the_source.source_key;
+
+            WITH selected_data AS (SELECT s.id_synthese
+                                        , COALESCE(
+                        (
+                            tr.champs_addi #>>
+                            ('{' || the_source.source_key || ',anonymous_in_export}')::TEXT[]
+                            )::BOOLEAN,
+                        FALSE
+                                          ) AS anonymous_in_export
+                                   FROM gn_synthese.synthese s
+                                            JOIN utilisateurs.t_roles tr
+                                                 ON s.id_digitiser = tr.id_role
+                                   WHERE (
+                                             tr.champs_addi #>>
+                                             ('{' || the_source.source_key || ',anonymous_in_export_ts_update}')::TEXT[]
+                                             )::TIMESTAMP >
+                                         COALESCE(the_source.last_check, '-infinity'::TIMESTAMP)
+                                     AND s.id_source = the_source.id_source)
+               , updated_rows AS (
+                UPDATE src_lpodatas.t_c_synthese_extended tse
+                    SET anonymous_in_export = sd.anonymous_in_export
+                    FROM selected_data sd
+                    WHERE tse.id_synthese = sd.id_synthese
+                        AND tse.anonymous_in_export IS DISTINCT FROM sd.anonymous_in_export
+                    RETURNING tse.id_synthese)
+               , meta_updated AS (
+                UPDATE gn_synthese.synthese s
+                    SET meta_update_date = NOW()
+                    FROM updated_rows ur
+                    WHERE s.id_synthese = ur.id_synthese
+                    RETURNING s.id_synthese)
+            SELECT COUNT(*)
+            INTO updated_count
+            FROM updated_rows;
+
+            UPDATE gn_synthese.t_sources
+            SET additional_data = JSONB_SET(
+                    additional_data,
+                    '{data_management,anonymous_in_export_last_check}',
+                    TO_JSONB(the_process_start_ts),
+                    TRUE
+                                  )
+            WHERE id_source = the_source.id_source;
+
+            message := FORMAT(
+                    '%s rows have been updated for source "%s" since %s',
+                    updated_count,
+                    the_source.source_key,
+                    COALESCE(the_source.last_check::TEXT, 'never')
+                       );
+
+            RAISE NOTICE '%', message;
+
+            RETURN NEXT;
+
+        END LOOP;
+
+    RESET SESSION_REPLICATION_ROLE;
+
+    RETURN;
+END;
+$fct_c_set_anonymous_status$
+    LANGUAGE plpgsql;
+
 COMMIT;
